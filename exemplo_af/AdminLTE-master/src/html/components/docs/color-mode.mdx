@@ -1,0 +1,96 @@
+AdminLTE supports Bootstrap 5.3 color modes (light, dark, and auto) out of the box. Since 4.1 the switcher ships in `adminlte.js` as the **ColorMode** module — you no longer need to copy a script into your pages.
+
+##### How it works
+
+- The chosen mode is persisted in `localStorage` under the key `lte-theme`.
+- `auto` follows the operating system's `prefers-color-scheme` and updates live when the OS preference changes.
+- The resolved mode is applied as `data-bs-theme="light|dark"` on `<html>`, so every Bootstrap and AdminLTE component adapts automatically.
+
+##### Markup
+
+Add toggle buttons anywhere with `data-bs-theme-value` — the module binds them automatically. Optional `data-lte-theme-icon` elements act as an indicator for the current choice (the demo uses them in the topbar trigger):
+
+```html
+<li class="nav-item dropdown">
+  <a
+    class="nav-link"
+    href="#"
+    id="bd-theme"
+    aria-label="Toggle color scheme"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    <i class="bi bi-sun-fill" data-lte-theme-icon="light"></i>
+    <i class="bi bi-moon-fill d-none" data-lte-theme-icon="dark"></i>
+    <i class="bi bi-circle-half d-none" data-lte-theme-icon="auto"></i>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="bd-theme">
+    <li>
+      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+        <i class="bi bi-sun-fill me-2"></i>
+        Light
+        <i class="bi bi-check-lg ms-auto d-none"></i>
+      </button>
+    </li>
+    <li>
+      <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+        <i class="bi bi-moon-fill me-2"></i>
+        Dark
+        <i class="bi bi-check-lg ms-auto d-none"></i>
+      </button>
+    </li>
+    <li>
+      <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
+        <i class="bi bi-circle-half me-2"></i>
+        Auto
+        <i class="bi bi-check-lg ms-auto d-none"></i>
+      </button>
+    </li>
+  </ul>
+</li>
+```
+
+The module keeps the `active` class, `aria-pressed` state, and the `.bi-check-lg` check marks in sync on every `[data-bs-theme-value]` button.
+
+##### JavaScript API
+
+```js
+import { ColorMode } from "admin-lte"
+
+const colorMode = new ColorMode()
+
+colorMode.getPreferredTheme() // "light" | "dark" | "auto"
+colorMode.setTheme("dark")    // apply + persist + sync toggles
+
+// React to changes (fired on document)
+document.addEventListener("changed.lte.color-mode", (event) => {
+  console.log(event.detail.theme)    // what the user chose: "light" | "dark" | "auto"
+  console.log(event.detail.resolved) // what got applied:    "light" | "dark"
+})
+```
+
+##### Preventing the flash of wrong theme
+
+The module runs after the DOM is ready, so pages should also apply the stored theme *before first paint* with a tiny inline snippet in `<head>` (this is the one piece that must stay inline — see `#6043`):
+
+```html
+<script>
+  (() => {
+    "use strict"
+    let stored = null
+    try { stored = localStorage.getItem("lte-theme") } catch {}
+    const prefersDark = matchMedia("(prefers-color-scheme: dark)").matches
+    const resolved = (stored === "dark" || stored === "light") ? stored : (prefersDark ? "dark" : "light")
+    document.documentElement.setAttribute("data-bs-theme", resolved)
+    document.documentElement.style.colorScheme = resolved
+  })()
+</script>
+```
+
+##### Per-region color modes
+
+`data-bs-theme` also works on any element, not just `<html>` — for example a permanently dark sidebar in an otherwise light layout:
+
+```html
+<aside class="app-sidebar" data-bs-theme="dark">...</aside>
+```

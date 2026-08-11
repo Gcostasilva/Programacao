@@ -1,0 +1,11 @@
+Array
+(
+    [acao] => salvar
+    [recurso] => 5
+    [data] => 2026-07-22
+    [pedido] => 0,52
+    [aco] => AZ-150
+    [vendedor] => 1
+    [peso] => 3215
+    [observacao] =>  
+)

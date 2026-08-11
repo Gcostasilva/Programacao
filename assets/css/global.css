@@ -1,0 +1,5 @@
+.collapsed-card > .card-body,
+.collapsed-card > .card-footer {
+    display: none !important;
+    background:brown;
+}
