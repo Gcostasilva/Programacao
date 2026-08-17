@@ -24,16 +24,19 @@
                         <tr>
                             <td>
                                 <?php
-                                $hoje = date('d-m-Y');
-
+                               
+                                $hoje = new DateTime();
+                                $hoje = $hoje->format('d/m/Y');
+                                
                                 if ($t['peso_realizado'] > 0) {
                                     echo '<span class="badge bg-success">Baixado</span>';
-                                } elseif ($t['data'] < $hoje && $t['peso_realizado'] == 0) {
+                                } elseif ($t['data'] < $hoje ) {
                                     echo '<span class="badge bg-danger">Atrasado</span>';
-                                } elseif ($t['data'] >= $hoje && $t['peso_realizado'] == 0) {
+                                } elseif ($t['data'] > $hoje ) {
                                     echo '<span class="badge bg-warning text-dark">Pendente</span>';
-                                }
-                                echo " " . $t['data'];
+                                };
+                                
+                                echo $hoje . " " . $t['data'];
                                 ?>
                             </td>
                             <td><?= $t['recurso'] ?></td>

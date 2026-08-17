@@ -72,6 +72,10 @@
                             <label class="form-label">Peso</label>
                             <input class="form-control" name="peso" required>
                         </div>
+                        <div class="col-md-1 text-center align-self-center">
+                            <input class="form-check-input" type="checkbox" id="falta_mp" name="falta_mp">
+                            <label class="form-check-label" for="falta_mp">Falta MP</label>
+                        </div>
                         <div class="col-md-10">
                             <label class="form-label">Observação</label>
                             <input class="form-control" name="observacao">
