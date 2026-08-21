@@ -7,6 +7,7 @@
     </div>
 
     <div class="row mt-3">
+        <?php include 'pages/programacao/semanal/componentes/modal_editar.php'; ?>
         <div class="col-12">
             <?php include 'pages/programacao/semanal/componentes/tabela.php'; ?>
         </div>

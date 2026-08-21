@@ -82,10 +82,10 @@
                         </div>
                     </div>
                 </div>
-                <div style="grid-column: 2/2;flex-direction: column;display: flex;margin-right:  50px;">
-                    <a data-bs-toggle="modal" data-bs-target="#modalBaixar" class="btn btn-primary mt-2 ">Baixar</a>
-                    <button class="btn btn-primary mt-2" type="submit">Salvar</button>
-                    <button class="btn btn-primary mt-2" type="reset">Cancelar</button>
+                <div style="grid-column: 2/2;flex-direction: column;display: flex;margin-right:  20px;">
+                    <a data-bs-toggle="modal" data-bs-target="#modalBaixar" class="btn btn-primary mt-2" > <i class="bi bi-download"></i> Baixar</a>
+                    <button class="btn btn-primary mt-2" type="submit">  <i class="bi bi-save"></i> Salvar</button>
+                    <button class="btn btn-primary mt-2" type="reset"> <i class="bi bi-x-circle"></i> Desistir</button>
                 </div>
             </form>
         </div>

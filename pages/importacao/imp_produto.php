@@ -40,7 +40,7 @@ function importarCsvParaBanco($caminhoArquivo, $pdo)
     fgetcsv($handle, 1000, ';');
 
     // Prepara a query SQL (ajuste os campos e a tabela conforme o seu banco)
-    $stmt = $pdo->prepare("INSERT INTO produtos (grupo, codigo, descricao, especial) VALUES (:grupo, :codigo, :descricao, :especial)");
+    $stmt = $pdo->prepare("INSERT INTO produtos (grupo, codigo, descricao, peso_liquido, especial) VALUES (:grupo, :codigo, :descricao, :peso_liquido, :especial)");
 
     $linhasImportadas = 0;
 
@@ -51,7 +51,8 @@ function importarCsvParaBanco($caminhoArquivo, $pdo)
             ':grupo' => trim($dados[0]),
             ':codigo' => trim($dados[1]),
             ':descricao' => trim($dados[2]),
-            ':especial' => trim($dados[3])
+            ':peso_liquido' => trim(str_replace(',', '.', $dados[3])),
+            ':especial' => trim($dados[4])
         ]);
         $linhasImportadas++;
     }

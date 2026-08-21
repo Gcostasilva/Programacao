@@ -16,6 +16,7 @@ $dados = [
     'vendedor'   => $_POST['vendedor']   ?? null,
     'peso'       => $_POST['peso']       ?? null,
     'observacao' => $_POST['observacao'] ?? null,
+    'falta_mp'   => isset($_POST['falta_mp']) ? 1 : 0,
 ];
 
 $model = new ProgramacaoModel();

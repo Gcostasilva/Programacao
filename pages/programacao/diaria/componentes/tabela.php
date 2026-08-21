@@ -1,11 +1,16 @@
 <div class="card mb-4">
-    <div class="card-header">
-        <h3 class="card-title">Programação de Produção</h3>
+    <div class="card-header accordion-header" id="accordionHeader">
+        <div class="card-title text-center">Programação de Produção</div>
+        
+        <div class="col-md-4  align-self-center text-center " role="button">
+            <input class="form-check-input" type="checkbox" id="exibir_baixados" name="exibir_baixados" role="button">
+            <label class="form-check-label" for="exibir_baixados" role="button">Exibir Baixados</label>
+        </div>
     </div>
     <!-- /.card-header -->
     <div class="card">
         <div class="card-body p-0">
-            <table class="table table-sm">
+            <table class="table table-sm table-hover">
                 <thead>
                     <tr>
                         <td>Data</td>
@@ -20,23 +25,31 @@
                     </tr>
                 </thead>
                 <tbody id="tabelaDados">
+                    <!-- INICIO_LINHAS -->
                     <?php foreach ($tabela['tabDiaria'] as $t): ?>
-                        <tr>
-                            <td>
+
+
+                        <?php $classeLinha = ($t['falta_mp'] == 1) ? 'table-danger text-white' : ""; ?>
+                        <tr class=" <?php echo $classeLinha ?>" data-id="<?= $t['id'] ?>" data-data="<?= $t['data'] ?>">
+
+                            <td role="button">
+                                <i class="bi bi-arrows-move"></i>
+
                                 <?php
-                               
-                                $hoje = new DateTime();
-                                $hoje = $hoje->format('d/m/Y');
-                                
+
+                                $hoje = new DateTime('today');
+                                $dataRegistro = DateTime::createFromFormat('d/m/Y', $t['data']);
+
                                 if ($t['peso_realizado'] > 0) {
                                     echo '<span class="badge bg-success">Baixado</span>';
-                                } elseif ($t['data'] < $hoje ) {
+                                } elseif ($dataRegistro < $hoje) {
                                     echo '<span class="badge bg-danger">Atrasado</span>';
-                                } elseif ($t['data'] > $hoje ) {
+                                } else {
                                     echo '<span class="badge bg-warning text-dark">Pendente</span>';
-                                };
-                                
-                                echo $hoje . " " . $t['data'];
+                                }
+                                ;
+
+                                echo " " . $t['data'];
                                 ?>
                             </td>
                             <td><?= $t['recurso'] ?></td>
@@ -55,6 +68,7 @@
                             <td><?= $t['obs'] ?></td>
                         </tr>
                     <?php endforeach; ?>
+                    <!-- FIM_LINHAS -->
                 </tbody>
             </table>
         </div>

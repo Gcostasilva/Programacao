@@ -13,49 +13,62 @@
             </div>
         </div>
         <div class="card-body" style="display: inline; grid-template-columns: 1fr 1fr;">
-            <form action="index.php?page=prog_diaria_salvar" method="POST" style="display:flex;">
+            <form action="index.php?page=prog_semanal_novo" method="POST" style="display:flex;">
                 <div id="formSemanal" class="form-programacao" style="width:90%;">
                     <div class="row">
                         <div class="col-md-2">
                             <label class="form-label">Semana</label>
-                            <input type="week" class="form-control">
+                            <input type="week" class="form-control" id="semana" name="semana" value="<?php $semanaAtual = date('o-\WW'); echo $semanaAtual; ?>" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Recurso</label>
-                            <select class="form-select">
-                                <option>Selecione...</option>
+                            <select class="form-select" name="recurso" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <?php
+                                foreach ($dados['recursos_semanal'] as $linha) {
+                                    $id = htmlspecialchars($linha['id']);
+                                    $nome = htmlspecialchars($linha['descricao']);
+                                    echo "<option value=\"$id\">$nome</option>";
+                                }
+                                ?>
                             </select>
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Data</label>
-                            <input type="date" class="form-control">
+                            <input type="date" class="form-control" id="data" name="data" required>
                         </div>
+                        <div class="col-lg-2">
+                            <label class="form-label">Demanda</label>
+                            <input class="form-control" name="demanda" id="demanda" required>
+                        </div>
+
                         <div></div>
-                        <div class="col-md-2">
+                        <div class="col-lg-2">
                             <label class="form-label">Código</label>
-                            <input class="form-control">
+                            <input class="form-control" name="codigo_s" id="codigo" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Descrição</label>
-                            <input class="form-control" style="z-index:-100;">
+                            <input class="form-control" name="descricao" id="descricao_sem" disabled>
                         </div>
                         <div class="col-md-1">
                             <label class="form-label">Quantidade</label>
-                            <input class="form-control">
+                            <input class="form-control" name="quantidade"  required>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-1">
                             <label class="form-label">Peso</label>
-                            <input class="form-control">
+                            <input class="form-control" name="peso">
+                            <input type="hidden" class="form-control" name="peso_liquido" id="peso_liquido" disabled>
                         </div>
                         <div class="col-md-10">
                             <label class="form-label">Observação</label>
-                            <input class="form-control">
+                            <input class="form-control" name="observacao">
                         </div>
                     </div>
                 </div>
                 <div style="grid-column: 2/2;flex-direction: column;display: flex;margin-right:  50px;">
-                    <button class="btn btn-primary mt-2" type="submit">Salvar</button>
-                    <button class="btn btn-primary mt-2" type="reset">Cancelar</button>
+                    <button class="btn btn-primary mt-2" type="submit"><i class="bi bi-save"></i> Salvar </button>
+                    <button class="btn btn-primary mt-2" type="reset"><i class="bi bi-x-circle"></i> Desistir </button>
                 </div>
             </form>
         </div>

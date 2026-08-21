@@ -1,11 +1,13 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.3.8/js/dataTables.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
 <script
     src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0/dist/js/adminlte.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+
+
+<script src="assets/js/enter-como-tab.js"></script>
 
 <!-- Filtro de equipamento e data para o formulário diária -->
 <script>
@@ -128,13 +130,12 @@
     });
 </script>
 
-<!-- Função para preencher o modal  -->
+<!-- Função para preencher o modal de telha -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
         const modalEditar = document.getElementById('modalEditar');
         const formEditar = document.getElementById('formEditar');
 
-        // Dispara quando o modal está prestes a abrir
         modalEditar.addEventListener('show.bs.modal', function (event) {
             const botao = event.relatedTarget;
             const id = botao.dataset.id;
@@ -149,14 +150,18 @@
                 .then(function (registro) {
                     document.getElementById('edit_id').value = registro.id;
                     document.getElementById('edit_recurso').value = registro.maquina_id;
-                    document.getElementById('edit_data').value = registro.data;
+                    document.getElementById('edit_data').value = registro.data_programacao;
                     document.getElementById('edit_pedido').value = registro.pedido;
                     document.getElementById('edit_espessura').value = registro.espessura;
                     document.getElementById('edit_aco').value = registro.aco;
-                    document.getElementById('edit_vendedor').value = registro.vendedor;
+                    document.getElementById('edit_vendedor').value = registro.vendedor_id; // era registro.vendedor
                     document.getElementById('edit_peso').value = registro.peso;
                     document.getElementById('edit_peso_real').value = registro.peso_realizado;
+                    // document.getElementById('falta_mp_at').checked = !!registro.falta_mp; // coluna não vem mais na consulta
                     document.getElementById('edit_obs').value = registro.obs;
+
+                    // Foco no campo, agora dentro do momento certo (quando o modal abre)
+                    document.getElementById('edit_peso_real').focus();
                 })
                 .catch(function (erro) {
                     alert('Não foi possível carregar o registro para edição.');
@@ -164,7 +169,6 @@
                 });
         });
 
-        // Envio do formulário de edição
         formEditar.addEventListener('submit', function (event) {
             event.preventDefault();
 
@@ -178,7 +182,6 @@
                     if (!resposta.ok) {
                         throw new Error('Erro ao atualizar');
                     }
-                    // Recarrega a página para a tabela refletir a mudança
                     location.reload();
                 })
                 .catch(function (erro) {
@@ -187,8 +190,6 @@
                 });
         });
     });
-    const campo = document.getElementById('edit_peso_real');
-    campo.focus();
 </script>
 <!-- Função para preencher o modal baixa de telha  -->
 <script>
@@ -214,6 +215,7 @@
             aco: document.getElementById('baixa_aco'),
             vendedor: document.getElementById('baixa_vendedor'),
             peso: document.getElementById('baixa_peso'),
+            falta_mp: document.getElementById('falta_mp_at'),
             observacao: document.getElementById('baixa_obs'),
         };
 
@@ -283,6 +285,7 @@
             camposConferencia.aco.value = registro.aco;
             camposConferencia.vendedor.value = registro.vendedor_id;
             camposConferencia.peso.value = registro.peso;
+            camposConferencia.falta_mp.checked = !!registro.falta_mp;
             camposConferencia.observacao.value = registro.obs;
 
             divResultados.innerHTML = '';
@@ -311,7 +314,15 @@
                 fetch('index.php?page=prog_diaria_baixar&pedido=' + encodeURIComponent(pedido))
                     .then(response => response.json())
                     .then(dados => {
-                        renderizarResultados(Array.isArray(dados) ? dados : []);
+
+                        const registros = Array.isArray(dados) ? dados : [];
+
+                        if (registros.length === 1) {
+                            // Só um resultado: seleciona automaticamente, sem exigir clique
+                            selecionarRegistro(registros[0]);
+                        } else {
+                            renderizarResultados(registros);
+                        }
                     })
                     .catch(erro => {
                         console.error('Erro ao buscar pedido:', erro);
@@ -352,9 +363,523 @@
                     console.error('Erro ao atualizar:', erro);
                 });
         });
-
+        modalBaixar.addEventListener('shown.bs.modal', function () {
+            const campo = document.getElementById('baixa_pedido');
+            setTimeout(function () { campo.focus(); }, 100);
+        });
         // Se o usuário fechar o modal no meio do processo, garante estado limpo na próxima abertura
         modalBaixar.addEventListener('hidden.bs.modal', resetarModal);
+
+    });
+</script>
+<!-- Função para classificar a tabela de programação diária  -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tbody = document.getElementById('tabelaDados');
+
+        if (!tbody) return; // guarda de segurança, igual você já faz com os cards
+
+        Sortable.create(tbody, {
+            animation: 150,
+            handle: 'td:first-child', // arraste iniciado pela primeira célula (data). Remova esta linha se quiser arrastar de qualquer ponto da linha
+
+            // Impede soltar a linha num ponto onde a data seja diferente
+            onMove: function (evt) {
+                const dataOrigem = evt.dragged.dataset.data;
+                const dataDestino = evt.related.dataset.data;
+                return dataOrigem === dataDestino;
+            },
+
+            onEnd: function () {
+                // Depois de soltar, pega todas as linhas do MESMO dia da linha movida
+                // e envia a nova ordem pro backend
+                const linhas = Array.from(tbody.querySelectorAll('tr'));
+
+                // Agrupa por data, mantendo a ordem atual do DOM
+                const grupos = {};
+                linhas.forEach(function (linha, index) {
+                    const data = linha.dataset.data;
+                    if (!grupos[data]) grupos[data] = [];
+                    grupos[data].push({ id: linha.dataset.id, posicao: grupos[data].length });
+                });
+
+                // Envia cada grupo (normalmente só um vai ter mudado, mas é seguro reenviar todos)
+                Object.values(grupos).forEach(function (grupo) {
+                    salvarOrdem(grupo);
+                });
+            }
+        });
+
+        function salvarOrdem(itens) {
+            fetch(`index.php?page=prog_diaria_reordenar`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ itens: itens })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.sucesso) {
+                        console.error('Erro ao salvar ordem:', data.mensagem);
+                    }
+                })
+                .catch(error => console.error('Erro na requisição:', error));
+        }
+    });
+</script>
+
+<!-- Função para filtrar a tabela de programação diária  -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const checkbox = document.getElementById('exibir_baixados');
+        const tbody = document.getElementById('tabelaDados');
+
+        if (!checkbox || !tbody) return;
+
+        checkbox.addEventListener('change', function () {
+
+            const exibir = checkbox.checked ? '1' : '0';
+
+            fetch(`index.php?page=prog_diaria_filtrar&exibir_baixados=${exibir}`)
+                .then(function (response) {
+                    return response.text();
+                })
+                .then(function (html) {
+                    tbody.innerHTML = html;
+                })
+                .catch(function (erro) {
+                    console.error('Erro ao filtrar programação:', erro);
+                });
+        });
+    });
+</script>
+
+
+<!--                         Semanal                 -->
+
+
+<!-- Função para preencher a descrição produto ao sair do codigo -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const codigoInput = document.getElementById('codigo');
+        const descricaoInput = document.getElementById('descricao_sem');
+        const pesoLiquidoInput = document.getElementById('peso_liquido');
+
+        codigoInput.addEventListener('blur', function () {
+            const codigo = this.value;
+            if (codigo) {
+                fetch(`index.php?page=prog_semanal_buscarCodigo&codigo=${codigo}`)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        console.log('Resposta:', data);
+
+                        if (data.descricao !== undefined) {
+                            descricaoInput.value = data.descricao;
+                            pesoLiquidoInput.value = data.peso_liquido;
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error('Erro ao buscar descrição:', error);
+                    });
+            }
+        });
+    });
+</script>
+
+<!-- Função para multiplicar peso líquido por quantidade -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantidadeInput = document.querySelector('input[name="quantidade"]');
+        const pesoLiquidoInput = document.getElementById('peso_liquido');
+        const pesoInput = document.querySelector('input[name="peso"]');
+
+        quantidadeInput.addEventListener('input', function () {
+            const quantidade = parseFloat(this.value);
+            const pesoLiquido = parseFloat(pesoLiquidoInput.value);
+
+            if (!isNaN(quantidade) && !isNaN(pesoLiquido)) {
+                pesoInput.value = (quantidade * pesoLiquido).toFixed(2);
+            } else {
+                pesoInput.value = '';
+            }
+        });
+    });
+</script>
+
+<!-- Função para Dividir peso pelo peso liquido -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const quantidadeInput = document.querySelector('input[name="quantidade"]');
+        const pesoLiquidoInput = document.getElementById('peso_liquido');
+        const pesoInput = document.querySelector('input[name="peso"]');
+
+        pesoInput.addEventListener('input', function () {
+            const quantidade = parseFloat(this.value);
+            const pesoLiquido = parseFloat(pesoLiquidoInput.value);
+
+            if (!isNaN(quantidade) && !isNaN(pesoLiquido)) {
+                quantidadeInput.value = (quantidade / pesoLiquido).toFixed(0);
+            } else {
+                quantidadeInput.value = '';
+            }
+        });
+    });
+</script>
+
+<!-- Função para limitar a data com base na semana -->
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const semanaInput = document.getElementById('semana');
+        const dataInput = document.getElementById('data');
+
+        function aplicarLimitesSemana() {
+
+            const valor = semanaInput.value;
+
+            if (!valor) {
+                dataInput.removeAttribute('min');
+                dataInput.removeAttribute('max');
+                return;
+            }
+
+            // Exemplo: 2026-W34
+            const [ano, semana] = valor.split('-W').map(Number);
+
+            // Janeiro 4 sempre pertence à semana ISO 1
+            const janeiro4 = new Date(ano, 0, 4);
+
+            // Dia da semana (domingo = 0)
+            const diaSemana = janeiro4.getDay() || 7;
+
+            // Segunda-feira da semana 1
+            const segundaSemana1 = new Date(janeiro4);
+            segundaSemana1.setDate(
+                janeiro4.getDate() - diaSemana + 1
+            );
+
+            // Segunda-feira da semana selecionada
+            const inicio = new Date(segundaSemana1);
+            inicio.setDate(
+                segundaSemana1.getDate() + (semana - 1) * 7
+            );
+
+            // Domingo da semana selecionada
+            const fim = new Date(inicio);
+            fim.setDate(inicio.getDate() + 6);
+
+            // Formata para YYYY-MM-DD
+            function formatarData(data) {
+                const ano = data.getFullYear();
+                const mes = String(data.getMonth() + 1).padStart(2, '0');
+                const dia = String(data.getDate()).padStart(2, '0');
+
+                return `${ano}-${mes}-${dia}`;
+            }
+
+            const dataInicio = formatarData(inicio);
+            const dataFim = formatarData(fim);
+
+            // Limita o input date
+            dataInput.min = dataInicio;
+            dataInput.max = dataFim;
+
+            // Se a data atual estiver fora da semana, limpa
+            if (
+                dataInput.value &&
+                (
+                    dataInput.value < dataInicio ||
+                    dataInput.value > dataFim
+                )
+            ) {
+                dataInput.value = '';
+            }
+
+            console.log('Semana:', valor);
+            console.log('Início:', dataInicio);
+            console.log('Fim:', dataFim);
+        }
+
+        // Roda uma vez no carregamento, tratando o valor padrão do campo (se houver)
+        aplicarLimitesSemana();
+
+        // Continua rodando a cada mudança do usuário
+        semanaInput.addEventListener('input', aplicarLimitesSemana);
+
+    });
+</script>
+
+<!-- Função para preencher o modal  -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const modalEditarSemanal = document.getElementById('modalEditarSemanal');
+        const formEditarSemanal = document.getElementById('formEditarSemanal');
+
+        modalEditarSemanal.addEventListener('show.bs.modal', function (event) {
+            const botao = event.relatedTarget;
+            const id = botao.dataset.id;
+
+            fetch("index.php?page=prog_semanal_buscar&id=" + id)
+                .then(function (resposta) {
+                    if (!resposta.ok) {
+                        throw new Error('Erro ao buscar registro');
+                    }
+                    return resposta.json();
+                })
+                .then(function (registro) {
+                    document.getElementById('edit_sem_id').value = registro.id;
+                    document.getElementById('edit_sem_recurso').value = registro.maquina_id;
+                    document.getElementById('edit_sem_data').value = registro.data_programacao;
+                    document.getElementById('edit_sem_demanda').value = registro.demanda;
+                    document.getElementById('edit_sem_codigo_s').value = registro.produto_id;
+                    document.getElementById('edit_sem_descricao').value = registro.descricao;
+                    document.getElementById('edit_sem_quantidade').value = registro.qtd;
+                    document.getElementById('edit_sem_peso').value = registro.peso;
+                    document.getElementById('edit_sem_descricao').value = registro.descricao;
+                    document.getElementById('edit_sem_peso_liquido').value = registro.peso_liquido;
+                    if (registro.peca_realizada > 0) {
+                        document.getElementById('edit_sem_quantidade_realizada').value = registro.peca_realizada;
+                    } else {
+                        document.getElementById('edit_sem_quantidade_realizada').value = '';
+                    }
+                    document.getElementById('edit_sem_peso_realizado').value = registro.peso_realizado;
+                    document.getElementById('edit_sem_observacao').value = registro.obs;
+                })
+                .catch(function (erro) {
+                    alert('Não foi possível carregar o registro para edição.');
+                    console.error(erro);
+                });
+        });
+
+        formEditarSemanal.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(formEditarSemanal);
+
+            fetch('index.php?page=prog_semanal_editar', {
+                method: 'POST',
+                body: formData
+            })
+                .then(function (resposta) {
+                    if (!resposta.ok) {
+                        throw new Error('Erro ao atualizar');
+                    }
+                    location.reload();
+                })
+                .catch(function (erro) {
+                    alert('Não foi possível salvar a edição.');
+                    console.error(erro);
+                });
+        });
+        modalEditarSemanal.addEventListener('shown.bs.modal', function () {
+            const campo = document.getElementById('edit_sem_quantidade_realizada');
+            setTimeout(function () { campo.focus(); }, 100);
+        });
+    });
+</script>
+
+<!-- Função para multiplicar peso líquido por quantidade dentro do modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editarquantidadeInput = document.querySelector('input[name="peca_realizada"]');
+        const editarpesoInput = document.querySelector('input[name="peso_realizado"]');
+        const editarpesoLiquidoInput = document.getElementById('edit_sem_peso_liquido');
+
+        editarquantidadeInput.addEventListener('input', function () {
+            const quantidade_sem = parseFloat(this.value);
+            const pesoLiquido_sem = parseFloat(editarpesoLiquidoInput.value);
+
+            if (!isNaN(quantidade_sem) && !isNaN(pesoLiquido_sem)) {
+                editarpesoInput.value = (quantidade_sem * pesoLiquido_sem).toFixed(2);
+            } else {
+                editarpesoInput.value = '';
+            }
+        });
+    });
+</script>
+
+<!-- Filtro de equipamento e data para o formulário semanal -->
+<script>
+    document.getElementById('recurso_filtro').addEventListener('change', function () {
+        const recursoSelecionado = this.value;
+        const linhas = document.querySelectorAll('#tabelaSemanal tr');
+
+        linhas.forEach(function (linha) {
+            if (recursoSelecionado === '' || linha.dataset.recurso === recursoSelecionado) {
+                linha.style.display = '';
+            } else {
+                linha.style.display = 'none';
+            }
+        });
+    });
+</script>sim
+
+<!-- Função para ajustar a semana -->
+<script>
+    function adjustWeek(direction) {
+        const weekInput = document.getElementById('semana_filtro');
+
+        if (direction === 1) {
+            weekInput.stepUp(); // Increments by 1 week
+        } else if (direction === -1) {
+            weekInput.stepDown(); // Decrements by 1 week
+        }
+    }
+</script>
+
+<!-- função para ordenar a tabela semanal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const tbodys = document.querySelectorAll('.tabelaSemanal');
+
+        tbodys.forEach(function (tbody) {
+            Sortable.create(tbody, {
+                animation: 150,
+                handle: 'td:first-child',
+                group: 'semanal', // MESMO nome em todos os tbody -> permite mover entre eles
+
+                onEnd: function (evt) {
+                    const linhaMovida = evt.item;
+                    const tbodyDestino = evt.to;   // <tbody> onde a linha caiu
+                    const tbodyOrigem = evt.from;  // <tbody> de onde ela saiu
+
+                    const novaData = tbodyDestino.dataset.data;
+                    const dataAnterior = linhaMovida.dataset.data; // ainda guarda o valor antigo, por enquanto
+
+                    // Atualiza a data "guardada" na própria linha, para futuras leituras
+                    linhaMovida.dataset.data = novaData;
+
+                    salvarOrdemEData(tbodyDestino);
+
+                    // Se a linha saiu de um dia para outro, o dia de origem também
+                    // perdeu uma posição e precisa reordenar o que sobrou nele
+                    if (tbodyOrigem !== tbodyDestino) {
+                        salvarOrdemEData(tbodyOrigem);
+                    }
+                }
+            });
+        });
+
+        function salvarOrdemEData(tbody) {
+            const novaData = tbody.dataset.data;
+            const linhas = Array.from(tbody.querySelectorAll('tr'));
+
+            const itens = linhas.map(function (linha, index) {
+                return {
+                    id: linha.dataset.id,
+                    posicao: index,
+                    data: novaData
+                };
+            });
+
+            if (itens.length === 0) return; // dia ficou vazio, nada pra salvar
+
+            fetch('index.php?page=prog_semanal_reordenar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ itens: itens })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.sucesso) {
+                        console.error('Erro ao salvar ordem:', data.mensagem);
+                    }
+                })
+                .catch(error => console.error('Erro na requisição:', error));
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const themeButtons = document.querySelectorAll('[data-bs-theme-value]');
+        const html = document.documentElement;
+        const storageKey = 'theme';
+
+        function aplicarTema(theme) {
+
+            if (theme === 'auto') {
+
+                const prefersDark = window.matchMedia(
+                    '(prefers-color-scheme: dark)'
+                ).matches;
+
+                html.setAttribute(
+                    'data-bs-theme',
+                    prefersDark ? 'dark' : 'light'
+                );
+
+            } else {
+
+                html.setAttribute('data-bs-theme', theme);
+
+            }
+        }
+
+
+        // ============================
+        // CARREGAR TEMA SALVO
+        // ============================
+
+        const temaSalvo = localStorage.getItem(storageKey);
+
+        if (temaSalvo) {
+
+            aplicarTema(temaSalvo);
+
+        } else {
+
+            // Primeiro acesso: automático
+            aplicarTema('auto');
+
+        }
+
+
+        // ============================
+        // CLIQUE NOS BOTÕES
+        // ============================
+
+        themeButtons.forEach(function (button) {
+
+            button.addEventListener('click', function () {
+
+                const theme = this.getAttribute('data-bs-theme-value');
+
+                // Aplica o tema
+                aplicarTema(theme);
+
+                // Salva a preferência
+                localStorage.setItem(storageKey, theme);
+
+            });
+
+        });
+
+
+        // ============================
+        // AUTO → ACOMPANHAR WINDOWS
+        // ============================
+
+        const mediaQuery = window.matchMedia(
+            '(prefers-color-scheme: dark)'
+        );
+
+        mediaQuery.addEventListener('change', function () {
+
+            const temaSalvo = localStorage.getItem(storageKey);
+
+            if (temaSalvo === 'auto') {
+
+                aplicarTema('auto');
+
+            }
+
+        });
 
     });
 </script>
