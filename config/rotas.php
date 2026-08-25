@@ -113,6 +113,11 @@ Router::add(
     'pages/programacao/semanal/reordenar.php',
     'Reordenar Programação Semanal'
 );
+Router::add(
+    'prog_semanal_filtrar',
+    'pages/programacao/semanal/prog_semanal_filtrar.php',
+    'Filtrar Programação Semanal'
+);
 
 // quinzenal -------------------------------------
 Router::add(

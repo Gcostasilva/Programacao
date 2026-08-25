@@ -374,6 +374,7 @@
 </script>
 <!-- Função para classificar a tabela de programação diária  -->
 <script>
+
     document.addEventListener('DOMContentLoaded', function () {
         const tbody = document.getElementById('tabelaDados');
 
@@ -425,6 +426,7 @@
                 .catch(error => console.error('Erro na requisição:', error));
         }
     });
+
 </script>
 
 <!-- Função para filtrar a tabela de programação diária  -->
@@ -483,6 +485,18 @@
                     .catch(function (error) {
                         console.error('Erro ao buscar descrição:', error);
                     });
+            }
+            // Exibe o modal de cálculo quando o peso líquido for menor que 1.1
+            if (parseFloat(pesoLiquidoInput.value) < 1.1) {
+                if (codigoInput.value.substring(0, 2) === '03' || codigoInput.value.substring(0, 2) === '06') {
+                    const modal = new bootstrap.Modal(document.getElementById('modalCalculo_chapa'));
+                    setTimeout(function () { modal.show(); }, 50);
+                       
+                } else {
+
+                    const modal = new bootstrap.Modal(document.getElementById('modalCalculo_perfil'));
+                    setTimeout(function () { modal.show(); }, 50);
+                }
             }
         });
     });
@@ -733,7 +747,8 @@
 
 <!-- função para ordenar a tabela semanal -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    function inicializarSortableSemanal() {
+
         const tbodys = document.querySelectorAll('.tabelaSemanal');
 
         tbodys.forEach(function (tbody) {
@@ -791,9 +806,13 @@
                 })
                 .catch(error => console.error('Erro na requisição:', error));
         }
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+        inicializarSortableSemanal();
     });
 </script>
 
+<!-- Função para alternar tema claro/escuro/auto -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -882,4 +901,74 @@
         });
 
     });
+</script>
+
+<!-- Função para logica de ajustar a semana do filtro semanal -->
+<script>
+    function adjustWeek(direcao) {
+        const input = document.getElementById('semana_filtro');
+        const [ano, semana] = input.value.split('-W').map(Number);
+
+        // Converte "ano + número da semana ISO" para uma data real (quinta-feira daquela semana,
+        // que é um truque comum pra evitar problemas de virada de ano)
+        const data = new Date(ano, 0, 1 + (semana - 1) * 7);
+        const diaSemana = data.getDay() || 7;
+        data.setDate(data.getDate() + (4 - diaSemana)); // ajusta para a quinta-feira da semana
+
+        // Aplica o incremento/decremento (em semanas, ou seja, 7 dias)
+        data.setDate(data.getDate() + direcao * 7);
+
+        // Recalcula ano e número da semana ISO a partir da nova data
+        const novoAno = data.getFullYear();
+        const inicioAno = new Date(novoAno, 0, 1);
+        const novaSemana = Math.ceil((((data - inicioAno) / 86400000) + inicioAno.getDay() + 1) / 7);
+
+        input.value = `${novoAno}-W${String(novaSemana).padStart(2, '0')}`;
+
+        carregarSemana(); // dispara a busca dos novos dados (função do passo 3)
+    }
+</script>
+
+<!-- Função para realizar a busca do filtro semanal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const inputSemana = document.getElementById('semana_filtro');
+        const inputRecurso = document.getElementById('recurso_filtro');
+        inputSemana.addEventListener('change', carregarSemana);
+
+        if (inputRecurso) {
+            inputRecurso.addEventListener('change', carregarSemana);
+        }
+    });
+
+    function carregarSemana() {
+
+        const semana = document.getElementById('semana_filtro').value;
+        const recursoElement = document.getElementById('recurso_filtro');
+        const recurso = recursoElement ? recursoElement.value : '';
+        const params = new URLSearchParams();
+
+        params.append('page', 'prog_semanal_filtrar');
+        params.append('semana', semana);
+
+        if (recurso !== '') {
+            params.append('recurso_filtro', recurso);
+        }
+        fetch('index.php?' + params.toString())
+            .then(function (resposta) {
+                if (!resposta.ok) {
+                    throw new Error('Erro ao buscar semana');
+                }
+                return resposta.text();
+            })
+            .then(function (html) {
+                document.getElementById('areaSemanal').innerHTML = html;
+                inicializarSortableSemanal();
+            })
+            .catch(function (erro) {
+
+                alert('Não foi possível carregar a semana selecionada.');
+                console.error(erro);
+            });
+    }
 </script>

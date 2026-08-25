@@ -17,6 +17,7 @@ $rotasAjax = [
     'prog_semanal_reordenar',
     'prog_semanal_excluir',
     'prog_semanal_editar',
+    'prog_semanal_filtrar'
     // vá adicionando aqui outras rotas "buscar" que você criar
     // ex: 'prog_semanal_buscar', 'corte_dobra_buscar'...
 ];
@@ -38,6 +39,7 @@ if (in_array($paginaAtual, $rotasAjax)) {
     <div class="app-wrapper">
         <?php include 'includes/sidebar.php'; ?>
         <?php include 'includes/navbar.php'; ?>
+        <?php include 'includes/helpers.php'; ?>
         <main class="app-main">
             <?php $router->carregar(); ?>
         </main>

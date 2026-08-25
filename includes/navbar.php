@@ -1,5 +1,5 @@
-<nav class="app-header navbar navbar-expand shadow">
-    <ul class="navbar-nav">
+<nav class="app-header navbar navbar-expand shadow hidden-print">
+    <ul class="navbar-nav hidden-print">
         <li class="nav-item">
             <a class="nav-link d-flex align-items-center" data-lte-toggle="sidebar" href="#" role="button"
                 aria-label="Toggle sidebar">

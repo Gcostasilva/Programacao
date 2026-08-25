@@ -1,104 +1,41 @@
-                    <div class="container row align-self-lg-auto mb-2 mt-0">
-                        <div class="col-md-2">
-                            <label class="form-label">Semana</label>
-                            <button type="button" onclick="adjustWeek(-1)"><i class="bi bi-dash"></i></button>
-                            <button type="button" onclick="adjustWeek(1)"><i class="bi bi-plus"></i></button>
-                            <input type="week" class="form-control" id="semana_filtro" name="semana"
-                            value="<?php $semanaAtual = date('o-\WW');
-                                echo $semanaAtual; ?>" required>
-                        </div>
-                        <div class="col-md-2">
-                            <label class="form-label">Recurso</label>
-                            <select class="form-select" name="recurso" id="recurso_filtro" required>
-                                <option value="" disabled selected>...</option>
-                                <?php
-                                foreach ($dados['recursos_semanal'] as $linha) {
-                                    $id = htmlspecialchars($linha['id']);
-                                    $nome = htmlspecialchars($linha['descricao']);
-                                    echo "<option value=\"$id\">$nome</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
-                    </div>
+<div class="container row align-self-lg-auto mb-2 mt-0">
+    <div class="col-md-2">
+        <label class="form-label">Semana</label>
+        <button type="button" onclick="adjustWeek(-1)"><i class="bi bi-dash"></i></button>
+        <button type="button" onclick="adjustWeek(1)"><i class="bi bi-plus"></i></button>
+        <input type="week" class="form-control" id="semana_filtro" name="semana" value="<?php $semanaAtual = date('o-\WW');
+        echo $semanaAtual; ?>" required>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Recurso</label>
+        <select class="form-select" name="recurso_filtro" id="recurso_filtro" required>
+            <option value="" disabled selected>Selecione...</option>
+            <?php
+            foreach ($dados['recursos_semanal'] as $linha) {
+                $id = htmlspecialchars($linha['id']);
+                $nome = htmlspecialchars($linha['descricao']);
+                echo "<option value=\"$id\">$nome</option>";
+            }
+            ?>
+        </select>
+    </div>
+</div>
 
 <?php
 $dias = [
     1 => ['nome' => 'Segunda-feira', 'id' => 'segunda'],
-    2 => ['nome' => 'Terça-feira',   'id' => 'terca'],
-    3 => ['nome' => 'Quarta-feira',  'id' => 'quarta'],
-    4 => ['nome' => 'Quinta-feira',  'id' => 'quinta'],
-    5 => ['nome' => 'Sexta-feira',   'id' => 'sexta'],
+    2 => ['nome' => 'Terça-feira', 'id' => 'terca'],
+    3 => ['nome' => 'Quarta-feira', 'id' => 'quarta'],
+    4 => ['nome' => 'Quinta-feira', 'id' => 'quinta'],
+    5 => ['nome' => 'Sexta-feira', 'id' => 'sexta'],
 ];
 
 $semana = isset($_POST['semana']) ? $_POST['semana'] : date('o-\WW');
-$hoje   = date('Y-m-d');
+$hoje = date('Y-m-d');
 ?>
 
-<?php foreach ($dias as $numDia => $info):
-    $dataDia = new DateTime();
-    $dataDia->setISODate((int)substr($semana, 0, 4), (int)substr($semana, 6, 2), $numDia);
-    $dataFormatada = $dataDia->format('Y-m-d');
-?>
-
-
-
-<div class="card mb-4 border-primary-subtle">
-    <div class="card-header text-primary p-0 ps-4 pt-1 <?= $dataDia->format('Y-m-d') === $hoje ? 'bg-primary bg-gradient text-light' : '' ?>">
-        <h4><i class="bi bi-calendar4"></i> <?= $info['nome'] ?> - <?= $dataDia->format('d/m/Y') ?></h4>
-        <h4 id="<?= $info['id'] ?>"></h4>
-    </div>
-    <div class="card-body p-0">
-        <table class="table table-sm table-hover">
-            <thead>
-                <tr class="fw-bold">
-                    <td>Demanda</td>
-                    <td>Produto</td>
-                    <td>Descrição</td>
-                    <td>Quantidade</td>
-                    <td>Peso</td>
-                    <td>Quantidade Realizada</td>
-                    <td>Peso Realizado</td>
-                    <td>Observação</td>
-                </tr>
-            </thead>
-            <tbody id="tabelaSemanal" class="tabelaSemanal" data-data="<?= $dataFormatada ?>">
-                <?php foreach ($tabela['tabSemanal'] as $t):
-                    if ($t['data'] !== $dataFormatada) {
-                        continue;
-                    }
-
-                    // - já realizado -> verde
-                    // - data futura, ainda não realizado -> amarelo (pendente)
-                    // - data passada/hoje, não realizado -> vermelho (atrasado)
-                    if ($t['peca_realizada'] >= 1) {
-                        $classe = 'class="table-success"';
-                    } elseif ($t['data'] >= $hoje) {
-                        $classe = 'class="table-warning"';
-                    } else {
-                        $classe = 'class="table-danger"';
-                    }
-                ?>
-                <tr <?= $classe ?> data-recurso="<?= $t['maquina_id'] ?>" data-id="<?= $t['id'] ?>">
-                    <td role="button">
-                        <i class="bi bi-arrows-move"></i>
-                        <a class="p-1" style="font-size: 1.2rem; color: crimson;" href="index.php?page=prog_semanal_excluir&id=<?= $t['id'] ?>"
-                           onclick="return confirm('Excluir registro?')"><i class="bi bi-trash"></i></a>
-                        <a type="button" class="p-0" style="font-size: 1.2rem; color: cornflowerblue; border: 1px black;" data-bs-toggle="modal" data-bs-target="#modalEditarSemanal" data-bs-whatever="@mdo"
-                           data-id="<?= $t['id'] ?>"><i class="bi bi-pencil"></i></a>
-                        <span class="bg-primary-subtle p-md-1 rounded-pill border-secondary text-primary fw-bolder"><?= $t['demanda'] ?></span>
-                    </td>
-                    <td><?= $t['produto_id'] ?></td>
-                    <td><?= $t['descricao'] ?></td>
-                    <td><?= number_format($t['qtd'], 0, ',', '.') ?></td>
-                    <td><?= number_format($t['peso'], 0, ',', '.') ?></td>
-                    <td><?= number_format($t['peca_realizada'], 0, ',', '.') ?></td>
-                    <td><?= number_format($t['peso_realizado'], 0, ',', '.') ?></td>
-                    <td><?= $t['obs'] ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    </div>
+<div id="areaSemanal">
+    <!-- para alterar a tabela em si vá no arquivo dias.php -->
+    <?php include __DIR__ . '../../dias.php'; ?>
 </div>
-<?php endforeach; ?>
+

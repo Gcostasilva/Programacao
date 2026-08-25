@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid hidden-print">
 
     <div class="card card-primary card-outline" id="cardFormSemanal">
 
@@ -58,7 +58,7 @@
                         <div class="col-md-1">
                             <label class="form-label">Peso</label>
                             <input class="form-control" name="peso">
-                            <input type="hidden" class="form-control" name="peso_liquido" id="peso_liquido" disabled>
+                            <input type="" class="form-control" name="peso_liquido" id="peso_liquido" disabled>
                         </div>
                         <div class="col-md-10">
                             <label class="form-label">Observação</label>
