@@ -50,19 +50,20 @@
                         <div class="col-md-6">
                             <label class="form-label">Descrição</label>
                             <input class="form-control" name="descricao" id="descricao_sem" disabled>
+                            <input type="" class="form-control" name="complemento_descricao" id="complemento_descricao">
                         </div>
                         <div class="col-md-1">
                             <label class="form-label">Quantidade</label>
-                            <input class="form-control" name="quantidade"  required>
+                            <input class="form-control" name="quantidade" id="quantidade" required>
                         </div>
                         <div class="col-md-1">
                             <label class="form-label">Peso</label>
-                            <input class="form-control" name="peso">
-                            <input type="" class="form-control" name="peso_liquido" id="peso_liquido" disabled>
+                            <input class="form-control" name="peso" id="peso">
+                            <input type="hidden" class="form-control" name="peso_liquido" id="peso_liquido" disabled>
                         </div>
                         <div class="col-md-10">
                             <label class="form-label">Observação</label>
-                            <input class="form-control" name="observacao">
+                            <input class="form-control" name="observacao" id="observacao">
                         </div>
                     </div>
                 </div>

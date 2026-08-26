@@ -273,6 +273,7 @@ class ProgramacaoModel extends BaseModel
                     data,
                     demanda,
                     produto_id,
+                    complemento_descricao,
                     qtd,
                     peso,
                     obs
@@ -286,6 +287,7 @@ class ProgramacaoModel extends BaseModel
                     :data_prog,
                     :demanda,
                     :produto,
+                    :complemento_descricao,
                     :qtd,
                     :peso,
                     :observacao
@@ -304,6 +306,7 @@ class ProgramacaoModel extends BaseModel
                 ':data_prog' => $dados['data'],
                 ':demanda' => $dados['demanda'],
                 ':produto' => $dados['codigo'],
+                'complemento_descricao' => $dados['complemento_descricao'],
                 ':qtd' => $dados['quantidade'],
                 ':peso' => $dados['peso'],
                 ':observacao' => $dados['observacao']
@@ -336,6 +339,7 @@ class ProgramacaoModel extends BaseModel
                     data = :data_prog,
                     demanda = :demanda,
                     produto_id = :produto,
+                    desc_complementar = :descricao_COMP,
                     qtd = :qtd,
                     peso = :peso,
                     peca_realizada = :peca_realizada,
@@ -355,6 +359,7 @@ class ProgramacaoModel extends BaseModel
                 ':data_prog' => $dados['data'],
                 ':demanda' => $dados['demanda'],
                 ':produto' => $dados['codigo'],
+                ':descricao_COMP' => $dados['descricao_COMP'],
                 ':qtd' => $dados['quantidade'],
                 ':peso' => $dados['peso'],
                 ':peca_realizada' => $dados['peca_realizada'],

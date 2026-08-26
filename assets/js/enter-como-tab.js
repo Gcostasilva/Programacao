@@ -1,6 +1,10 @@
 document.addEventListener('keydown', function (e) {
 
-    if (e.key !== 'Enter') return;
+    if (
+    e.target.matches('button, input[type="submit"], input[type="button"]')
+) {
+    return;
+}
 
     const el = e.target;
     const tag = el.tagName;

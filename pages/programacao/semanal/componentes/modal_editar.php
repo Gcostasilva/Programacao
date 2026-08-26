@@ -45,6 +45,7 @@
                         <div class="col-md-9">
                             <label class="form-label">Descrição</label>
                             <input class="form-control" name="descricao" id="edit_sem_descricao" disabled>
+                            <input class="form-control" name="descricao_COMP" id="edit_descricao_COMP">
                         </div>
                         <div></div>
                         <div class="col-md-2">

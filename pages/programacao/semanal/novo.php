@@ -13,6 +13,7 @@ $dados = [
     'data'          => $_POST['data']     ?? null,
     'demanda'      => $_POST['demanda']       ?? null,
     'codigo'        => $_POST['codigo_s']  ?? null,
+    'complemento_descricao' => $_POST['complemento_descricao']  ?? null,
     'quantidade'    => $_POST['quantidade']        ?? null,
     'peso'          => $_POST['peso']   ?? null,
     'observacao'    => $_POST['observacao'] ?? null,

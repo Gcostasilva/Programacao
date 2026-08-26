@@ -14,6 +14,7 @@ $dados = [
     'data'          => $_POST['data']     ?? null,
     'demanda'      => $_POST['demanda']       ?? null,
     'codigo'        => $_POST['codigo_s']  ?? null,
+    'descricao_COMP' => $_POST['descricao_COMP'] ?? null,
     'quantidade'    => $_POST['quantidade']        ?? null,
     'peso'          => $_POST['peso']   ?? null,
     'peca_realizada' => $_POST['peca_realizada'] ?? null,

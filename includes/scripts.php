@@ -468,36 +468,52 @@
         const pesoLiquidoInput = document.getElementById('peso_liquido');
 
         codigoInput.addEventListener('blur', function () {
-            const codigo = this.value;
-            if (codigo) {
-                fetch(`index.php?page=prog_semanal_buscarCodigo&codigo=${codigo}`)
-                    .then(function (response) {
-                        return response.json();
-                    })
-                    .then(function (data) {
-                        console.log('Resposta:', data);
 
-                        if (data.descricao !== undefined) {
-                            descricaoInput.value = data.descricao;
-                            pesoLiquidoInput.value = data.peso_liquido;
+            const codigo = this.value.trim();
+
+            if (!codigo) {
+                return;
+            }
+
+            fetch(`index.php?page=prog_semanal_buscarCodigo&codigo=${encodeURIComponent(codigo)}`)
+                .then(response => response.json())
+                .then(data => {
+
+                    console.log('Resposta:', data);
+
+                    if (data.descricao !== undefined) {
+                        descricaoInput.value = data.descricao;
+                        pesoLiquidoInput.value = data.peso_liquido;
+                    }
+
+                    // Só verifica depois que recebeu o produto
+                    const pesoLiquido = parseFloat(data.peso_liquido);
+
+                    if (pesoLiquido < 1.1) {
+
+                        const prefixo = codigo.substring(0, 2);
+
+                        if (prefixo === '03' || prefixo === '06' || prefixo === '02') {
+
+                            const modal = new bootstrap.Modal(
+                                document.getElementById('modalCalculo_chapa')
+                            );
+
+                            modal.show();
+
+                        } else {
+
+                            const modal = new bootstrap.Modal(
+                                document.getElementById('modalCalculo_perfil')
+                            );
+
+                            modal.show();
                         }
-                    })
-                    .catch(function (error) {
-                        console.error('Erro ao buscar descrição:', error);
-                    });
-            }
-            // Exibe o modal de cálculo quando o peso líquido for menor que 1.1
-            if (parseFloat(pesoLiquidoInput.value) < 1.1) {
-                if (codigoInput.value.substring(0, 2) === '03' || codigoInput.value.substring(0, 2) === '06') {
-                    const modal = new bootstrap.Modal(document.getElementById('modalCalculo_chapa'));
-                    setTimeout(function () { modal.show(); }, 50);
-                       
-                } else {
-
-                    const modal = new bootstrap.Modal(document.getElementById('modalCalculo_perfil'));
-                    setTimeout(function () { modal.show(); }, 50);
-                }
-            }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar descrição:', error);
+                });
         });
     });
 </script>
@@ -654,7 +670,12 @@
                     document.getElementById('edit_sem_quantidade').value = registro.qtd;
                     document.getElementById('edit_sem_peso').value = registro.peso;
                     document.getElementById('edit_sem_descricao').value = registro.descricao;
-                    document.getElementById('edit_sem_peso_liquido').value = registro.peso_liquido;
+                    if (parseFloat(registro.peso_liquido) === 1.0 ) {
+                        document.getElementById('edit_sem_peso_liquido').value = registro.peso / registro.qtd;
+                    } else {
+                        document.getElementById('edit_sem_peso_liquido').value = registro.peso_liquido;
+                    }
+
                     if (registro.peca_realizada > 0) {
                         document.getElementById('edit_sem_quantidade_realizada').value = registro.peca_realizada;
                     } else {
@@ -971,4 +992,105 @@
                 console.error(erro);
             });
     }
+</script>
+
+<!-- Função de multiplicação dentro do modal de chapa -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const espessuraInput = document.querySelector('input[name="espessura_chapa"]');
+        const larguraInput = document.querySelector('input[name="largura_chapa"]');
+        const comprimentoInput = document.querySelector('input[name="comprimento_chapa"]');
+
+        const formCalculoChapa = document.getElementById('formCalculo_Chapa');
+
+        const pesoLiquidoInput = document.getElementById('peso_peca_chapa');
+
+        const quantidadeInput = document.querySelector('input[name="quantidade_chapa"]');
+        const pesoInput = document.querySelector('input[name="peso_chapa"]');
+
+        function calcularPeso() {
+            const espessura = parseFloat(espessuraInput.value);
+            const largura = parseFloat(larguraInput.value);
+            const comprimento = parseFloat(comprimentoInput.value);
+
+            if (!isNaN(espessura) && !isNaN(largura) && !isNaN(comprimento)) {
+                const pesoLiquido = (espessura * largura * comprimento * 0.000008); // kg
+                pesoLiquidoInput.value = pesoLiquido.toFixed(2);
+                calcularPeso();
+            } else {
+                pesoLiquidoInput.value = '';
+                pesoInput.value = '';
+            }
+        }
+
+        espessuraInput.addEventListener('input', calcularPeso);
+        larguraInput.addEventListener('input', calcularPeso);
+        comprimentoInput.addEventListener('input', calcularPeso);
+
+        quantidadeInput.addEventListener('input', function () {
+            const quantidade = parseFloat(this.value);
+            const pesoLiquido = parseFloat(pesoLiquidoInput.value);
+
+            if (!isNaN(quantidade) && !isNaN(pesoLiquido)) {
+                pesoInput.value = (quantidade * pesoLiquido).toFixed(2);
+            } else {
+                pesoInput.value = '';
+            }
+        });
+        pesoInput.addEventListener('input', function () {
+            const peso = parseFloat(this.value);
+            const pesoLiquido = parseFloat(pesoLiquidoInput.value);
+
+            if (!isNaN(peso) && !isNaN(pesoLiquido) && pesoLiquido !== 0) {
+                quantidadeInput.value = (peso / pesoLiquido).toFixed(0);
+            } else {
+                quantidadeInput.value = '';
+            }
+        });
+
+        // adiciona o evento que captura o envio do formulário para atualizar os campos no formulário principal
+        const btnAplicarCalculoChapa =
+            document.getElementById('btnAplicarCalculoChapa');
+
+            btnAplicarCalculoChapa.addEventListener('click', function (e) {
+
+            console.log('Aplicar chapa');
+
+            const quantidade = parseFloat(quantidadeInput.value);
+            const peso = parseFloat(pesoInput.value);
+
+            console.log('Quantidade:', quantidade);
+            console.log('Peso:', peso);
+
+            if (isNaN(quantidade) || isNaN(peso)) {
+                alert('Preencha corretamente os campos de quantidade e peso.');
+                return;
+            }
+
+            const quantidadePrincipal = document.getElementById('quantidade');
+
+            const pesoPrincipal = document.getElementById('peso');
+            const complemento_descricao = document.getElementById('complemento_descricao');
+
+            const descricaoPrincipal = document.getElementById('descricao_sem');
+
+            quantidadePrincipal.value = quantidade;
+            pesoPrincipal.value = peso;
+            complemento_descricao.value = ` / ${comprimentoInput.value} x ${larguraInput.value} mm`;
+
+            descricaoPrincipal.value += ` / ${comprimentoInput.value} x ${larguraInput.value} mm`;
+
+            const modalElement = document.getElementById('modalCalculo_chapa');
+
+            const modal = bootstrap.Modal.getInstance(modalElement);
+
+            if (modal) {
+                modal.hide();
+            }
+
+            quantidadePrincipal.focus();
+        });
+
+    });
 </script>

@@ -50,12 +50,16 @@ class tabelasModel extends BaseModel
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
-    public function listarTabSemanal(string $dataInicio,string $dataFim,?int $recursoId = null) {
+    public function listarTabSemanal(string $dataInicio, string $dataFim, ?int $recursoId = null)
+    {
         $sql = "        SELECT 
             pr.id AS id,
             pr.demanda AS demanda,
             pr.produto_id AS produto_id,
-            vd.descricao AS descricao,
+            CONCAT(
+            COALESCE(vd.descricao,''), 
+            COALESCE(pr.desc_complementar, '')
+            ) AS descricao,
             pr.qtd AS qtd,
             pr.peso AS peso,
             pr.peca_realizada AS peca_realizada,
