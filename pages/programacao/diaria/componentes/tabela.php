@@ -1,16 +1,31 @@
 <div class="card mb-4">
-    <div class="card-header accordion-header" id="accordionHeader">
-        <div class="card-title text-center">Programação de Produção</div>
-        
-        <div class="col-md-4  align-self-center text-center " role="button">
+    <div class="card-header accordion-header " id="accordionHeader">
+        <div class="card-title text-center flex-nowrap">Programação de Produção
             <input class="form-check-input" type="checkbox" id="exibir_baixados" name="exibir_baixados" role="button">
             <label class="form-check-label" for="exibir_baixados" role="button">Exibir Baixados</label>
+
         </div>
 
-        <div>
-            <?php foreach ($tabela['tabDiaria'] as $t): ?>
-            Programação: <?= $t['peso_total'] ?>                         
-            <?php endforeach; ?>
+        <div class="row">
+            <div class="mini-box-row h3" id="rowIndicadores">
+            <div class="mini-box bg-primary" id="boxProgramacao">
+                <div class="mini-box-valor" id="boxProgramacaoValor">--</div>
+                <div class="mini-box-label h3">Programação</div>
+            </div>
+            <div class="mini-box bg-success" id="boxProduzido">
+                <div class="mini-box-valor" id="boxProduzidoValor">--</div>
+                <div class="mini-box-label">Produzido</div>
+            </div>
+            <div class="mini-box bg-info" id="boxSaldo">
+                <div class="mini-box-valor" id="boxSaldoValor">--</div>
+                <div class="mini-box-label">Saldo</div>
+            </div>
+            <div class="mini-box bg-danger" id="boxUtilizacao">
+                <div class="mini-box-valor" id="boxUtilizacaoValor">--</div>
+                <div class="mini-box-label">% Máquina</div>
+            </div>
+        </div>
+
         </div>
     </div>
     <!-- /.card-header -->

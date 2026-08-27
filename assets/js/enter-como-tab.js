@@ -1,28 +1,26 @@
 document.addEventListener('keydown', function (e) {
 
-    if (
-    e.target.matches('button, input[type="submit"], input[type="button"]')
-) {
-    return;
-}
+const el = e.target;
+const tag = el.tagName;
 
-    const el = e.target;
-    const tag = el.tagName;
+// Só interfere na tecla Enter
+if (e.key !== 'Enter') return;
 
-    // Enter em botão (ou algo com papel de botão) mantém o comportamento nativo: clica.
-    const ehBotao =
-        tag === 'BUTTON' ||
-        el.getAttribute('role') === 'button' ||
-        (tag === 'INPUT' && ['submit', 'button', 'reset'].includes(el.type));
+// Enter em botão mantém o comportamento nativo
+const ehBotao =
+    tag === 'BUTTON' ||
+    el.getAttribute('role') === 'button' ||
+    (tag === 'INPUT' && ['submit', 'button', 'reset'].includes(el.type));
 
-    if (ehBotao) return;
+if (ehBotao) return;
 
-    // Em textarea, mantém o Enter pra quebra de linha.
-    if (tag === 'TEXTAREA') return;
+// Em textarea, mantém o Enter para quebra de linha
+if (tag === 'TEXTAREA') return;
 
-    // Qualquer outro campo: cancela o "submit" automático e pula pro próximo campo focável.
-    e.preventDefault();
-    moverFocoParaProximo(el);
+// Cancela o comportamento padrão do Enter
+e.preventDefault();
+
+moverFocoParaProximo(el);
 });
 
 
@@ -42,3 +40,34 @@ function moverFocoParaProximo(atual) {
     }
 }
 
+
+
+(function () {
+    const salvo = localStorage.getItem('temaPreset');
+    if (!salvo) return;
+
+    const tema = JSON.parse(salvo);
+    const html = document.documentElement;
+
+    html.style.setProperty('--bs-primary', tema.primary);
+
+    // sidebar/navbar/footer ainda não existem no momento do <head>,
+    // então aplicamos assim que o restante do HTML estiver pronto
+    document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.querySelector('.app-sidebar');
+        const navbar = document.querySelector('.app-header');
+        const footer = document.querySelector('.app-footer');
+
+        if (sidebar) {
+            sidebar.style.background = tema.sidebar;
+            sidebar.setAttribute('data-bs-theme', tema.texto === '#111827' ? 'light' : 'dark');
+        }
+        if (navbar) {
+            navbar.style.background = tema.navbar;
+            navbar.setAttribute('data-bs-theme', tema.texto === '#111827' ? 'light' : 'dark');
+        }
+        if (footer) {
+            footer.style.background = tema.footer;
+        }
+    });
+})();

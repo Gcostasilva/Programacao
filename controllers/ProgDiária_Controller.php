@@ -10,17 +10,14 @@ $recursoModel = new RecursoModel();
 $vendedorModel = new VendedorModel();
 $tabelaDiaria  = new tabelasModel();
 
-
 $dados = [];
 $tabela = [];
 $idDiaria = [];
 
+
 $dados['vendedores'] = $vendedorModel->listar();
 $dados['recursos_diario'] = $recursoModel->listarDiario();
 $dados['recursos_semanal'] = $recursoModel->listarSemanal();
-$dados['resultados'] = $tabelaDiaria->listarProdDiaria();
 $tabela['tabDiaria'] = $tabelaDiaria->listarTabDiario();
-
-
 
 include __DIR__ . '/../pages/programacao/diaria/index.php';

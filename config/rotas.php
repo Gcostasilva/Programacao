@@ -72,8 +72,18 @@ Router::add(
     'Reordenar Programação Diária'
 );
 Router::add(
+    'prog_diaria_editar',
+    'pages/programacao/diaria/editar.php',
+    'Reordenar Programação Diária'
+);
+Router::add(
     'prog_diaria_filtrar', 
     'pages/programacao/diaria/filtrar.php',
+    'Filtrar Programação Diária'
+);
+Router::add(
+    'prog_diaria_dados', 
+    'pages/programacao/diaria/dados.php',
     'Filtrar Programação Diária'
 );
 // semanal -------------------------------------
@@ -124,4 +134,10 @@ Router::add(
     'prog_quinzenal',
     'pages/programacao/quinzena/index.php',
     'Programação Quinzenal'
+);
+
+Router::add(
+    'temas',
+    'pages/temas.php',
+    'Selecione seu tema'
 );

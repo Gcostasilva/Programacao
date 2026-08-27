@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="card-body" style="display: inline; grid-template-columns: 1fr 1fr;">
-            <form action="index.php?page=prog_diaria_salvar" method="POST" style="display:flex;">
+            <form action="index.php?page=prog_diaria_salvar" id="formDiario" method="POST" style="display:flex;">
                 <div id="formDiaria" class="form-programacao" style="width:110%; margin-left:50px; grid-column: 1/2;">
                     <input type="hidden" name="acao" value="salvar">
                     <div class="row">
@@ -72,11 +72,12 @@
                             <label class="form-label">Peso</label>
                             <input class="form-control" name="peso" required>
                         </div>
+                        <div></div>
                         <div class="col-md-1 text-center align-self-center">
                             <input class="form-check-input" type="checkbox" id="falta_mp" name="falta_mp">
                             <label class="form-check-label" for="falta_mp">Falta MP</label>
                         </div>
-                        <div class="col-md-10">
+                        <div class="col-md-9">
                             <label class="form-label">Observação</label>
                             <input class="form-control" name="observacao">
                         </div>

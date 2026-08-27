@@ -3,15 +3,31 @@
     $dataDia->setISODate((int) substr($semana, 0, 4), (int) substr($semana, 6, 2), $numDia);
     $dataFormatada = $dataDia->format('Y-m-d');
     ?>
+    <div class="card mb-4 border-primary-subtle">
+<div class="card-header d-flex justify-content-between text-primary align-items-center p-0 ps-4 pt-1 <?= $dataDia->format('Y-m-d') === $hoje ? 'bg-primary bg-gradient text-light' : '' ?>">
+    
+    <h4 class="mb-0"><i class="bi bi-calendar4"></i> <?= $info['nome'] ?> - <?= $dataDia->format('d/m/Y') ?></h4>
 
+    <div class="mini-box-row" id="rowIndicadores">
+        <div class="mini-box bg-secondary" id="boxProgramacao">
+            <div class="mini-box-valor" id="boxProgramacaoValor">--</div>
+            <div class="mini-box-label">Programação</div>
+        </div>
+        <div class="mini-box bg-success" id="boxProduzido">
+            <div class="mini-box-valor" id="boxProduzidoValor">--</div>
+            <div class="mini-box-label">Produzido</div>
+        </div>
+        <div class="mini-box bg-info" id="boxSaldo">
+            <div class="mini-box-valor" id="boxSaldoValor">--</div>
+            <div class="mini-box-label">Saldo</div>
+        </div>
+        <div class="mini-box bg-danger" id="boxUtilizacao">
+            <div class="mini-box-valor" id="boxUtilizacaoValor">--</div>
+            <div class="mini-box-label">% Máquina</div>
+        </div>
+    </div>
+</div>
 
-
-        <div class="card mb-4 border-primary-subtle">
-            <div
-                class="card-header text-primary p-0 ps-4 pt-1 <?= $dataDia->format('Y-m-d') === $hoje ? 'bg-primary bg-gradient text-light' : '' ?>">
-                <h4><i class="bi bi-calendar4"></i> <?= $info['nome'] ?> - <?= $dataDia->format('d/m/Y') ?></h4>
-                <h4 id="<?= $info['id'] ?>"></h4>
-            </div>
             <div class="card-body p-0">
                 <table class="table table-sm table-hover">
                     <thead>
@@ -70,4 +86,4 @@
             </div>
         </div>
 
-<?php endforeach; ?>
+    <?php endforeach; ?>

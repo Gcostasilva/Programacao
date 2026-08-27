@@ -12,6 +12,8 @@ $rotasAjax = [
     'prog_diaria_editar',
     'prog_diaria_reordenar',
     'prog_diaria_filtrar',
+    'prog_diaria_dados',
+
     'prog_semanal_buscar',
     'prog_semanal_buscarCodigo',
     'prog_semanal_reordenar',
@@ -31,11 +33,11 @@ if (in_array($paginaAtual, $rotasAjax)) {
 ?>
 
 <!DOCTYPE html>
-<html language="pt-br">
+<html language="pt-br" data-lte-primary="...">
     
 <?php include 'includes/head.php'; ?>
 
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse">
     <div class="app-wrapper">
         <?php include 'includes/sidebar.php'; ?>
         <?php include 'includes/navbar.php'; ?>

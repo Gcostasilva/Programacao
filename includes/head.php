@@ -17,4 +17,5 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.8/css/dataTables.bootstrap5.css">
 
 <!-- Seu CSS -->
-<link rel="stylesheet" href="/../programacao/assets/css/global.css">
+<link rel="stylesheet" href="assets/css/global.css">
+                                

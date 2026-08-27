@@ -1,17 +1,12 @@
 <?php require_once 'config/menu.php'; ?>
 
-<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+<aside class="app-sidebar bg-body-secondary shadow" >
 
-    <div class="sidebar-brand">
+    <div class="sidebar-brand align-self-center">
 
         <a href="index.php" class="brand-link">
-
-            <img src="uploads/img/Logotipo.png"
-                class="brand-image opacity-75 shadow">
-
-            <span class="brand-text fw-light">
-            </span>
-
+            <img src="uploads/img/Logotipo_pequeno.jpeg" class="brand-image opacity-75 shadow">
+            <span class="brand-text fw-light fw-bold">Perfinasa Metais</span>
         </a>
 
     </div>

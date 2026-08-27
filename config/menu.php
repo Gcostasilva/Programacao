@@ -44,5 +44,10 @@ $MENU = [
         "icone" => "bi-file-earmark-bar-graph",
         "url" => "index.php?page=relatorios"
     ],
+    [
+        "titulo" => "Temas",
+        "icone" => "bi-file-earmark-bar-graph",
+        "url" => "index.php?page=temas"
+    ],
 
 ];
