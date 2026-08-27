@@ -50,7 +50,7 @@
                         <div class="col-md-6">
                             <label class="form-label">Descrição</label>
                             <input class="form-control" name="descricao" id="descricao_sem" disabled>
-                            <input type="" class="form-control" name="complemento_descricao" id="complemento_descricao">
+                            <input type="hidden" class="form-control" name="complemento_descricao" id="complemento_descricao">
                         </div>
                         <div class="col-md-1">
                             <label class="form-label">Quantidade</label>

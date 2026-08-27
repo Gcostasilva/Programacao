@@ -72,7 +72,7 @@ Router::add(
     'Reordenar Programação Diária'
 );
 Router::add(
-    'prog_diaria_filtrar',
+    'prog_diaria_filtrar', 
     'pages/programacao/diaria/filtrar.php',
     'Filtrar Programação Diária'
 );

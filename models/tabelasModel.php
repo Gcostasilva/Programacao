@@ -12,6 +12,7 @@ class tabelasModel extends BaseModel
                 SELECT
         pr.id           as id,
         DATE_FORMAT(pr.data, '%d/%m/%Y')            as data,
+        sum(pr.peso) as peso_total,
         vd.nome         as vendedor,
         mq.descricao    as recurso,
         pr.pedido       as pedido,
@@ -50,6 +51,34 @@ class tabelasModel extends BaseModel
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $result;
     }
+
+    public function listarProdDiaria(string $equipamento, string $data)
+    {
+        $sql = " SELECT 
+        sum(pr.peso) as peso,
+        sum(pr.peso_realizado) as peso_realizado,
+        sum(pr.peso) - sum(pr.peso_realizado) as saldo,
+        sum(pr.peso) / sum(q.capacidade) as utilizacao
+
+        from programacao pr
+
+        LEFT JOIN maquinas mq
+        on pr.maquina_id = mq.id
+
+        WHERE pr.maquina_id = :equipamento and pr.data = :data
+        ";
+        $stmt = $this->pdo->prepare($sql);
+
+        $stmt->execute([
+            ':equipamento' => $equipamento,
+            ':data' => $data
+        ]);
+
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
+
     public function listarTabSemanal(string $dataInicio, string $dataFim, ?int $recursoId = null)
     {
         $sql = "        SELECT 

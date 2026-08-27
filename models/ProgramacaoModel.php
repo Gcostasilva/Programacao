@@ -273,7 +273,7 @@ class ProgramacaoModel extends BaseModel
                     data,
                     demanda,
                     produto_id,
-                    complemento_descricao,
+                    desc_complementar,
                     qtd,
                     peso,
                     obs

@@ -18,8 +18,8 @@ $idDiaria = [];
 $dados['vendedores'] = $vendedorModel->listar();
 $dados['recursos_diario'] = $recursoModel->listarDiario();
 $dados['recursos_semanal'] = $recursoModel->listarSemanal();
-
-$tabela['tabDiaria'] = $tabelaDiaria ->listarTabDiario();
+$dados['resultados'] = $tabelaDiaria->listarProdDiaria();
+$tabela['tabDiaria'] = $tabelaDiaria->listarTabDiario();
 
 
 

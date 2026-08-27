@@ -44,6 +44,18 @@
                 linha.style.display = (corrRecurso && corrData) ? '' : 'none';
             }
         }
+        if (data !== null && recurso !== null) {
+            fetch("index.php?page=prog_diaria_buscar&equipamento=" + recurso + "&data=" + data)
+                .then(function (resposta) {
+                    if (!resposta.ok) {
+                        throw new Error('Erro ao buscar registro');
+                    }
+                    return resposta.json();
+                })
+                .then(function (registro) {
+
+                })
+        }
     }
 
     // Eventos para acionar o filtro
@@ -478,7 +490,6 @@
             fetch(`index.php?page=prog_semanal_buscarCodigo&codigo=${encodeURIComponent(codigo)}`)
                 .then(response => response.json())
                 .then(data => {
-
                     console.log('Resposta:', data);
 
                     if (data.descricao !== undefined) {
@@ -488,26 +499,88 @@
 
                     // Só verifica depois que recebeu o produto
                     const pesoLiquido = parseFloat(data.peso_liquido);
-
                     if (pesoLiquido < 1.1) {
-
                         const prefixo = codigo.substring(0, 2);
 
                         if (prefixo === '03' || prefixo === '06' || prefixo === '02') {
-
-                            const modal = new bootstrap.Modal(
-                                document.getElementById('modalCalculo_chapa')
-                            );
-
+                            const modal = new bootstrap.Modal(document.getElementById('modalCalculo_chapa'));
+                            contextoCalculo = {
+                                tipo: 'novo',
+                                quantidade: 'quantidade',
+                                peso: 'peso',
+                                descricao: 'descricao_sem',
+                                descricao_comp: 'complemento_descricao',
+                                foco: 'observacao'
+                            };
                             modal.show();
-
                         } else {
-
-                            const modal = new bootstrap.Modal(
-                                document.getElementById('modalCalculo_perfil')
-                            );
-
+                            const modal = new bootstrap.Modal(document.getElementById('modalCalculo_perfil'));
+                            contextoCalculo = {
+                                tipo: 'novo',
+                                quantidade: 'quantidade',
+                                peso: 'peso',
+                                descricao: 'descricao_sem',
+                                descricao_comp: 'complemento_descricao',
+                                foco: 'observacao'
+                            };
                             modal.show();
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar descrição:', error);
+                });
+        });
+    });
+</script>
+
+<!-- Função para preencher a descrição produto ao sair do codigo DENTRO DO MODAL -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const codigoEditInput = document.getElementById('edit_sem_codigo_s');
+        const descricaoEditInput = document.getElementById('edit_descricao_COMP');
+        const pesoLiquidoEditInput = document.getElementById('edit_sem_peso_liquido');
+
+        codigoEditInput.addEventListener('blur', function () {
+
+            const codigoEdit = this.value.trim();
+            fetch(`index.php?page=prog_semanal_buscarCodigo&codigo=${encodeURIComponent(codigoEdit)}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Resposta:', data);
+
+                    if (data.descricao !== undefined) {
+                        descricaoEditInput.value = data.descricao;
+                        pesoLiquidoEditInput.value = data.peso_liquido;
+                    }
+                    // Só verifica depois que recebeu o produto
+                    const pesoLiquidoEdit = parseFloat(pesoLiquidoEditInput.value);
+                    console.log(pesoLiquidoEdit);
+                    if (pesoLiquidoEdit < 1.1) {
+                        const prefixo = codigoEdit.substring(0, 2);
+
+                        if (prefixo === '03' || prefixo === '06' || prefixo === '02') {
+                            contextoCalculo = {
+                                tipo: 'edicao',
+                                quantidade: 'edit_sem_quantidade',
+                                peso: 'edit_sem_peso',
+                                descricao: 'edit_sem_descricao',
+                                descricao_comp: 'edit_descricao_COMP',
+                                foco: 'edit_sem_quantidade_realizada'
+                            };
+                            const modalEdit = new bootstrap.Modal(document.getElementById('modalCalculo_chapa'));
+                            modalEdit.show();
+                        } else {
+                            contextoCalculo = {
+                                tipo: 'edicao',
+                                quantidade: 'edit_sem_quantidade',
+                                peso: 'edit_sem_peso',
+                                descricao: 'edit_sem_descricao',
+                                descricao_comp: 'edit_descricao_COMP',
+                                foco: 'edit_sem_quantidade_realizada'
+                            };
+                            const modalEdit = new bootstrap.Modal(document.getElementById('modalCalculo_perfil'));
+                            modalEdit.show();
                         }
                     }
                 })
@@ -670,7 +743,8 @@
                     document.getElementById('edit_sem_quantidade').value = registro.qtd;
                     document.getElementById('edit_sem_peso').value = registro.peso;
                     document.getElementById('edit_sem_descricao').value = registro.descricao;
-                    if (parseFloat(registro.peso_liquido) === 1.0 ) {
+                    //document.getElementById('edit_sem_peso_liquido').value = registro.peso_liquido;
+                    if (parseFloat(registro.peso_liquido) === 1.0) {
                         document.getElementById('edit_sem_peso_liquido').value = registro.peso / registro.qtd;
                     } else {
                         document.getElementById('edit_sem_peso_liquido').value = registro.peso_liquido;
@@ -1049,11 +1123,12 @@
             }
         });
 
-        // adiciona o evento que captura o envio do formulário para atualizar os campos no formulário principal
-        const btnAplicarCalculoChapa =
-            document.getElementById('btnAplicarCalculoChapa');
 
-            btnAplicarCalculoChapa.addEventListener('click', function (e) {
+
+        // adiciona o evento que captura o envio do formulário para atualizar os campos no formulário principal
+        const btnAplicarCalculoChapa = document.getElementById('btnAplicarCalculoChapa');
+
+        btnAplicarCalculoChapa.addEventListener('click', function (e) {
 
             console.log('Aplicar chapa');
 
@@ -1072,14 +1147,12 @@
 
             const pesoPrincipal = document.getElementById('peso');
             const complemento_descricao = document.getElementById('complemento_descricao');
-
             const descricaoPrincipal = document.getElementById('descricao_sem');
 
-            quantidadePrincipal.value = quantidade;
-            pesoPrincipal.value = peso;
-            complemento_descricao.value = ` / ${comprimentoInput.value} x ${larguraInput.value} mm`;
-
-            descricaoPrincipal.value += ` / ${comprimentoInput.value} x ${larguraInput.value} mm`;
+            document.getElementById(contextoCalculo.quantidade).value = quantidade;
+            document.getElementById(contextoCalculo.peso).value = peso;
+            document.getElementById(contextoCalculo.descricao).value += ` / ${comprimentoInput.value} x ${larguraInput.value} mm`;
+            document.getElementById(contextoCalculo.descricao_comp).value = ` / ${comprimentoInput.value} x ${larguraInput.value} mm`;
 
             const modalElement = document.getElementById('modalCalculo_chapa');
 
@@ -1089,7 +1162,7 @@
                 modal.hide();
             }
 
-            quantidadePrincipal.focus();
+            document.getElementById(contextoCalculo.foco).focus();
         });
 
     });

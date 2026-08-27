@@ -6,6 +6,12 @@
             <input class="form-check-input" type="checkbox" id="exibir_baixados" name="exibir_baixados" role="button">
             <label class="form-check-label" for="exibir_baixados" role="button">Exibir Baixados</label>
         </div>
+
+        <div>
+            <?php foreach ($tabela['tabDiaria'] as $t): ?>
+            Programação: <?= $t['peso_total'] ?>                         
+            <?php endforeach; ?>
+        </div>
     </div>
     <!-- /.card-header -->
     <div class="card">

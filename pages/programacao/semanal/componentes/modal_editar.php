@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Editar Programação</h5>
+                <h5 class="modal-title">Editar/Baixar Programação <?  ?> </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="formEditarSemanal">
@@ -45,7 +45,7 @@
                         <div class="col-md-9">
                             <label class="form-label">Descrição</label>
                             <input class="form-control" name="descricao" id="edit_sem_descricao" disabled>
-                            <input class="form-control" name="descricao_COMP" id="edit_descricao_COMP">
+                            <input type="hidden" class="form-control" name="descricao_COMP" id="edit_descricao_COMP">
                         </div>
                         <div></div>
                         <div class="col-md-2">

@@ -4,13 +4,13 @@
         <div class="col-12">
             
             <?php include 'pages\programacao\semanal\componentes\formulario.php'; ?>
+            <?php include 'pages/programacao/semanal/componentes/modal_editar.php'; ?>
             <?php include 'pages/programacao/semanal/componentes/modalCalculo_chapa.php'; ?>
             <?php include 'pages/programacao/semanal/componentes/modalCalculo_perfil.php'; ?>
         </div>
     </div>
 
     <div class="row mt-3">
-        <?php include 'pages/programacao/semanal/componentes/modal_editar.php'; ?>
 
         <div class="col-12">
             <?php include 'pages/programacao/semanal/componentes/tabela.php'; ?>
