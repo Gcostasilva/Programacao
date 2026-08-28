@@ -132,6 +132,7 @@ class tabelasModel extends BaseModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function listarProdSemanal(string $equipamento, string $data)
     {
         $sql = " SELECT 
@@ -163,12 +164,12 @@ class tabelasModel extends BaseModel
     public function listaCodigos()
     {
         try {
-            $sql = "SELECT * FROM produtos WHERE descricao in('PROCESSO','DESB') order by grupo, descricao";
+            $sql = "SELECT codigo, descricao, peso_liquido FROM produtos WHERE descricao IN ('PROCESSO','DESB') ORDER BY grupo, descricao, codigo";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
 
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $erro) {
             throw $erro;
         }
