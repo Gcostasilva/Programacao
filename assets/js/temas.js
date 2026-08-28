@@ -327,119 +327,122 @@ if (area) {
     // ======================================================
     function aplicarTema(tema, salvar) {
 
-        const sidebar = document.querySelector('.app-sidebar');
-        const navbar = document.querySelector('.app-header');
-        const footer = document.querySelector('.app-footer');
-        const html = document.documentElement;
+    const sidebar = document.querySelector('.app-sidebar');
+    const navbar = document.querySelector('.app-header');
+    const footer = document.querySelector('.app-footer');
+    const html = document.documentElement;
 
+    // Identifica o tema atual
+    html.setAttribute('data-tema', tema.id);
 
-        // ------------------------------------------
-        // SIDEBAR
-        // ------------------------------------------
-        if (sidebar) {
+    // Modo Bootstrap
+    html.setAttribute('data-bs-theme', tema.modo);
 
-            sidebar.style.setProperty(
-                'background',
-                tema.sidebar,
-                'important'
-            );
-
-            sidebar.setAttribute(
-                'data-bs-theme',
-                tema.modo
-            );
-        }
-
-
-        // ------------------------------------------
-        // NAVBAR
-        // ------------------------------------------
-        if (navbar) {
-
-            navbar.style.setProperty(
-                'background',
-                tema.navbar,
-                'important'
-            );
-
-            navbar.setAttribute(
-                'data-bs-theme',
-                tema.modo
-            );
-        }
-
-
-        // ------------------------------------------
-        // FOOTER
-        // ------------------------------------------
-        if (footer) {
-
-            footer.style.setProperty(
-                'background',
-                tema.footer,
-                'important'
-            );
-
-            footer.setAttribute(
-                'data-bs-theme',
-                tema.modo
-            );
-        }
-
-
-        // ------------------------------------------
-        // COR PRIMÁRIA
-        // ------------------------------------------
-        html.style.setProperty(
-            '--bs-primary',
-            tema.primary
+    // Sidebar
+    if (sidebar) {
+        sidebar.style.setProperty(
+            'background',
+            tema.sidebar,
+            'important'
         );
 
-        html.style.setProperty(
-            '--bs-primary-rgb',
-            hexParaRgb(tema.primary)
+        sidebar.setAttribute(
+            'data-bs-theme',
+            tema.modo
         );
-
-
-        // ------------------------------------------
-        // CARD ATIVO
-        // SOMENTE NA PÁGINA DE TEMAS
-        // ------------------------------------------
-        if (area) {
-
-            document
-                .querySelectorAll('.preset-card')
-                .forEach(function (card) {
-                    card.classList.remove('ativo');
-                });
-
-
-            const cardAtivo = document.querySelector(
-                `.preset-card[data-id="${tema.id}"]`
-            );
-
-
-            if (cardAtivo) {
-                cardAtivo.classList.add('ativo');
-            }
-
-        }
-
-
-        // ------------------------------------------
-        // SALVA
-        // ------------------------------------------
-        if (salvar) {
-
-            localStorage.setItem(
-                storageKey,
-                JSON.stringify(tema)
-            );
-
-        }
-
     }
 
+    // Navbar
+    if (navbar) {
+        navbar.style.setProperty(
+            'background',
+            tema.navbar,
+            'important'
+        );
+
+        navbar.setAttribute(
+            'data-bs-theme',
+            tema.modo
+        );
+    }
+
+    // Footer
+    if (footer) {
+        footer.style.setProperty(
+            'background',
+            tema.footer,
+            'important'
+        );
+
+        footer.setAttribute(
+            'data-bs-theme',
+            tema.modo
+        );
+    }
+
+    // ==================================================
+    // CORES GLOBAIS BOOTSTRAP
+    // ==================================================
+
+    const rgb = hexParaRgb(tema.primary);
+
+    html.style.setProperty(
+        '--bs-primary',
+        tema.primary
+    );
+
+    html.style.setProperty(
+        '--bs-primary-rgb',
+        rgb
+    );
+
+    html.style.setProperty(
+        '--bs-link-color',
+        tema.primary
+    );
+
+    html.style.setProperty(
+        '--bs-link-color-rgb',
+        rgb
+    );
+
+    html.style.setProperty(
+        '--bs-focus-ring-color',
+        `rgba(${rgb}, .25)`
+    );
+
+    // ==================================================
+    // CARD ATIVO
+    // ==================================================
+
+    if (area) {
+
+        document
+            .querySelectorAll('.preset-card')
+            .forEach(function (card) {
+                card.classList.remove('ativo');
+            });
+
+        const cardAtivo = document.querySelector(
+            `.preset-card[data-id="${tema.id}"]`
+        );
+
+        if (cardAtivo) {
+            cardAtivo.classList.add('ativo');
+        }
+    }
+
+    // ==================================================
+    // SALVA
+    // ==================================================
+
+    if (salvar) {
+        localStorage.setItem(
+            storageKey,
+            JSON.stringify(tema)
+        );
+    }
+}
 
     // ======================================================
     // CONVERTE HEX PARA RGB
@@ -490,3 +493,4 @@ if (area) {
         }
 
     }
+});

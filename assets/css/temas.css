@@ -1,0 +1,144 @@
+/* =====================================================
+   TEMA - COMPONENTES BOOTSTRAP
+   ===================================================== */
+
+
+/* ==============================
+   BOTÃO PRIMARY
+   ============================== */
+
+.btn-primary {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--bs-primary);
+    --bs-btn-border-color: var(--bs-primary);
+
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: var(--bs-primary);
+    --bs-btn-hover-border-color: var(--bs-primary);
+
+    --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
+
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--bs-primary);
+    --bs-btn-active-border-color: var(--bs-primary);
+}
+
+
+/* ==============================
+   LINKS
+   ============================== */
+
+a {
+    color: var(--bs-link-color);
+}
+
+a:hover {
+    color: var(--bs-link-color);
+}
+
+
+/* ==============================
+   INPUTS
+   ============================== */
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--bs-primary);
+
+    box-shadow:
+        0 0 0 .25rem
+        var(--bs-focus-ring-color);
+}
+
+
+/* ==============================
+   CHECKBOX / RADIO
+   ============================== */
+
+.form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+
+/* ==============================
+   RANGE
+   ============================== */
+
+.form-range::-webkit-slider-thumb {
+    background-color: var(--bs-primary);
+}
+
+.form-range::-moz-range-thumb {
+    background-color: var(--bs-primary);
+}
+
+
+/* ==============================
+   PROGRESS
+   ============================== */
+
+.progress-bar {
+    background-color: var(--bs-primary);
+}
+
+
+/* ==============================
+   BADGES
+   ============================== */
+
+.bg-primary {
+    background-color: var(--bs-primary) !important;
+}
+
+
+/* ==============================
+   TEXT PRIMARY
+   ============================== */
+
+.text-primary {
+    color: var(--bs-primary) !important;
+}
+
+
+/* ==============================
+   BORDER PRIMARY
+   ============================== */
+
+.border-primary {
+    border-color: var(--bs-primary) !important;
+}
+
+
+/* ==============================
+   PAGINAÇÃO
+   ============================== */
+
+.page-link {
+    color: var(--bs-primary);
+}
+
+.page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+
+/* ==============================
+   NAV-TABS
+   ============================== */
+
+.nav-tabs .nav-link.active {
+    color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+
+/* ==============================
+   SPINNER
+   ============================== */
+
+.spinner-border {
+    color: var(--bs-primary);
+}
