@@ -1,6 +1,6 @@
 <?php require_once 'config/menu.php'; ?>
 
-<aside class="app-sidebar bg-body-secondary shadow" >
+<aside class="app-sidebar shadow" >
 
     <div class="sidebar-brand align-self-center">
 
