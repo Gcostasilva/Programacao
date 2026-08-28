@@ -163,7 +163,7 @@ class tabelasModel extends BaseModel
     public function listaCodigos()
     {
         try {
-            $sql = "SELECT * FROM produtos WHERE descricao in('PROCESSO','DESB')";
+            $sql = "SELECT * FROM produtos WHERE descricao in('PROCESSO','DESB') order by grupo, descricao";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
