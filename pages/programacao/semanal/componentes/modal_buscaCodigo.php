@@ -49,3 +49,54 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const botaoBusca = document.getElementById('btn_buscaCodigo');
+    const modalElemento = document.getElementById('modalBuscaCodigo');
+    const campoPesquisa = document.getElementById('buscaCodigoDescricao');
+    const tabela = document.getElementById('tabelaBuscaCodigos');
+    const campoCodigo = document.getElementById('codigo');
+
+    if (!botaoBusca || !modalElemento || !campoPesquisa || !tabela || !campoCodigo) {
+        return;
+    }
+
+    const modal = new bootstrap.Modal(modalElemento);
+
+    botaoBusca.addEventListener('click', function () {
+        campoPesquisa.value = '';
+        tabela.querySelectorAll('tr').forEach(function (linha) {
+            linha.style.display = '';
+        });
+
+        modal.show();
+    });
+
+    campoPesquisa.addEventListener('input', function () {
+        const busca = this.value.toLowerCase().trim();
+
+        tabela.querySelectorAll('tr').forEach(function (linha) {
+            const descricao = linha.cells[1].textContent.toLowerCase();
+            linha.style.display = descricao.includes(busca) ? '' : 'none';
+        });
+    });
+
+    tabela.addEventListener('click', function (event) {
+        const botao = event.target.closest('.btnSelecionarCodigo');
+
+        if (!botao) {
+            return;
+        }
+
+        campoCodigo.value = botao.dataset.codigo;
+        campoCodigo.dispatchEvent(new Event('blur'));
+        modal.hide();
+        campoCodigo.focus();
+    });
+
+    modalElemento.addEventListener('shown.bs.modal', function () {
+        campoPesquisa.focus();
+    });
+});
+</script>
