@@ -39,35 +39,3 @@ function moverFocoParaProximo(atual) {
         focaveis[indiceAtual + 1].focus();
     }
 }
-
-
-
-(function () {
-    const salvo = localStorage.getItem('temaPreset');
-    if (!salvo) return;
-
-    const tema = JSON.parse(salvo);
-    const html = document.documentElement;
-
-    html.style.setProperty('--bs-primary', tema.primary);
-
-    // sidebar/navbar/footer ainda não existem no momento do <head>,
-    // então aplicamos assim que o restante do HTML estiver pronto
-    document.addEventListener('DOMContentLoaded', function () {
-        const sidebar = document.querySelector('.app-sidebar');
-        const navbar = document.querySelector('.app-header');
-        const footer = document.querySelector('.app-footer');
-
-        if (sidebar) {
-            sidebar.style.background = tema.sidebar;
-            sidebar.setAttribute('data-bs-theme', tema.texto === '#111827' ? 'light' : 'dark');
-        }
-        if (navbar) {
-            navbar.style.background = tema.navbar;
-            navbar.setAttribute('data-bs-theme', tema.texto === '#111827' ? 'light' : 'dark');
-        }
-        if (footer) {
-            footer.style.background = tema.footer;
-        }
-    });
-})();
