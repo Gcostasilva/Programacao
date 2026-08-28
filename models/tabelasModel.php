@@ -159,4 +159,18 @@ class tabelasModel extends BaseModel
 
         return $resultado;
     }
+
+    public function listaCodigos()
+    {
+        try {
+            $sql = "SELECT * FROM produtos WHERE descricao in('PROCESSO','DESB')";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException $erro) {
+            throw $erro;
+        }
+    }
 }
