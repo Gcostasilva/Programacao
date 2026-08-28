@@ -18,7 +18,8 @@
                     <div class="row">
                         <div class="col-md-2">
                             <label class="form-label">Semana</label>
-                            <input type="week" class="form-control" id="semana" name="semana" value="<?php $semanaAtual = date('o-\WW'); echo $semanaAtual; ?>" required>
+                            <input type="week" class="form-control" id="semana" name="semana" value="<?php $semanaAtual = date('o-\WW');
+                            echo $semanaAtual; ?>" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Recurso</label>
@@ -43,14 +44,20 @@
                         </div>
 
                         <div></div>
-                        <div class="col-lg-2">
+                        <div class="col-md-3">
                             <label class="form-label">Código</label>
-                            <input class="form-control" name="codigo_s" id="codigo" required>
+                            <div class="input-group">
+                                <input class="form-control" name="codigo_s" id="codigo" required>
+                                <input type="hidden" id="espessura_prod">
+                                <button class="btn btn-primary" type="button" id="btn_buscaCodigo"><i class="bi bi-search"></i></button>
+                                <button class="btn btn-primary ms-1" type="button" id="btn_buscaCodigo"><i class="bi bi-boxes"></i></button>
+                            </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Descrição</label>
                             <input class="form-control" name="descricao" id="descricao_sem" disabled>
-                            <input type="hidden" class="form-control" name="complemento_descricao" id="complemento_descricao">
+                            <input type="hidden" class="form-control" name="complemento_descricao"
+                                id="complemento_descricao">
                         </div>
                         <div class="col-md-1">
                             <label class="form-label">Quantidade</label>

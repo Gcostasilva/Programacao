@@ -9,18 +9,18 @@
                 <div class="row g-3 p-lg-2 modal-body">
                     <div class="col-md-3">
                         <label class="form-label">Descrição</label>
-                        <input type="text" class="form-control" id="texto_complementar" name="texto_complementar"
+                        <input type="text" class="form-control" id="texto_complementar_perfil" name="texto_complementar"
                             required>
                     </div>
                     <div></div>
                     <div class="col-md-3">
                         <label class="form-label">Quantidade</label>
-                        <input type="number" class="form-control" id="quantidade_chapa" name="quantidade_chapa"
+                        <input type="number" class="form-control" id="quantidade_perfil" name="quantidade_chapa"
                             required>
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Peso</label>
-                        <input type="number" class="form-control" id="peso_chapa" name="peso_chapa" step="0.001"
+                        <input type="number" class="form-control" id="peso_perfil" name="peso_chapa" step="0.001"
                             required>
                     </div>
                 </div>

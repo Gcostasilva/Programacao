@@ -3,12 +3,12 @@
     $dataDia->setISODate((int) substr($semana, 0, 4), (int) substr($semana, 6, 2), $numDia);
     $dataFormatada = $dataDia->format('Y-m-d');
     ?>
-    <div class="card mb-4 border-primary-subtle">
-<div class="card-header d-flex justify-content-between text-primary align-items-center p-0 ps-4 pt-1 <?= $dataDia->format('Y-m-d') === $hoje ? 'bg-primary bg-gradient text-light' : '' ?>">
+    <div class="card mb-4 border-primary">
+<div class="card-header d-flex justify-content-between  align-items-center p-0 ps-4 pt-1 <?= $dataDia->format('Y-m-d') === $hoje ? 'bg-primary bg-gradient text-light' : '' ?>">
     
-    <h4 class="mb-0"><i class="bi bi-calendar4"></i> <?= $info['nome'] ?> - <?= $dataDia->format('d/m/Y') ?></h4>
+    <div><h4 class="mb-1"><i class="bi bi-calendar4"></i> <?= $info['nome'] ?> - <?= $dataDia->format('d/m/Y') ?></h4></div>
 
-    <div class="mini-box-row" id="rowIndicadores">
+    <div class="mini-box-row mb-1 align-content-end" id="rowIndicadores">
         <div class="mini-box bg-secondary" id="boxProgramacao">
             <div class="mini-box-valor" id="boxProgramacaoValor">--</div>
             <div class="mini-box-label">Programação</div>

@@ -51,74 +51,50 @@ document.addEventListener('DOMContentLoaded', function () {
         },
 
         {
-            nome: 'Semi-dark',
-            desc: 'Sidebar escura, cabeçalho claro — o layout mais comum.',
+            nome: 'Dark',
+            desc: 'Interface escura completa, com contraste confortável.',
             temas: [
                 {
-                    id: 'default',
-                    label: 'Default',
-                    sidebar: '#343a40',
-                    navbar: '#ffffff',
-                    footer: '#ffffff',
-                    texto: '#111827',
-                    modo: 'light',
+                    id: 'dark',
+                    label: 'Dark',
+                    sidebar: '#111827',
+                    navbar: '#111827',
+                    footer: '#111827',
+                    texto: '#e5e7eb',
+                    modo: 'dark',
+                    body: '#0f172a',
+                    surface: '#1e293b',
+                    border: '#334155',
                     primary: '#0d6efd',
+                    chips: ['#0d6efd', '#20c997']
+                },
+                {
+                    id: 'dark-teal',
+                    label: 'Dark & teal',
+                    sidebar: '#0f172a',
+                    navbar: '#0f172a',
+                    footer: '#0f172a',
+                    texto: '#e2e8f0',
+                    modo: 'dark',
+                    body: '#0b1414',
+                    surface: '#132525',
+                    border: '#254545',
+                    primary: '#20c997',
                     chips: ['#20c997', '#0d6efd']
                 },
                 {
-                    id: 'graphite',
-                    label: 'Graphite',
-                    sidebar: '#4b5563',
-                    navbar: '#ffffff',
-                    footer: '#ffffff',
-                    texto: '#111827',
-                    modo: 'light',
-                    primary: '#fd7e14',
-                    chips: ['#6610f2', '#fd7e14']
-                },
-                {
-                    id: 'navy',
-                    label: 'Navy',
-                    sidebar: '#1b2a4a',
-                    navbar: '#ffffff',
-                    footer: '#ffffff',
-                    texto: '#111827',
-                    modo: 'light',
-                    primary: '#0dcaf0',
-                    chips: ['#20c997', '#d63384']
-                },
-                {
-                    id: 'steel',
-                    label: 'Steel',
-                    sidebar: '#64748b',
-                    navbar: '#ffffff',
-                    footer: '#ffffff',
-                    texto: '#111827',
-                    modo: 'light',
-                    primary: '#d63384',
-                    chips: ['#0d6efd', '#fd7e14']
-                },
-                {
-                    id: 'midnight',
-                    label: 'Midnight',
-                    sidebar: '#0f172a',
-                    navbar: '#ffffff',
-                    footer: '#ffffff',
-                    texto: '#111827',
-                    modo: 'light',
-                    primary: '#20c997',
-                    chips: ['#20c997', '#fd7e14']
-                },
-                {
-                    id: 'indigo',
-                    label: 'Indigo',
-                    sidebar: '#6610f2',
-                    navbar: '#ffffff',
-                    footer: '#ffffff',
-                    texto: '#111827',
-                    modo: 'light',
-                    primary: '#6610f2',
-                    chips: ['#20c997', '#d63384']
+                    id: 'dark-indigo',
+                    label: 'Dark & indigo',
+                    sidebar: '#111827',
+                    navbar: '#111827',
+                    footer: '#111827',
+                    texto: '#e5e7eb',
+                    modo: 'dark',
+                    body: '#11101d',
+                    surface: '#211d35',
+                    border: '#393252',
+                    primary: '#8b5cf6',
+                    chips: ['#8b5cf6', '#d63384']
                 }
             ]
         },
@@ -133,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sidebar: '#1b2a4a',
                     navbar: '#1b2a4a',
                     footer: '#ffffff',
-                    texto: '#ffffff',
+                    texto: '#1a1717',
                     modo: 'dark',
                     primary: '#0dcaf0',
                     chips: ['#20c997', '#d63384']
@@ -195,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sidebar: '#6f42c1',
                     navbar: '#6f42c1',
                     footer: '#ffffff',
-                    texto: '#ffffff',
+                    texto: '#241d1d',
                     modo: 'dark',
                     primary: '#6f42c1',
                     chips: ['#fd7e14', '#20c997']
@@ -206,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sidebar: 'linear-gradient(160deg,#6610f2,#9c6bff)',
                     navbar: 'linear-gradient(90deg,#6610f2,#9c6bff)',
                     footer: '#ffffff',
-                    texto: '#ffffff',
+                    texto: '#241d1d',
                     modo: 'dark',
                     primary: '#6610f2',
                     chips: ['#20c997', '#fd7e14']
@@ -217,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     sidebar: 'linear-gradient(160deg,#0f766e,#2dd4bf)',
                     navbar: 'linear-gradient(90deg,#0f766e,#2dd4bf)',
                     footer: '#ffffff',
-                    texto: '#ffffff',
+                    texto: '#241d1d',
                     modo: 'dark',
                     primary: '#20c997',
                     chips: ['#fd7e14', '#0d6efd']
@@ -228,33 +204,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const area = document.getElementById('areaCategorias');
 
-// ======================================================
-// MONTA A GRADE DE MINIATURAS
-// SOMENTE SE ESTIVER NA PÁGINA DE TEMAS
-// ======================================================
-if (area) {
+    // ======================================================
+    // MONTA A GRADE DE MINIATURAS
+    // SOMENTE SE ESTIVER NA PÁGINA DE TEMAS
+    // ======================================================
+    if (area) {
 
-    CATEGORIAS.forEach(categoria => {
+        CATEGORIAS.forEach(categoria => {
 
-        const bloco = document.createElement('div');
+            const bloco = document.createElement('div');
 
-        bloco.className = 'mb-4';
+            bloco.className = 'mb-4';
 
-        bloco.innerHTML = `
+            bloco.innerHTML = `
             <div class="categoria-titulo">${categoria.nome}</div>
             <div class="categoria-desc">${categoria.desc}</div>
             <div class="row row-cols-3 row-cols-md-6 g-2" data-lista></div>
         `;
 
-        const lista = bloco.querySelector('[data-lista]');
+            const lista = bloco.querySelector('[data-lista]');
 
-        categoria.temas.forEach(tema => {
+            categoria.temas.forEach(tema => {
 
-            const col = document.createElement('div');
+                const col = document.createElement('div');
 
-            col.className = 'col';
+                col.className = 'col';
 
-            col.innerHTML = `
+                col.innerHTML = `
                 <div class="preset-card" data-id="${tema.id}">
                     <div class="mini-device">
 
@@ -271,11 +247,10 @@ if (area) {
 
                                 <div
                                     class="dot"
-                                    style="background:${
-                                        tema.modo === 'dark'
-                                            ? 'rgba(255,255,255,.6)'
-                                            : 'rgba(0,0,0,.35)'
-                                    };">
+                                    style="background:${tema.modo === 'dark'
+                        ? 'rgba(255,255,255,.6)'
+                        : 'rgba(0,0,0,.35)'
+                    };">
                                 </div>
 
                             </div>
@@ -304,20 +279,20 @@ if (area) {
                 </div>
             `;
 
-            col.querySelector('.preset-card')
-                .addEventListener('click', function () {
-                    aplicarTema(tema, true);
-                });
+                col.querySelector('.preset-card')
+                    .addEventListener('click', function () {
+                        aplicarTema(tema, true);
+                    });
 
-            lista.appendChild(col);
+                lista.appendChild(col);
+
+            });
+
+            area.appendChild(bloco);
 
         });
 
-        area.appendChild(bloco);
-
-    });
-
-}
+    }
 
 
 
@@ -327,122 +302,107 @@ if (area) {
     // ======================================================
     function aplicarTema(tema, salvar) {
 
-    const sidebar = document.querySelector('.app-sidebar');
-    const navbar = document.querySelector('.app-header');
-    const footer = document.querySelector('.app-footer');
-    const html = document.documentElement;
+        const sidebar = document.querySelector('.app-sidebar');
+        const navbar = document.querySelector('.app-header');
+        const footer = document.querySelector('.app-footer');
+        const html = document.documentElement;
 
-    // Identifica o tema atual
-    html.setAttribute('data-tema', tema.id);
+        // Identifica o tema atual
+        html.setAttribute('data-tema', tema.id);
 
-    // Modo Bootstrap
-    html.setAttribute('data-bs-theme', tema.modo);
+        // Modo Bootstrap
+        //sidebar.setAttribute('data-bs-theme', tema.modo);
+        //navbar.setAttribute('data-bs-theme', tema.modo);
+        //footer.setAttribute('data-bs-theme', tema.modo);
 
-    // Sidebar
-    if (sidebar) {
-        sidebar.style.setProperty(
-            'background',
-            tema.sidebar,
-            'important'
+        // Sidebar
+        if (sidebar) {
+            html.style.setProperty(
+                '--tema-sidebar',
+                tema.sidebar
+            );
+
+            sidebar.setAttribute(
+                'data-bs-theme',
+                tema.modo
+            );
+        }
+
+        // Navbar
+        if (navbar) {
+            html.style.setProperty(
+                '--tema-navbar',
+                tema.navbar
+            );
+
+            navbar.setAttribute(
+                'data-bs-theme',
+                tema.modo
+            );
+        }
+
+        if (footer) {
+            html.style.setProperty(
+                '--tema-footer',
+                tema.footer
+            );
+
+            footer.setAttribute(
+                'data-bs-theme',
+                tema.modo
+            );
+        }
+
+        // ==================================================
+        // CORES GLOBAIS BOOTSTRAP
+        // ==================================================
+
+        const rgb = hexParaRgb(tema.primary);
+
+        html.style.setProperty('--tema-primary', tema.primary);
+        html.style.setProperty('--tema-primary-rgb', rgb);
+        html.style.setProperty('--tema-body', tema.body || '#ffffff');
+        html.style.setProperty('--tema-surface', tema.surface || '#ffffff');
+        html.style.setProperty('--tema-border', tema.border || '#dee2e6');
+        html.style.setProperty('--tema-texto', tema.texto);
+
+        html.style.setProperty(
+            '--tema-focus',
+            `rgba(${rgb}, .25)`
         );
 
-        sidebar.setAttribute(
-            'data-bs-theme',
-            tema.modo
-        );
-    }
+        // ==================================================
+        // CARD ATIVO
+        // ==================================================
 
-    // Navbar
-    if (navbar) {
-        navbar.style.setProperty(
-            'background',
-            tema.navbar,
-            'important'
-        );
+        if (area) {
 
-        navbar.setAttribute(
-            'data-bs-theme',
-            tema.modo
-        );
-    }
+            document
+                .querySelectorAll('.preset-card')
+                .forEach(function (card) {
+                    card.classList.remove('ativo');
+                });
 
-    // Footer
-    if (footer) {
-        footer.style.setProperty(
-            'background',
-            tema.footer,
-            'important'
-        );
+            const cardAtivo = document.querySelector(
+                `.preset-card[data-id="${tema.id}"]`
+            );
 
-        footer.setAttribute(
-            'data-bs-theme',
-            tema.modo
-        );
-    }
+            if (cardAtivo) {
+                cardAtivo.classList.add('ativo');
+            }
+        }
 
-    // ==================================================
-    // CORES GLOBAIS BOOTSTRAP
-    // ==================================================
+        // ==================================================
+        // SALVA
+        // ==================================================
 
-    const rgb = hexParaRgb(tema.primary);
-
-    html.style.setProperty(
-        '--bs-primary',
-        tema.primary
-    );
-
-    html.style.setProperty(
-        '--bs-primary-rgb',
-        rgb
-    );
-
-    html.style.setProperty(
-        '--bs-link-color',
-        tema.primary
-    );
-
-    html.style.setProperty(
-        '--bs-link-color-rgb',
-        rgb
-    );
-
-    html.style.setProperty(
-        '--bs-focus-ring-color',
-        `rgba(${rgb}, .25)`
-    );
-
-    // ==================================================
-    // CARD ATIVO
-    // ==================================================
-
-    if (area) {
-
-        document
-            .querySelectorAll('.preset-card')
-            .forEach(function (card) {
-                card.classList.remove('ativo');
-            });
-
-        const cardAtivo = document.querySelector(
-            `.preset-card[data-id="${tema.id}"]`
-        );
-
-        if (cardAtivo) {
-            cardAtivo.classList.add('ativo');
+        if (salvar) {
+            localStorage.setItem(
+                storageKey,
+                JSON.stringify(tema)
+            );
         }
     }
-
-    // ==================================================
-    // SALVA
-    // ==================================================
-
-    if (salvar) {
-        localStorage.setItem(
-            storageKey,
-            JSON.stringify(tema)
-        );
-    }
-}
 
     // ======================================================
     // CONVERTE HEX PARA RGB

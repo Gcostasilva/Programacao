@@ -1,144 +1,211 @@
-/* =====================================================
-   TEMA - COMPONENTES BOOTSTRAP
-   ===================================================== */
+/* =========================================================
+   SISTEMA DE TEMAS
+   ========================================================= */
 
 
-/* ==============================
-   BOTÃO PRIMARY
-   ============================== */
+/* =========================================================
+   BOTÕES
+   ========================================================= */
 
 .btn-primary {
-    --bs-btn-color: #fff;
-    --bs-btn-bg: var(--bs-primary);
-    --bs-btn-border-color: var(--bs-primary);
+    background-color: var(--tema-primary) !important;
+    border-color: var(--tema-primary) !important;
+    color: #fff !important;
+}
 
-    --bs-btn-hover-color: #fff;
-    --bs-btn-hover-bg: var(--bs-primary);
-    --bs-btn-hover-border-color: var(--bs-primary);
-
-    --bs-btn-focus-shadow-rgb: var(--bs-primary-rgb);
-
-    --bs-btn-active-color: #fff;
-    --bs-btn-active-bg: var(--bs-primary);
-    --bs-btn-active-border-color: var(--bs-primary);
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+    background-color: var(--tema-primary) !important;
+    border-color: var(--tema-primary) !important;
+    color: #fff !important;
 }
 
 
-/* ==============================
-   LINKS
-   ============================== */
-
-a {
-    color: var(--bs-link-color);
-}
-
-a:hover {
-    color: var(--bs-link-color);
-}
-
-
-/* ==============================
+/* =========================================================
    INPUTS
-   ============================== */
+   ========================================================= */
 
 .form-control:focus,
-.form-select:focus,
-.form-check-input:focus {
-    border-color: var(--bs-primary);
+.form-select:focus {
+    border-color: var(--tema-primary) !important;
 
     box-shadow:
         0 0 0 .25rem
-        var(--bs-focus-ring-color);
+        var(--tema-focus) !important;
 }
 
 
-/* ==============================
+/* =========================================================
    CHECKBOX / RADIO
-   ============================== */
+   ========================================================= */
 
 .form-check-input:checked {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
+    background-color: var(--tema-primary) !important;
+    border-color: var(--tema-primary) !important;
+}
+
+.form-check-input:focus {
+    border-color: var(--tema-primary) !important;
+
+    box-shadow:
+        0 0 0 .25rem
+        var(--tema-focus) !important;
 }
 
 
-/* ==============================
-   RANGE
-   ============================== */
+/* =========================================================
+   LINKS
+   ========================================================= */
 
-.form-range::-webkit-slider-thumb {
-    background-color: var(--bs-primary);
-}
-
-.form-range::-moz-range-thumb {
-    background-color: var(--bs-primary);
+a.text-primary,
+.text-primary {
+    color: var(--tema-primary) !important;
 }
 
 
-/* ==============================
-   PROGRESS
-   ============================== */
-
-.progress-bar {
-    background-color: var(--bs-primary);
-}
-
-
-/* ==============================
-   BADGES
-   ============================== */
+/* =========================================================
+   BACKGROUNDS
+   ========================================================= */
 
 .bg-primary {
-    background-color: var(--bs-primary) !important;
+    background-color: var(--tema-primary) !important;
 }
 
 
-/* ==============================
-   TEXT PRIMARY
-   ============================== */
-
-.text-primary {
-    color: var(--bs-primary) !important;
-}
-
-
-/* ==============================
-   BORDER PRIMARY
-   ============================== */
+/* =========================================================
+   BORDAS
+   ========================================================= */
 
 .border-primary {
-    border-color: var(--bs-primary) !important;
+    border-color: var(--tema-primary) !important;
 }
 
 
-/* ==============================
+/* =========================================================
+   PROGRESS
+   ========================================================= */
+
+.progress-bar {
+    background-color: var(--tema-primary) !important;
+}
+
+
+/* =========================================================
    PAGINAÇÃO
-   ============================== */
+   ========================================================= */
 
 .page-link {
-    color: var(--bs-primary);
+    color: var(--tema-primary) !important;
 }
 
 .page-item.active .page-link {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
+    background-color: var(--tema-primary) !important;
+    border-color: var(--tema-primary) !important;
+    color: #fff !important;
 }
 
 
-/* ==============================
-   NAV-TABS
-   ============================== */
+/* =========================================================
+   NAV TABS
+   ========================================================= */
 
 .nav-tabs .nav-link.active {
-    color: var(--bs-primary);
-    border-color: var(--bs-primary);
+    color: var(--tema-primary) !important;
+    border-color: var(--tema-primary) !important;
 }
 
 
-/* ==============================
+/* =========================================================
    SPINNER
-   ============================== */
+   ========================================================= */
 
 .spinner-border {
-    color: var(--bs-primary);
+    color: var(--tema-primary) !important;
+}
+
+
+/* =========================================================
+   RANGE
+   ========================================================= */
+
+.form-range::-webkit-slider-thumb {
+    background-color: var(--tema-primary) !important;
+}
+
+.form-range::-moz-range-thumb {
+    background-color: var(--tema-primary) !important;
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+.app-sidebar {
+    background: var(--tema-sidebar) !important;
+}
+
+
+/* =========================================================
+   NAVBAR
+   ========================================================= */
+
+.app-header {
+    background: var(--tema-navbar) !important;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.app-footer {
+    background: var(--tema-footer) !important;
+}
+
+body {
+    background-color: var(--tema-body);
+    color: var(--tema-texto);
+}
+
+.card,
+.modal-content,
+.dropdown-menu,
+.list-group-item {
+    background-color: var(--tema-surface);
+    color: var(--tema-texto);
+    border-color: var(--tema-border);
+}
+
+.form-control,
+.form-select {
+    background-color: var(--tema-surface);
+    color: var(--tema-texto);
+    border-color: var(--tema-border);
+}
+
+.form-control::placeholder {
+    color: color-mix(
+        in srgb,
+        var(--tema-texto) 55%,
+        transparent
+    );
+}
+/* =========================================================
+   INPUTS DESABILITADOS
+   ========================================================= */
+
+.form-control:disabled,
+.form-control[readonly],
+.form-select:disabled {
+    background-color: var(--tema-surface) !important;
+    color: var(--tema-texto) !important;
+    border-color: var(--tema-border) !important;
+    opacity: 0.65;
+}
+
+.form-control:disabled::placeholder {
+    color: var(--tema-texto) !important;
+    opacity: 0.5;
 }

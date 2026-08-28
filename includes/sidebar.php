@@ -2,11 +2,11 @@
 
 <aside class="app-sidebar shadow" >
 
-    <div class="sidebar-brand align-self-center">
+    <div class="sidebar-brand border-0 align-self-center align-content-center ps-md-3">
 
         <a href="index.php" class="brand-link">
             <img src="uploads/img/Logotipo_pequeno.jpeg" class="brand-image opacity-75 shadow">
-            <span class="brand-text fw-light fw-bold">Perfinasa Metais</span>
+            <span class="brand-text  fw-bold">Perfinasa Metais</span>
         </a>
 
     </div>

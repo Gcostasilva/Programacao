@@ -128,6 +128,11 @@ Router::add(
     'pages/programacao/semanal/prog_semanal_filtrar.php',
     'Filtrar Programação Semanal'
 );
+Router::add(
+    'prog_semanal_indicadores',
+    'pages/programacao/semanal/indicadores.php',
+    'Filtrar Programação Semanal'
+);
 
 // quinzenal -------------------------------------
 Router::add(
