@@ -1,5 +1,5 @@
 <?php
-    $pagina = $_GET['page'] ?? 'dashboard';
+$pagina = $_GET['page'] ?? 'dashboard';
 ?>
 
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
@@ -1053,7 +1053,7 @@
                 if (!isNaN(espessura) && !isNaN(largura) && !isNaN(comprimento)) {
                     const pesoLiquido = (espessura * largura * comprimento * 0.000008); // kg
                     pesoLiquidoInput.value = pesoLiquido.toFixed(2);
-                    calcularPeso();
+                    //calcularPeso();
                 } else {
                     pesoLiquidoInput.value = '';
                     pesoInput.value = '';
@@ -1228,6 +1228,86 @@
         });
     </script>
 
+
+    <!-- Funcçao da busca do codigo -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const botaoBusca = document.getElementById('btn_buscaCodigo');
+            const modalElemento = document.getElementById('modalBuscaCodigo');
+            const campoPesquisa = document.getElementById('buscaCodigoDescricao');
+            const tabela = document.getElementById('tabelaBuscaCodigos');
+            const campoCodigo = document.getElementById('codigo');
+
+            if (!botaoBusca || !modalElemento || !campoPesquisa || !tabela || !campoCodigo) {
+                return;
+            }
+
+            const modal = new bootstrap.Modal(modalElemento);
+
+            // Abrir modal
+            botaoBusca.addEventListener('click', function () {
+
+                campoPesquisa.value = '';
+
+                tabela.querySelectorAll('tr').forEach(function (linha) {
+                    linha.style.display = '';
+                });
+
+                modal.show();
+            });
+
+            // Filtrar pela descrição
+            campoPesquisa.addEventListener('input', function () {
+
+                const busca = this.value.toLowerCase().trim();
+
+                tabela.querySelectorAll('tr').forEach(function (linha) {
+
+                    const descricao = linha.cells[1].textContent.toLowerCase();
+
+                    linha.style.display =
+                        descricao.includes(busca) ? '' : 'none';
+                });
+            });
+
+            // Selecionar código
+            tabela.addEventListener('click', function (event) {
+
+                const botao = event.target.closest('.btnSelecionarCodigo');
+
+                if (!botao) {
+                    return;
+                }
+
+                campoCodigo.value = botao.dataset.codigo;
+
+                /*
+                 * IMPORTANTE:
+                 * registra o evento ANTES de fechar o modal.
+                 */
+                modalElemento.addEventListener('hidden.bs.modal', function executarAposFechar() {
+
+                    // Agora o backdrop do modal de busca já foi removido
+                    campoCodigo.dispatchEvent(new Event('blur'));
+
+                    campoCodigo.focus();
+
+                }, { once: true });
+
+                // Fecha o modal
+                modal.hide();
+            });
+
+            // Foco automático na pesquisa
+            modalElemento.addEventListener('shown.bs.modal', function () {
+                campoPesquisa.focus();
+            });
+
+        });
+    </script>
+
+
 <?php endif; ?>
 
 
@@ -1236,4 +1316,3 @@
 
 
 <?php endif; ?>
-
