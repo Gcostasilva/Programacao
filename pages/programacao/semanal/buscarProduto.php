@@ -8,7 +8,7 @@ $programacaoModel = new ProgramacaoModel();
 
 $codigo = $_GET['codigo'];
 
-if (strlen($codigo) < 9) {
+if (strlen($codigo) < 1) {
     http_response_code(400);
     echo json_encode(['erro' => 'Código inválido']);
     exit;

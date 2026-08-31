@@ -49,8 +49,8 @@
                             <div class="input-group">
                                 <input class="form-control" name="codigo_s" id="codigo" required>
                                 <input type="hidden" id="espessura_prod">
-                                <button class="btn btn-primary" type="button" id="btn_buscaCodigo"><i class="bi bi-search"></i></button>
-                                <button class="btn btn-primary ms-1" type="button" id="btn_buscaDemanda"><i class="bi bi-boxes"></i></button>
+                                <button class="btn btn-primary bt-especial" type="button" id="btn_buscaCodigo"><i class="bi bi-search"></i></button>
+                                <button class="btn btn-primary ms-1 bt-especial" type="button" id="btn_buscaDemanda"><i class="bi bi-boxes"></i></button>
                             </div>
                         </div>
                         <div class="col-md-6">

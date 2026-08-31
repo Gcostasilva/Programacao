@@ -5,11 +5,13 @@ const tag = el.tagName;
 
 // Só interfere na tecla Enter
 if (e.key !== 'Enter') return;
+// Se a classe for diferente de bt-especial
+if (el.classList.contains('bt-especial')) {console.log('Está lá');}
 
 // Enter em botão mantém o comportamento nativo
 const ehBotao =
     tag === 'BUTTON' ||
-    el.getAttribute('role') === 'button' ||
+    el.getAttribute('role') === 'button' || 
     (tag === 'INPUT' && ['submit', 'button', 'reset'].includes(el.type));
 
 if (ehBotao) return;
