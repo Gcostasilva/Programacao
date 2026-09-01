@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="card-body" style="display: inline; grid-template-columns: 1fr 1fr;">
-            <form action="index.php?page=prog_semanal_novo" method="POST" style="display:flex;">
+            <form action="index.php?page=prog_semanal_novo" method="POST" style="display:flex;" id="formProgramacaoSemanal">
                 <div id="formSemanal" class="form-programacao" style="width:90%;">
                     <div class="row">
                         <div class="col-md-2">
@@ -22,7 +22,7 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Recurso</label>
-                            <select class="form-select" name="recurso" required>
+                            <select class="form-select" id="recursoSemanal" name="recurso" required>
                                 <option value="" disabled selected>Selecione...</option>
                                 <?php foreach ($dados['recursos_semanal'] as $linha) { $id = htmlspecialchars($linha['id']); $nome = htmlspecialchars($linha['descricao']); echo "<option value=\"$id\">$nome</option>"; } ?>
                             </select>
@@ -71,3 +71,37 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const semana = document.getElementById('semana');
+    const recurso = document.getElementById('recursoSemanal');
+    const data = document.getElementById('data');
+    const form = document.getElementById('formProgramacaoSemanal');
+    const chave = 'programacaoSemanal_filtros';
+
+    if (!semana || !recurso || !data || !form) return;
+
+    try {
+        const salvo = JSON.parse(localStorage.getItem(chave) || '{}');
+        if (salvo.semana) semana.value = salvo.semana;
+        if (salvo.recurso) recurso.value = salvo.recurso;
+        if (salvo.data) data.value = salvo.data;
+    } catch (e) {
+        console.warn('Não foi possível recuperar os filtros da programação semanal.', e);
+    }
+
+    function salvarFiltros() {
+        localStorage.setItem(chave, JSON.stringify({
+            semana: semana.value,
+            recurso: recurso.value,
+            data: data.value
+        }));
+    }
+
+    semana.addEventListener('change', salvarFiltros);
+    recurso.addEventListener('change', salvarFiltros);
+    data.addEventListener('change', salvarFiltros);
+    form.addEventListener('submit', salvarFiltros);
+});
+</script>
