@@ -20,3 +20,20 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const modal = document.getElementById('modalBuscaDemanda');
+
+    if (!modal) return;
+
+    modal.addEventListener('show.bs.modal', function (event) {
+        const botao = event.relatedTarget;
+        window.demandaCampoDestino = botao?.dataset.target || '#codigo';
+    });
+
+    modal.addEventListener('hidden.bs.modal', function () {
+        window.demandaCampoDestino = '#codigo';
+    });
+});
+</script>
