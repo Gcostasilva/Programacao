@@ -1,6 +1,6 @@
 <?php
 
-require_once 'c:\xampp\htdocs\Programacao\config\banco.php';
+require_once 'c:\\xampp\\htdocs\\Programacao\\config\\banco.php';
 
 $sql = "
 SELECT
@@ -35,6 +35,7 @@ $demanda = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $modoDemanda = $modoDemanda ?? 'pagina';
 $idTabelaDemanda = $idTabelaDemanda ?? 'tb_demanda';
 $modoSelecao = $modoDemanda === 'selecao';
+$colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
 ?>
 
 <div class="container-fluid">
@@ -58,10 +59,10 @@ $modoSelecao = $modoDemanda === 'selecao';
                     <?php for ($i = 0; $i < 10; $i++): ?>
                         <th>
                             <input type="text"
-                                   class="form-control form-control-sm filtro-coluna"
+                                   class="form-control form-control-sm filtro-coluna <?= in_array($i, $colunasNumericas, true) ? 'filtro-numerico' : '' ?>"
                                    data-tabela="<?= htmlspecialchars($idTabelaDemanda, ENT_QUOTES) ?>"
                                    data-coluna="<?= $i ?>"
-                                   placeholder="Filtrar..."
+                                   placeholder="<?= in_array($i, $colunasNumericas, true) ? 'Ex.: > 500' : 'Filtrar...' ?>"
                                    autocomplete="off">
                         </th>
                     <?php endfor; ?>
@@ -100,6 +101,36 @@ $modoSelecao = $modoDemanda === 'selecao';
 <script>
 (function () {
     const idTabela = <?= json_encode($idTabelaDemanda) ?>;
+    const colunasNumericas = <?= json_encode($colunasNumericas) ?>;
+
+    function interpretarFiltroNumerico(valor) {
+        const texto = valor.trim().replace(',', '.');
+        if (!texto) return null;
+
+        const correspondencia = texto.match(/^(>=|<=|>|<|=)?\s*(-?\d+(?:\.\d+)?)$/);
+        if (!correspondencia) return { invalido: true };
+
+        return {
+            operador: correspondencia[1] || '=',
+            valor: Number(correspondencia[2]),
+            invalido: false
+        };
+    }
+
+    function compararNumero(numero, filtro) {
+        switch (filtro.operador) {
+            case '>':  return numero > filtro.valor;
+            case '>=': return numero >= filtro.valor;
+            case '<':  return numero < filtro.valor;
+            case '<=': return numero <= filtro.valor;
+            case '=':  return numero === filtro.valor;
+            default:   return true;
+        }
+    }
+
+    function obterTextoCelula(celula) {
+        return celula == null ? '' : String(celula).trim();
+    }
 
     function inicializarDemanda() {
         const tabela = document.getElementById(idTabela);
@@ -125,8 +156,7 @@ $modoSelecao = $modoDemanda === 'selecao';
 
         tabela.dataset.dataTableInicializada = '1';
 
-        // Com scrollY o DataTables cria um cabecalho separado (.dataTables_scrollHead).
-        // Por isso o evento precisa ser delegado no document, e nao na tabela original.
+        // Filtros de texto continuam usando o filtro nativo do DataTables.
         document.addEventListener('input', function (event) {
             const input = event.target.closest('.filtro-coluna');
             if (!input || input.dataset.tabela !== idTabela) return;
@@ -134,8 +164,37 @@ $modoSelecao = $modoDemanda === 'selecao';
             const coluna = Number(input.dataset.coluna);
             if (!Number.isInteger(coluna)) return;
 
-            dt.column(coluna).search(input.value).draw();
+            if (colunasNumericas.includes(coluna)) {
+                // O filtro numérico é tratado pelo ext.search abaixo.
+                dt.draw();
+            } else {
+                dt.column(coluna).search(input.value).draw();
+            }
         });
+
+        // Filtro numérico com operadores: >, >=, <, <= e =.
+        // Sem operador, o valor é tratado como igualdade.
+        if (DataTable.ext && DataTable.ext.search) {
+            DataTable.ext.search.push(function (settings, data) {
+                if (settings.nTable !== tabela) return true;
+
+                for (const coluna of colunasNumericas) {
+                    const input = document.querySelector(
+                        '.filtro-coluna[data-tabela="' + CSS.escape(idTabela) + '"][data-coluna="' + coluna + '"]'
+                    );
+
+                    if (!input || !input.value.trim()) continue;
+
+                    const filtro = interpretarFiltroNumerico(input.value);
+                    if (filtro.invalido) return false;
+
+                    const numero = Number(obterTextoCelula(data[coluna]).replace(/\s/g, '').replace(',', '.'));
+                    if (!Number.isFinite(numero) || !compararNumero(numero, filtro)) return false;
+                }
+
+                return true;
+            });
+        }
 
         document.addEventListener('click', function (event) {
             if (event.target.closest('.filtro-coluna')) event.stopPropagation();
