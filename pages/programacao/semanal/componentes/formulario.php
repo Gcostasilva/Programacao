@@ -18,7 +18,8 @@
                     <div class="row">
                         <div class="col-md-2">
                             <label class="form-label">Semana</label>
-                            <input type="week" class="form-control" id="semana" name="semana" value="<?php $semanaAtual = date('o-\WW'); echo $semanaAtual; ?>" required>
+                            <input type="week" class="form-control" id="semana" name="semana" value="<?php $semanaAtual = date('o-\WW');
+echo $semanaAtual; ?>" required>
                         </div>
                         <div class="col-md-3">
                             <label class="form-label">Recurso</label>
@@ -49,22 +50,14 @@
                                 <input class="form-control" name="codigo_s" id="codigo" required>
                                 <input type="hidden" id="espessura_prod">
                                 <button class="btn btn-primary bt-especial" type="button" id="btn_buscaCodigo"><i class="bi bi-search"></i></button>
-                                <button
-                                    class="btn btn-primary ms-1 bt-especial"
-                                    type="button"
-                                    id="btn_buscaDemanda"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalBuscaDemanda"
-                                    data-target="#codigo"
-                                    title="Selecionar pela Demanda">
-                                    <i class="bi bi-boxes"></i>
-                                </button>
+                                <button class="btn btn-primary ms-1 bt-especial" type="button" id="btn_buscaDemanda"><i class="bi bi-boxes"></i></button>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Descrição</label>
                             <input class="form-control" name="descricao" id="descricao_sem" disabled>
-                            <input type="hidden" class="form-control" name="complemento_descricao" id="complemento_descricao">
+                            <input type="hidden" class="form-control" name="complemento_descricao"
+                                id="complemento_descricao">
                         </div>
                         <div class="col-md-1">
                             <label class="form-label">Quantidade</label>
@@ -81,7 +74,7 @@
                         </div>
                     </div>
                 </div>
-                <div style="grid-column: 2/2;flex-direction: column;display: flex;margin-right: 50px;">
+                <div style="grid-column: 2/2;flex-direction: column;display: flex;margin-right:  50px;">
                     <button class="btn btn-primary mt-2" type="submit"><i class="bi bi-save"></i> Salvar </button>
                     <button class="btn btn-primary mt-2" type="reset"><i class="bi bi-x-circle"></i> Desistir </button>
                 </div>
