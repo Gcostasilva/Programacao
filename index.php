@@ -37,7 +37,7 @@ if (in_array($paginaAtual, $rotasAjax)) {
     
 <?php include 'includes/head.php'; ?>
 
-<body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse">
+<body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse fixed-header">
     <div class="app-wrapper">
         <?php include 'includes/sidebar.php'; ?>
         <?php include 'includes/navbar.php'; ?>
