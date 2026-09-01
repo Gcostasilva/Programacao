@@ -115,19 +115,33 @@ $modoSelecao = $modoDemanda === 'selecao';
 
         tabela.dataset.dataTableInicializada = '1';
 
-        // Os inputs estão no segundo cabeçalho. O clique não deve acionar a ordenação.
-        tabela.querySelectorAll('thead tr.filtros-demanda th').forEach(function (th, index) {
-            const input = th.querySelector('input');
+        // Delegacao: funciona mesmo que o DataTables mova/recrie elementos do cabecalho.
+        tabela.addEventListener('input', function (event) {
+            const input = event.target.closest('input.filtro-coluna');
             if (!input) return;
 
-            ['click', 'mousedown', 'keydown'].forEach(function (evento) {
-                input.addEventListener(evento, function (e) { e.stopPropagation(); });
-            });
+            const th = input.closest('th');
+            const linhaFiltros = tabela.querySelector('thead tr.filtros-demanda');
+            if (!th || !linhaFiltros) return;
 
-            input.addEventListener('input', function () {
-                dt.column(index).search(this.value).draw();
-            });
+            const coluna = Array.from(linhaFiltros.children).indexOf(th);
+            if (coluna < 0) return;
+
+            dt.column(coluna).search(input.value).draw();
         });
+
+        // Impede que clicar/digitar no filtro acione ordenacao do cabecalho.
+        tabela.addEventListener('click', function (event) {
+            if (event.target.closest('input.filtro-coluna')) event.stopPropagation();
+        }, true);
+
+        tabela.addEventListener('mousedown', function (event) {
+            if (event.target.closest('input.filtro-coluna')) event.stopPropagation();
+        }, true);
+
+        tabela.addEventListener('keydown', function (event) {
+            if (event.target.closest('input.filtro-coluna')) event.stopPropagation();
+        }, true);
 
         tabela.addEventListener('click', function (event) {
             const botao = event.target.closest('.btn-selecionar-demanda');
