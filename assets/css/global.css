@@ -78,3 +78,7 @@
 .mini-chip { flex: 1; height: 18px; border-radius: 3px; }
 
 .preset-label { font-size: .78rem; }
+
+.modalBuscaDemanda{
+    max-width: 90vw;
+}
