@@ -39,6 +39,12 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
 ?>
 
 <div class="container-fluid">
+    <div class="d-flex justify-content-end mb-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalAjudaFiltroDemanda">
+            <i class="bi bi-funnel me-1"></i> Como filtrar?
+        </button>
+    </div>
+
     <div class="table-responsive">
         <table id="<?= htmlspecialchars($idTabelaDemanda) ?>" class="table table-hover table-striped align-middle" style="font-size: 0.8em; width:100%">
             <thead>
@@ -62,7 +68,7 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
                                    class="form-control form-control-sm filtro-coluna <?= in_array($i, $colunasNumericas, true) ? 'filtro-numerico' : '' ?>"
                                    data-tabela="<?= htmlspecialchars($idTabelaDemanda, ENT_QUOTES) ?>"
                                    data-coluna="<?= $i ?>"
-                                   placeholder="<?= in_array($i, $colunasNumericas, true) ? 'Ex.: > 500' : 'Filtrar...' ?>"
+                                   placeholder="<?= in_array($i, $colunasNumericas, true) ? 'Ex.: > 500 < 1000' : 'Filtrar...' ?>"
                                    autocomplete="off">
                         </th>
                     <?php endfor; ?>
@@ -92,6 +98,98 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
     </div>
 </div>
 
+<!-- Ajuda dos filtros -->
+<div class="modal fade" id="modalAjudaFiltroDemanda" tabindex="-1" aria-labelledby="modalAjudaFiltroDemandaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAjudaFiltroDemandaLabel">
+                    <i class="bi bi-funnel me-2"></i>Como utilizar os filtros
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+
+            <div class="modal-body">
+                <p class="mb-3">
+                    Os campos logo abaixo dos nomes das colunas filtram a tabela diretamente.
+                    Você pode combinar filtros de várias colunas ao mesmo tempo.
+                </p>
+
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-1"></i>
+                    <strong>Dica:</strong> em colunas numéricas, você pode informar mais de uma condição no mesmo campo.
+                </div>
+
+                <h6 class="fw-bold mt-3">1. Filtros de texto</h6>
+                <p>
+                    Nas colunas de texto, basta digitar o conteúdo que deseja localizar.
+                </p>
+                <div class="alert alert-light border py-2">
+                    <code>ABC123</code> → encontra registros que contenham <strong>ABC123</strong>.
+                </div>
+
+                <h6 class="fw-bold mt-4">2. Filtros numéricos</h6>
+                <p>Nas colunas numéricas, estão disponíveis os operadores:</p>
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered align-middle">
+                        <thead>
+                            <tr>
+                                <th>Filtro</th>
+                                <th>Significado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><code>&gt; 500</code></td><td>maior que 500</td></tr>
+                            <tr><td><code>&gt;= 500</code></td><td>maior ou igual a 500</td></tr>
+                            <tr><td><code>&lt; 500</code></td><td>menor que 500</td></tr>
+                            <tr><td><code>&lt;= 500</code></td><td>menor ou igual a 500</td></tr>
+                            <tr><td><code>= 500</code></td><td>igual a 500</td></tr>
+                            <tr><td><code>500</code></td><td>também significa igual a 500</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h6 class="fw-bold mt-4">3. Duas condições na mesma coluna</h6>
+                <p>
+                    Separe as condições por espaço. Elas são combinadas com <strong>AND</strong>.
+                </p>
+                <div class="alert alert-primary py-2">
+                    <code>&gt; 500 &lt; 1000</code><br>
+                    Resultado: valores <strong>maiores que 500 e menores que 1000</strong>.
+                </div>
+                <div class="alert alert-primary py-2">
+                    <code>&gt;= 500 &lt;= 1000</code><br>
+                    Resultado: valores entre <strong>500 e 1000, incluindo os limites</strong>.
+                </div>
+
+                <h6 class="fw-bold mt-4">4. Alternativas usando OR</h6>
+                <p>
+                    Use <code>OR</code> quando quiser aceitar uma condição <strong>ou</strong> outra.
+                </p>
+                <div class="alert alert-warning py-2">
+                    <code>&lt; 100 OR &gt; 1000</code><br>
+                    Resultado: valores <strong>menores que 100 ou maiores que 1000</strong>.
+                </div>
+
+                <h6 class="fw-bold mt-4">5. Filtros em várias colunas</h6>
+                <p>
+                    Os filtros de colunas diferentes também são combinados com <strong>AND</strong>.
+                </p>
+                <div class="alert alert-success py-2 mb-0">
+                    <strong>Estoque:</strong> <code>&gt;= 500 &lt;= 1000</code><br>
+                    <strong>Saldo:</strong> <code>&gt; 200</code><br>
+                    <strong>Necessidade:</strong> <code>&lt; 5000</code><br><br>
+                    Isso mostra somente registros que atendam <strong>a todas as três regras</strong>.
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 #<?= htmlspecialchars($idTabelaDemanda) ?> thead tr.filtros-demanda th { padding:4px; background:var(--bs-body-bg); }
 #<?= htmlspecialchars($idTabelaDemanda) ?> .filtro-coluna { min-width:70px; font-size:.9em; }
@@ -103,33 +201,54 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
     const idTabela = <?= json_encode($idTabelaDemanda) ?>;
     const colunasNumericas = <?= json_encode($colunasNumericas) ?>;
 
-    function interpretarFiltroNumerico(valor) {
-        const texto = valor.trim().replace(',', '.');
-        if (!texto) return null;
+    function normalizarNumero(valor) {
+        let texto = String(valor ?? '').trim().replace(/\s/g, '');
+        if (!texto) return NaN;
+        if (texto.includes(',') && texto.includes('.')) texto = texto.replace(/\./g, '').replace(',', '.');
+        else if (texto.includes(',')) texto = texto.replace(',', '.');
+        return Number(texto);
+    }
 
-        const correspondencia = texto.match(/^(>=|<=|>|<|=)?\s*(-?\d+(?:\.\d+)?)$/);
-        if (!correspondencia) return { invalido: true };
-
-        return {
-            operador: correspondencia[1] || '=',
-            valor: Number(correspondencia[2]),
-            invalido: false
-        };
+    function interpretarCondicaoNumerica(texto) {
+        const match = texto.trim().match(/^(>=|<=|>|<|=)?\s*(-?(?:\d+(?:[.,]\d+)?|[.,]\d+))$/);
+        if (!match) return null;
+        const valor = normalizarNumero(match[2]);
+        return Number.isFinite(valor) ? { operador: match[1] || '=', valor: valor } : null;
     }
 
     function compararNumero(numero, filtro) {
         switch (filtro.operador) {
-            case '>':  return numero > filtro.valor;
+            case '>': return numero > filtro.valor;
             case '>=': return numero >= filtro.valor;
-            case '<':  return numero < filtro.valor;
+            case '<': return numero < filtro.valor;
             case '<=': return numero <= filtro.valor;
-            case '=':  return numero === filtro.valor;
-            default:   return true;
+            case '=': return numero === filtro.valor;
+            default: return false;
         }
     }
 
-    function obterTextoCelula(celula) {
-        return celula == null ? '' : String(celula).trim();
+    function interpretarFiltroNumerico(valor) {
+        const texto = valor.trim();
+        if (!texto) return null;
+
+        const grupos = texto.split(/\s+OR\s+/i).map(grupo => grupo.trim()).filter(Boolean);
+        if (!grupos.length) return { invalido: true };
+
+        const resultado = [];
+        for (const grupoTexto of grupos) {
+            const tokens = grupoTexto.match(/(?:>=|<=|>|<|=)?\s*-?(?:\d+(?:[.,]\d+)?|[.,]\d+)/g);
+            if (!tokens || tokens.join('').replace(/\s/g, '') !== grupoTexto.replace(/\s/g, '')) return { invalido: true };
+            const grupo = tokens.map(interpretarCondicaoNumerica);
+            if (grupo.some(condicao => !condicao)) return { invalido: true };
+            resultado.push(grupo);
+        }
+        return { grupos: resultado, invalido: false };
+    }
+
+    function obterInput(coluna) {
+        const inputs = document.querySelectorAll('.filtro-coluna[data-coluna="' + coluna + '"]');
+        for (const input of inputs) if (input.dataset.tabela === idTabela) return input;
+        return null;
     }
 
     function inicializarDemanda() {
@@ -156,7 +275,6 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
 
         tabela.dataset.dataTableInicializada = '1';
 
-        // Filtros de texto continuam usando o filtro nativo do DataTables.
         document.addEventListener('input', function (event) {
             const input = event.target.closest('.filtro-coluna');
             if (!input || input.dataset.tabela !== idTabela) return;
@@ -165,31 +283,31 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
             if (!Number.isInteger(coluna)) return;
 
             if (colunasNumericas.includes(coluna)) {
-                // O filtro numérico é tratado pelo ext.search abaixo.
                 dt.draw();
             } else {
                 dt.column(coluna).search(input.value).draw();
             }
         });
 
-        // Filtro numérico com operadores: >, >=, <, <= e =.
-        // Sem operador, o valor é tratado como igualdade.
         if (DataTable.ext && DataTable.ext.search) {
             DataTable.ext.search.push(function (settings, data) {
                 if (settings.nTable !== tabela) return true;
 
                 for (const coluna of colunasNumericas) {
-                    const input = document.querySelector(
-                        '.filtro-coluna[data-tabela="' + CSS.escape(idTabela) + '"][data-coluna="' + coluna + '"]'
-                    );
-
+                    const input = obterInput(coluna);
                     if (!input || !input.value.trim()) continue;
 
                     const filtro = interpretarFiltroNumerico(input.value);
-                    if (filtro.invalido) return false;
+                    if (!filtro || filtro.invalido) return false;
 
-                    const numero = Number(obterTextoCelula(data[coluna]).replace(/\s/g, '').replace(',', '.'));
-                    if (!Number.isFinite(numero) || !compararNumero(numero, filtro)) return false;
+                    const numero = normalizarNumero(data[coluna]);
+                    if (!Number.isFinite(numero)) return false;
+
+                    const atende = filtro.grupos.some(grupo =>
+                        grupo.every(condicao => compararNumero(numero, condicao))
+                    );
+
+                    if (!atende) return false;
                 }
 
                 return true;
