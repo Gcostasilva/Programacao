@@ -987,7 +987,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para realizar a busca do filtro semanal -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+     document.addEventListener('DOMContentLoaded', function () {
             const inputSemana = document.getElementById('semana_filtro');
             const inputRecurso = document.getElementById('recurso_filtro');
             inputSemana.addEventListener('change', carregarSemana);

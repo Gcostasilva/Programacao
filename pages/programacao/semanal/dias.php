@@ -9,22 +9,27 @@
     <div><h4 class="mb-1"><i class="bi bi-calendar4"></i> <?= $info['nome'] ?> - <?= $dataDia->format('d/m/Y') ?></h4></div>
 
     <div class="mini-box-row mb-1 align-content-end" id="rowIndicadores">
+        <?php foreach ($dados['prodSemanal'] as $r):
+         if ($r['data'] !== $dataFormatada) {
+                continue;
+        } ?>
         <div class="mini-box bg-secondary" id="boxProgramacao">
-            <div class="mini-box-valor" id="boxProgramacaoValor">--</div>
+            <div class="mini-box-valor" id="boxProgramacaoValor"><?= $r['peso'] ?></div>
             <div class="mini-box-label">Programação</div>
         </div>
         <div class="mini-box bg-success" id="boxProduzido">
-            <div class="mini-box-valor" id="boxProduzidoValor">--</div>
+            <div class="mini-box-valor" id="boxProduzidoValor"><?= $r['peso_realizado'] ?></div>
             <div class="mini-box-label">Produzido</div>
         </div>
         <div class="mini-box bg-info" id="boxSaldo">
-            <div class="mini-box-valor" id="boxSaldoValor">--</div>
+            <div class="mini-box-valor" id="boxSaldoValor"><?= $r['saldo'] ?></div>
             <div class="mini-box-label">Saldo</div>
         </div>
         <div class="mini-box bg-danger" id="boxUtilizacao">
-            <div class="mini-box-valor" id="boxUtilizacaoValor">--</div>
+            <div class="mini-box-valor" id="boxUtilizacaoValor"><?= $r['utilizacao'] ?></div>
             <div class="mini-box-label">% Máquina</div>
         </div>
+        <?php endforeach; ?>
     </div>
 </div>
 

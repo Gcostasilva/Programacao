@@ -133,27 +133,32 @@ class tabelasModel extends BaseModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function listarProdSemanal(string $equipamento, string $data)
+    public function listarProdSemanal(string $equipamento, string $data_INICIO, string $data_FIM)
     {
         $sql = " SELECT 
-        sum(pr.peso) as peso,
-        sum(pr.peso_realizado) as peso_realizado,
-        sum(pr.peso) - sum(pr.peso_realizado) as saldo,
-        sum(pr.peso) / mq.capacidade as utilizacao,
-        mq.capacidade as capacidade
+        pr.data                                             as data,
+        sum(pr.peso)                                        as peso,
+        sum(pr.peso_realizado)                              as peso_realizado,
+        sum(pr.peso) - sum(pr.peso_realizado)               as saldo,
+        (sum(pr.peso) / NULLIF(mq.capacidade, 0))*100       as utilizacao,
+        mq.capacidade                                       as capacidade
 
         from programacao pr
 
         LEFT JOIN maquinas mq
         on pr.maquina_id = mq.id
 
-        WHERE pr.maquina_id = :equipamento and pr.data = :data
+        WHERE pr.maquina_id = :equipamento and pr.data BETWEEN :data_inicio AND :data_fim
+
+        GROUP BY pr.data
+
         ";
         $stmt = $this->pdo->prepare($sql);
 
         $stmt->execute([
             ':equipamento' => $equipamento,
-            ':data' => $data
+            ':data_inicio' => $data_INICIO,
+            ':data_fim' => $data_FIM
         ]);
 
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -164,7 +169,7 @@ class tabelasModel extends BaseModel
     public function listaCodigos()
     {
         try {
-            $sql = "SELECT codigo, descricao, peso_liquido FROM produtos where descricao LIKE '%DESB*%' OR descricao LIKE '%PROCESSO%'  ORDER BY grupo, descricao, codigo";
+            $sql = "SELECT codigo, descricao, peso_liquido FROM produtos where descricao LIKE '%DESB*%' OR descricao LIKE '%PROCESSO%' ORDER BY grupo, descricao, codigo";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
