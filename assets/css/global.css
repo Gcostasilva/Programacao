@@ -82,3 +82,8 @@
 .modalBuscaDemanda{
     max-width: 90vw;
 }
+
+/* Modal de ajuda dos filtros da demanda com aproximadamente 90% da largura da tela. */
+#modalAjudaFiltroDemanda .modal-dialog {
+    max-width: 90vw;
+}
