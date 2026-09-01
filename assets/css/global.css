@@ -8,6 +8,20 @@
     background:brown;
 }
 
+/* Navbar fixa no topo, preservando o layout do AdminLTE. */
+.app-header.navbar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+}
+
+/* O conteúdo começa abaixo da navbar para não ficar escondido atrás dela. */
+.app-main {
+    padding-top: var(--lte-app-header-height, 4rem);
+}
+
 .mini-box-row {
     display: flex;
     justify-content: flex-end;  /* agrupa os cards colados na direita */
