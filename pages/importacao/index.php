@@ -14,7 +14,7 @@
     <div class="card" style="display: grid; grid-template-columns: 1fr 1fr; box-shadow: rgba(50, 50, 93, 0.25) 0px 50px 100px -20px, rgba(0, 0, 0, 0.3) 0px 30px 60px -30px, rgba(10, 37, 64, 0.35) 0px -2px 6px 0px inset;">
         <div class="card-header">
             <h1>Importar Produtos</h1>
-            Grupo, Código, Descrição, Peso Líquido, Especial.
+            Grupo, Código, Descrição, Espessura, Peso Líquido, Especial.
         </div>
         <form action="pages/importacao/imp_produto.php" method="post" enctype="multipart/form-data">
             <div class="text-info-emphasis">Somente arquivos .csv</div>
