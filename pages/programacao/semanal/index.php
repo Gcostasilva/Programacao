@@ -8,7 +8,6 @@
             <?php include 'pages/programacao/semanal/componentes/modalCalculo_chapa.php'; ?>
             <?php include 'pages/programacao/semanal/componentes/modalCalculo_perfil.php'; ?>
             <?php include 'pages/programacao/semanal/componentes/modal_buscaCodigo.php'; ?>
-            <?php include 'pages/programacao/semanal/componentes/modal_demanda.php'; ?>
         </div>
     </div>
 
