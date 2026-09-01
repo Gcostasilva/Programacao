@@ -8,23 +8,6 @@
     background:brown;
 }
 
-/* Navbar fixa no topo respeitando a coluna da sidebar. */
-.fixed-header .app-header {
-    grid-area: app-header;
-    grid-column: 2;
-    width: 100%;
-    position: sticky;
-    top: 0;
-    z-index: 1030;
-}
-
-/* Garante que o conteúdo permaneça na coluna ao lado da sidebar. */
-.fixed-header .app-main {
-    grid-area: app-main;
-    grid-column: 2;
-    min-width: 0;
-}
-
 .mini-box-row {
     display: flex;
     justify-content: flex-end;
