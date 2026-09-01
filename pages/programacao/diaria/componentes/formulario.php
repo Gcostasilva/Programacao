@@ -54,7 +54,6 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-
                             <label class="form-label">Vendedor</label>
                             <select class="form-select" name="vendedor" required>
                                 <option value="" disabled selected>Selecione...</option>
@@ -67,7 +66,6 @@
                                 ?>
                             </select>
                         </div>
-
                         <div class="col-md-2">
                             <label class="form-label">Peso</label>
                             <input class="form-control" name="peso" required>
@@ -92,3 +90,34 @@
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const recurso = document.getElementById('recurso');
+    const data = document.getElementById('data');
+    const form = document.getElementById('formDiario');
+    const chave = 'programacaoDiaria_filtros';
+
+    if (!recurso || !data || !form) return;
+
+    // Recupera os últimos valores usados após o POST e recarregamento da página.
+    try {
+        const salvo = JSON.parse(localStorage.getItem(chave) || '{}');
+        if (salvo.recurso) recurso.value = salvo.recurso;
+        if (salvo.data) data.value = salvo.data;
+    } catch (e) {
+        console.warn('Não foi possível recuperar os filtros da programação diária.', e);
+    }
+
+    function salvarFiltros() {
+        localStorage.setItem(chave, JSON.stringify({
+            recurso: recurso.value,
+            data: data.value
+        }));
+    }
+
+    recurso.addEventListener('change', salvarFiltros);
+    data.addEventListener('change', salvarFiltros);
+    form.addEventListener('submit', salvarFiltros);
+});
+</script>
