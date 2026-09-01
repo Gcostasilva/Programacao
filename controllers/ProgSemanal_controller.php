@@ -24,7 +24,7 @@ $dados['recursos_semanal'] = $recursoModel->listarSemanal();
 
 $tabela['tabDiaria'] = $tabelaDiaria->listarTabDiario();
 $tabela['tabSemanal'] = $tabelaDiaria->listarTabSemanal($intervalo['inicio'], $intervalo['fim']);
-$dados['prodSemanal'] = $tabelaDiaria->listarProdSemanal($dados['recursos_semanal'][0]['id'], $intervalo['inicio'], $intervalo['fim']);
+$dados['prodSemanal'] = [];
 $dados['listaCodigos'] = $tabelaDiaria->listaCodigos();
 
 include __DIR__ . '/../pages/programacao/semanal/index.php';

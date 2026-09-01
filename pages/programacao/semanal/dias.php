@@ -9,27 +9,35 @@
     <div><h4 class="mb-1"><i class="bi bi-calendar4"></i> <?= $info['nome'] ?> - <?= $dataDia->format('d/m/Y') ?></h4></div>
 
     <div class="mini-box-row mb-1 align-content-end" id="rowIndicadores">
-        <?php foreach ($dados['prodSemanal'] as $r):
-         if ($r['data'] !== $dataFormatada) {
-                continue;
-        } ?>
-        <div class="mini-box bg-secondary" id="boxProgramacao">
-            <div class="mini-box-valor" id="boxProgramacaoValor"><?= $r['peso'] ?></div>
-            <div class="mini-box-label">Programação</div>
-        </div>
-        <div class="mini-box bg-success" id="boxProduzido">
-            <div class="mini-box-valor" id="boxProduzidoValor"><?= $r['peso_realizado'] ?></div>
-            <div class="mini-box-label">Produzido</div>
-        </div>
-        <div class="mini-box bg-info" id="boxSaldo">
-            <div class="mini-box-valor" id="boxSaldoValor"><?= $r['saldo'] ?></div>
-            <div class="mini-box-label">Saldo</div>
-        </div>
-        <div class="mini-box bg-danger" id="boxUtilizacao">
-            <div class="mini-box-valor" id="boxUtilizacaoValor"><?= $r['utilizacao'] ?></div>
-            <div class="mini-box-label">% Máquina</div>
-        </div>
-        <?php endforeach; ?>
+        <?php if (empty($dados['prodSemanal'])): ?>
+
+    <div class=" fw-bold" style="font-size: 1.2rem; margin-right: 10px;">
+        Selecione um equipamento para visualizar o acompanhamento.
+    </div>
+
+<?php else: ?>
+            <?php foreach (($dados['prodSemanal'] ?? []) as $r):
+                if ($r['data'] !== $dataFormatada) {
+                        continue;
+                } ?>
+                <div class="mini-box bg-secondary" id="boxProgramacao">
+                    <div class="mini-box-valor" id="boxProgramacaoValor"><?= number_format($r['peso'], 0, ',', '.') ?></div>
+                    <div class="mini-box-label">Programação</div>
+                </div>
+                <div class="mini-box bg-success" id="boxProduzido">
+                    <div class="mini-box-valor" id="boxProduzidoValor"><?= number_format($r['peso_realizado'], 0, ',', '.') ?></div>
+                    <div class="mini-box-label">Produzido</div>
+                </div>
+                <div class="mini-box bg-info" id="boxSaldo">
+                    <div class="mini-box-valor" id="boxSaldoValor"><?= number_format($r['saldo'], 0, ',', '.') ?></div>
+                    <div class="mini-box-label">Saldo</div>
+                </div>
+                <div class="mini-box bg-danger" id="boxUtilizacao">
+                    <div class="mini-box-valor" id="boxUtilizacaoValor"><?= number_format($r['utilizacao'], 1, ',', '.') ?> %</div>
+                    <div class="mini-box-label">% Máquina</div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -74,8 +82,7 @@
                                         style="font-size: 1.2rem; color: cornflowerblue; border: 1px black;"
                                         data-bs-toggle="modal" data-bs-target="#modalEditarSemanal" data-bs-whatever="@mdo"
                                         data-id="<?= $t['id'] ?>"><i class="bi bi-pencil"></i></a>
-                                    <span
-                                        class="bg-white p-md-1 rounded-pill  text-primary fw-bolder"><?= $t['demanda'] ?></span>
+                                    <span class="bg-white p-md-1 rounded-pill  text-primary fw-bolder"> <?= $t['demanda'] ?></span>
                                 </td>
                                 <td><?= $t['produto_id'] ?></td>
                                 <td><?= $t['descricao'] ?></td>

@@ -14,6 +14,83 @@ $pagina = $_GET['page'] ?? 'dashboard';
 <script src="assets/js/enter-como-tab.js"></script>
 <script src="assets/js/temas.js"></script>
 
+<!-- FUNÇÕES PARA TODAS AS PÁGINAS -->
+<!-- Função para recolher os cards  -->
+<script>
+    //script para adicionar o toggle button nos formulários de inserção
+    document.addEventListener('DOMContentLoaded', function () {
+
+        // Constantes com os elementos de cada card — fica fácil adicionar um novo card aqui
+        const CARD_SEMANAL = {
+            card: document.getElementById('cardFormSemanal'),
+            btn: document.getElementById('btnToggleFormSemanal'),
+            icone: document.getElementById('iconeToggleFormSemanal'),
+            chave: 'formSemanal_aberto'
+        };
+        const CARD_DIARIA = {
+            card: document.getElementById('cardFormDiaria'),
+            btn: document.getElementById('btnToggleFormDiaria'),
+            icone: document.getElementById('iconeToggleFormDiaria'),
+            chave: 'formDiaria_aberto'
+        };
+        const CARD_QUINZENA = {
+            card: document.getElementById('cardFormQuinzena'),
+            btn: document.getElementById('btnToggleFormQuinzena'),
+            icone: document.getElementById('iconeToggleFormQuinzena'),
+            chave: 'formQuinzena_aberto'
+        };
+
+
+        // Função genérica: aplica o estado (aberto/fechado) em UM card específico
+        function aplicarEstado(config, aberto) {
+            if (aberto) {
+                config.card.classList.remove('collapsed-card');
+                config.icone.classList.replace('bi-chevron-down', 'bi-chevron-up');
+            } else {
+                config.card.classList.add('collapsed-card');
+                config.icone.classList.replace('bi-chevron-up', 'bi-chevron-down');
+            }
+        }
+
+        // Função genérica: alterna UM card específico e salva o estado dele
+        function alternar(config) {
+            const estaAberto = !config.card.classList.contains('collapsed-card');
+            const novoEstado = !estaAberto;
+
+            aplicarEstado(config, novoEstado);
+            localStorage.setItem(config.chave, novoEstado ? '1' : '0');
+        }
+
+        // Função que "liga" tudo pra um card: estado inicial + eventos de clique
+        function inicializarCard(config) {
+            // Se o card não existe nesta página, não faz nada (evita erro)
+            if (!config.card) {
+                return;
+            }
+            const header = config.card.querySelector('.card-header');
+
+            // Estado inicial: lê o localStorage; se nunca salvou, começa fechado
+            const salvo = localStorage.getItem(config.chave);
+            aplicarEstado(config, salvo === '1');
+
+            // Clicar no título alterna esse card
+            header.addEventListener('click', function () {
+                alternar(config);
+            });
+
+            // Clicar no botão alterna esse card, sem deixar o clique vazar pro header
+            config.btn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                alternar(config);
+            });
+        }
+
+        // Inicializa cada card independentemente
+        inicializarCard(CARD_DIARIA);
+        inicializarCard(CARD_SEMANAL);
+        inicializarCard(CARD_QUINZENA);
+    });
+</script>
 
 <?php if ($pagina === 'prog_diaria'): ?>
 
@@ -106,83 +183,6 @@ $pagina = $_GET['page'] ?? 'dashboard';
         data.addEventListener('input', filtrarTabela); // 'input' responde instantaneamente ao digitar a data
         recurso.addEventListener('change', filtrarTabela);
         recurso.addEventListener('input', filtrarTabela); // 'input' para filtrar enquanto digita no text/select
-    </script>
-
-    <!-- Função para recolher os cards  -->
-    <script>
-        //script para adicionar o toggle button nos formulários de inserção
-        document.addEventListener('DOMContentLoaded', function () {
-
-            // Constantes com os elementos de cada card — fica fácil adicionar um novo card aqui
-            const CARD_SEMANAL = {
-                card: document.getElementById('cardFormSemanal'),
-                btn: document.getElementById('btnToggleFormSemanal'),
-                icone: document.getElementById('iconeToggleFormSemanal'),
-                chave: 'formSemanal_aberto'
-            };
-            const CARD_DIARIA = {
-                card: document.getElementById('cardFormDiaria'),
-                btn: document.getElementById('btnToggleFormDiaria'),
-                icone: document.getElementById('iconeToggleFormDiaria'),
-                chave: 'formDiaria_aberto'
-            };
-            const CARD_QUINZENA = {
-                card: document.getElementById('cardFormQuinzena'),
-                btn: document.getElementById('btnToggleFormQuinzena'),
-                icone: document.getElementById('iconeToggleFormQuinzena'),
-                chave: 'formQuinzena_aberto'
-            };
-
-
-            // Função genérica: aplica o estado (aberto/fechado) em UM card específico
-            function aplicarEstado(config, aberto) {
-                if (aberto) {
-                    config.card.classList.remove('collapsed-card');
-                    config.icone.classList.replace('bi-chevron-down', 'bi-chevron-up');
-                } else {
-                    config.card.classList.add('collapsed-card');
-                    config.icone.classList.replace('bi-chevron-up', 'bi-chevron-down');
-                }
-            }
-
-            // Função genérica: alterna UM card específico e salva o estado dele
-            function alternar(config) {
-                const estaAberto = !config.card.classList.contains('collapsed-card');
-                const novoEstado = !estaAberto;
-
-                aplicarEstado(config, novoEstado);
-                localStorage.setItem(config.chave, novoEstado ? '1' : '0');
-            }
-
-            // Função que "liga" tudo pra um card: estado inicial + eventos de clique
-            function inicializarCard(config) {
-                // Se o card não existe nesta página, não faz nada (evita erro)
-                if (!config.card) {
-                    return;
-                }
-                const header = config.card.querySelector('.card-header');
-
-                // Estado inicial: lê o localStorage; se nunca salvou, começa fechado
-                const salvo = localStorage.getItem(config.chave);
-                aplicarEstado(config, salvo === '1');
-
-                // Clicar no título alterna esse card
-                header.addEventListener('click', function () {
-                    alternar(config);
-                });
-
-                // Clicar no botão alterna esse card, sem deixar o clique vazar pro header
-                config.btn.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    alternar(config);
-                });
-            }
-
-            // Inicializa cada card independentemente
-            inicializarCard(CARD_DIARIA);
-            inicializarCard(CARD_SEMANAL);
-            inicializarCard(CARD_QUINZENA);
-        });
     </script>
 
     <!-- Função para preencher o modal de telha -->
@@ -987,7 +987,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para realizar a busca do filtro semanal -->
     <script>
-     document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function () {
             const inputSemana = document.getElementById('semana_filtro');
             const inputRecurso = document.getElementById('recurso_filtro');
             inputSemana.addEventListener('change', carregarSemana);

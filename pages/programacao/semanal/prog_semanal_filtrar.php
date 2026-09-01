@@ -21,5 +21,11 @@ $dias = [
 ];
 $hoje = date('Y-m-d');
 
+$dados = [];
+
+if ($recursoId !== null) {
+    $dados['prodSemanal'] = $tabelaModel->listarProdSemanal($recursoId, $intervalo['inicio'], $intervalo['fim']);
+}
+
 include __DIR__ . '/dias.php';
 exit;
