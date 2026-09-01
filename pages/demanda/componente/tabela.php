@@ -56,7 +56,14 @@ $modoSelecao = $modoDemanda === 'selecao';
                 </tr>
                 <tr class="filtros-demanda">
                     <?php for ($i = 0; $i < 10; $i++): ?>
-                        <th><input type="text" class="form-control form-control-sm filtro-coluna" placeholder="Filtrar..."></th>
+                        <th>
+                            <input type="text"
+                                   class="form-control form-control-sm filtro-coluna"
+                                   data-tabela="<?= htmlspecialchars($idTabelaDemanda, ENT_QUOTES) ?>"
+                                   data-coluna="<?= $i ?>"
+                                   placeholder="Filtrar..."
+                                   autocomplete="off">
+                        </th>
                     <?php endfor; ?>
                     <?php if ($modoSelecao): ?><th></th><?php endif; ?>
                 </tr>
@@ -87,12 +94,15 @@ $modoSelecao = $modoDemanda === 'selecao';
 <style>
 #<?= htmlspecialchars($idTabelaDemanda) ?> thead tr.filtros-demanda th { padding:4px; background:var(--bs-body-bg); }
 #<?= htmlspecialchars($idTabelaDemanda) ?> .filtro-coluna { min-width:70px; font-size:.9em; }
+.dataTables_scrollHead .filtro-coluna { min-width:70px; font-size:.9em; }
 </style>
 
 <script>
 (function () {
+    const idTabela = <?= json_encode($idTabelaDemanda) ?>;
+
     function inicializarDemanda() {
-        const tabela = document.getElementById('<?= htmlspecialchars($idTabelaDemanda, ENT_QUOTES) ?>');
+        const tabela = document.getElementById(idTabela);
         if (!tabela || typeof DataTable === 'undefined' || tabela.dataset.dataTableInicializada === '1') return;
 
         const dt = new DataTable(tabela, {
@@ -115,37 +125,36 @@ $modoSelecao = $modoDemanda === 'selecao';
 
         tabela.dataset.dataTableInicializada = '1';
 
-        // Delegacao: funciona mesmo que o DataTables mova/recrie elementos do cabecalho.
-        tabela.addEventListener('input', function (event) {
-            const input = event.target.closest('input.filtro-coluna');
-            if (!input) return;
+        // Com scrollY o DataTables cria um cabecalho separado (.dataTables_scrollHead).
+        // Por isso o evento precisa ser delegado no document, e nao na tabela original.
+        document.addEventListener('input', function (event) {
+            const input = event.target.closest('.filtro-coluna');
+            if (!input || input.dataset.tabela !== idTabela) return;
 
-            const th = input.closest('th');
-            const linhaFiltros = tabela.querySelector('thead tr.filtros-demanda');
-            if (!th || !linhaFiltros) return;
-
-            const coluna = Array.from(linhaFiltros.children).indexOf(th);
-            if (coluna < 0) return;
+            const coluna = Number(input.dataset.coluna);
+            if (!Number.isInteger(coluna)) return;
 
             dt.column(coluna).search(input.value).draw();
         });
 
-        // Impede que clicar/digitar no filtro acione ordenacao do cabecalho.
-        tabela.addEventListener('click', function (event) {
-            if (event.target.closest('input.filtro-coluna')) event.stopPropagation();
+        document.addEventListener('click', function (event) {
+            if (event.target.closest('.filtro-coluna')) event.stopPropagation();
         }, true);
 
-        tabela.addEventListener('mousedown', function (event) {
-            if (event.target.closest('input.filtro-coluna')) event.stopPropagation();
+        document.addEventListener('mousedown', function (event) {
+            if (event.target.closest('.filtro-coluna')) event.stopPropagation();
         }, true);
 
-        tabela.addEventListener('keydown', function (event) {
-            if (event.target.closest('input.filtro-coluna')) event.stopPropagation();
+        document.addEventListener('keydown', function (event) {
+            if (event.target.closest('.filtro-coluna')) event.stopPropagation();
         }, true);
 
-        tabela.addEventListener('click', function (event) {
+        document.addEventListener('click', function (event) {
             const botao = event.target.closest('.btn-selecionar-demanda');
             if (!botao) return;
+
+            const tabelaBotao = botao.closest('table');
+            if (!tabelaBotao || tabelaBotao.id !== idTabela) return;
 
             const codigo = botao.dataset.codigo;
             const destino = window.demandaCampoDestino || '#codigo';
@@ -153,11 +162,11 @@ $modoSelecao = $modoDemanda === 'selecao';
             if (!campo) return;
 
             campo.value = codigo;
-            campo.dispatchEvent(new Event('input', { bubbles:true }));
-            campo.dispatchEvent(new Event('change', { bubbles:true }));
-            campo.dispatchEvent(new Event('blur', { bubbles:true }));
+            campo.dispatchEvent(new Event('input', { bubbles: true }));
+            campo.dispatchEvent(new Event('change', { bubbles: true }));
+            campo.dispatchEvent(new Event('blur', { bubbles: true }));
 
-            const modal = tabela.closest('.modal');
+            const modal = tabelaBotao.closest('.modal');
             if (modal && window.bootstrap) {
                 const instancia = bootstrap.Modal.getInstance(modal);
                 if (instancia) instancia.hide();
@@ -165,7 +174,10 @@ $modoSelecao = $modoDemanda === 'selecao';
         });
     }
 
-    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', inicializarDemanda);
-    else inicializarDemanda();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', inicializarDemanda);
+    } else {
+        inicializarDemanda();
+    }
 })();
 </script>
