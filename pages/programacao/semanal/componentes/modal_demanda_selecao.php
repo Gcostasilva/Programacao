@@ -19,60 +19,78 @@
 
 <script>
 (function () {
-    const botao = document.getElementById('btn_buscaDemanda');
-    const modalElement = document.getElementById('modalBuscaDemanda');
-    const corpo = document.getElementById('modalBuscaDemandaBody');
+    function inicializarModalDemanda() {
+        const botao = document.getElementById('btn_buscaDemanda');
+        const modalElement = document.getElementById('modalBuscaDemanda');
+        const corpo = document.getElementById('modalBuscaDemandaBody');
 
-    if (!botao || !modalElement || !corpo || typeof bootstrap === 'undefined') return;
+        if (!botao || !modalElement || !corpo) return;
 
-    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    let carregado = false;
-    let carregando = false;
+        // O script agora só é ligado depois do DOM estar pronto e do Bootstrap estar disponível.
+        if (typeof bootstrap === 'undefined') {
+            setTimeout(inicializarModalDemanda, 100);
+            return;
+        }
 
-    botao.addEventListener('click', function (event) {
-        event.preventDefault();
-        event.stopPropagation();
-        window.demandaCampoDestino = '#codigo';
-        modal.show();
-    });
+        if (botao.dataset.modalDemandaLigado === '1') return;
+        botao.dataset.modalDemandaLigado = '1';
 
-    modalElement.addEventListener('show.bs.modal', function () {
-        if (carregado || carregando) return;
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        let carregado = false;
+        let carregando = false;
 
-        carregando = true;
-        corpo.innerHTML = '<div class="text-center py-5"><div class="spinner-border" role="status"></div><div class="mt-2">Carregando demanda...</div></div>';
-
-        fetch('pages/demanda/modal.php', {
-            method: 'GET',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        })
-        .then(function (resposta) {
-            if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
-            return resposta.text();
-        })
-        .then(function (html) {
-            const temporario = document.createElement('div');
-            temporario.innerHTML = html;
-
-            const scripts = Array.from(temporario.querySelectorAll('script'));
-            scripts.forEach(function (script) { script.remove(); });
-
-            corpo.innerHTML = temporario.innerHTML;
-
-            scripts.forEach(function (script) {
-                const novoScript = document.createElement('script');
-                novoScript.textContent = script.textContent;
-                document.body.appendChild(novoScript);
-            });
-
-            carregado = true;
-            carregando = false;
-        })
-        .catch(function (erro) {
-            carregando = false;
-            corpo.innerHTML = '<div class="alert alert-danger m-3">Não foi possível carregar a Demanda.</div>';
-            console.error('Erro ao carregar Demanda no modal:', erro);
+        botao.addEventListener('click', function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            window.demandaCampoDestino = '#codigo';
+            modal.show();
         });
-    });
+
+        modalElement.addEventListener('show.bs.modal', function () {
+            if (carregado || carregando) return;
+
+            carregando = true;
+            corpo.innerHTML = '<div class="text-center py-5"><div class="spinner-border" role="status"></div><div class="mt-2">Carregando demanda...</div></div>';
+
+            fetch('pages/demanda/modal.php', {
+                method: 'GET',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(function (resposta) {
+                if (!resposta.ok) throw new Error('HTTP ' + resposta.status);
+                return resposta.text();
+            })
+            .then(function (html) {
+                const temporario = document.createElement('div');
+                temporario.innerHTML = html;
+
+                const scripts = Array.from(temporario.querySelectorAll('script'));
+                scripts.forEach(function (script) { script.remove(); });
+                corpo.innerHTML = temporario.innerHTML;
+
+                // Reexecuta apenas os scripts do componente da tabela.
+                scripts.forEach(function (script) {
+                    const novoScript = document.createElement('script');
+                    if (script.src) novoScript.src = script.src;
+                    else novoScript.textContent = script.textContent;
+                    document.body.appendChild(novoScript);
+                });
+
+                carregado = true;
+                carregando = false;
+            })
+            .catch(function (erro) {
+                carregando = false;
+                corpo.innerHTML = '<div class="alert alert-danger m-3">Não foi possível carregar a Demanda.</div>';
+                console.error('Erro ao carregar Demanda no modal:', erro);
+            });
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', inicializarModalDemanda, { once: true });
+    } else {
+        inicializarModalDemanda();
+    }
 })();
 </script>
