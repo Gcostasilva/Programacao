@@ -97,7 +97,6 @@ function nomeDiaRelatorio(string $data): string
 
     <form method="get" class="card shadow-sm mb-3 report-filter report-toolbar">
         <input type="hidden" name="page" value="relatorio_programacao">
-<<<<<<< HEAD
         <div class="card-body">
             <div class="row g-3 align-items-end">
                 <div class="col-md-2">
@@ -109,16 +108,6 @@ function nomeDiaRelatorio(string $data): string
                 <input type="date" name="fim" class="form-control" value="<?= htmlspecialchars($fim) ?>" required>
                 <div class="col-md-4">
                     <label class="form-label">Equipamento</label>
-=======
-        <div class="card-body py-2">
-            <div class="row g-2 align-items-end">
-                <div class="col-md-3 col-lg-2">
-                    <label class="form-label mb-1">Semana</label>
-                    <input type="week" name="semana" class="form-control" value="<?= htmlspecialchars($semana) ?>" required>
-                </div>
-                <div class="col-md-5 col-lg-4">
-                    <label class="form-label mb-1">Equipamento</label>
->>>>>>> 3d08d5287b9406c25816d2dfa7c8794840bdfe4d
                     <select name="recurso_id" class="form-select">
                         <option value="">Todos os equipamentos</option>
                         <?php foreach ($recursos as $recurso): ?>
@@ -191,19 +180,11 @@ function nomeDiaRelatorio(string $data): string
             <?php endif; ?>
 
             <?php foreach ($relatorio['equipamentos'] as $equipamento): ?>
-<<<<<<< HEAD
                 <section class="report-equipment mb-5">
                     <div class="report-section-title d-flex justify-content-between align-items-center border rounded-top px-3 py-2">
                         <strong><?= htmlspecialchars($equipamento['nome']) ?></strong>
                         <span class="text-muted small">
                             Total programado: <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado']/1000) ?> Ton
-=======
-                <section class="report-equipment">
-                    <div class="report-equipment-header">
-                        <span><?= htmlspecialchars($equipamento['nome']) ?></span>
-                        <span class="report-equipment-total">
-                            Total: <?= formatarNumeroRelatorio((float) $equipamento['totais']['quantidade']) ?>
->>>>>>> 3d08d5287b9406c25816d2dfa7c8794840bdfe4d
                         </span>
                     </div>
 
