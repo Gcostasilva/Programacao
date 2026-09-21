@@ -13,12 +13,13 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
 <script src="assets/js/enter-como-tab.js"></script>
 <script src="assets/js/temas.js"></script>
+<script src="assets/js/global.js"></script>
 
 <!-- FUNÇÕES PARA TODAS AS PÁGINAS -->
 <!-- Função para recolher os cards  -->
 <script>
     //script para adicionar o toggle button nos formulários de inserção
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
 
         // Constantes com os elementos de cada card — fica fácil adicionar um novo card aqui
         const CARD_SEMANAL = {
@@ -74,12 +75,12 @@ $pagina = $_GET['page'] ?? 'dashboard';
             aplicarEstado(config, salvo === '1');
 
             // Clicar no título alterna esse card
-            header.addEventListener('click', function () {
+            header.addEventListener('click', function() {
                 alternar(config);
             });
 
             // Clicar no botão alterna esse card, sem deixar o clique vazar pro header
-            config.btn.addEventListener('click', function (e) {
+            config.btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 alternar(config);
             });
@@ -129,14 +130,15 @@ $pagina = $_GET['page'] ?? 'dashboard';
                     linha.style.display = (corrRecurso && corrData) ? '' : 'none';
                 }
             }
+
             function atualizarIndicadores(dados) {
                 const mapa = {
                     boxProgramacaoValor: dados.programacao,
                     boxProduzidoValor: dados.produzido,
                     boxSaldoValor: dados.saldo,
-                    boxUtilizacaoValor: dados.utilizacao != null
-                        ? (dados.utilizacao * 100).toFixed(1) + '%'
-                        : '--'
+                    boxUtilizacaoValor: dados.utilizacao != null ?
+                        (dados.utilizacao * 100).toFixed(1) + '%' :
+                        '--'
                 };
 
                 for (const id in mapa) {
@@ -165,9 +167,15 @@ $pagina = $_GET['page'] ?? 'dashboard';
                             const d = json.dados[0];
 
                             atualizarIndicadores({
-                                programacao: (Number(d.peso) || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 }),
-                                produzido: (Number(d.peso_realizado) || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 }),
-                                saldo: (Number(d.saldo) || 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 }),
+                                programacao: (Number(d.peso) || 0).toLocaleString('pt-BR', {
+                                    maximumFractionDigits: 0
+                                }),
+                                produzido: (Number(d.peso_realizado) || 0).toLocaleString('pt-BR', {
+                                    maximumFractionDigits: 0
+                                }),
+                                saldo: (Number(d.saldo) || 0).toLocaleString('pt-BR', {
+                                    maximumFractionDigits: 0
+                                }),
                                 utilizacao: d.utilizacao
                             });
                         }
@@ -187,22 +195,22 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para preencher o modal de telha -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const modalEditar = document.getElementById('modalEditar');
             const formEditar = document.getElementById('formEditar');
 
-            modalEditar.addEventListener('show.bs.modal', function (event) {
+            modalEditar.addEventListener('show.bs.modal', function(event) {
                 const botao = event.relatedTarget;
                 const id = botao.dataset.id;
 
                 fetch("index.php?page=prog_diaria_buscar&id=" + id)
-                    .then(function (resposta) {
+                    .then(function(resposta) {
                         if (!resposta.ok) {
                             throw new Error('Erro ao buscar registro');
                         }
                         return resposta.json();
                     })
-                    .then(function (registro) {
+                    .then(function(registro) {
                         document.getElementById('edit_id').value = registro.id;
                         document.getElementById('edit_recurso').value = registro.maquina_id;
                         document.getElementById('edit_data').value = registro.data_programacao;
@@ -218,28 +226,28 @@ $pagina = $_GET['page'] ?? 'dashboard';
                         // Foco no campo, agora dentro do momento certo (quando o modal abre)
                         document.getElementById('edit_peso_real').focus();
                     })
-                    .catch(function (erro) {
+                    .catch(function(erro) {
                         alert('Não foi possível carregar o registro para edição.');
                         console.error(erro);
                     });
             });
 
-            formEditar.addEventListener('submit', function (event) {
+            formEditar.addEventListener('submit', function(event) {
                 event.preventDefault();
 
                 const formData = new FormData(formEditar);
 
                 fetch('index.php?page=prog_diaria_editar', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(function (resposta) {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(resposta) {
                         if (!resposta.ok) {
                             throw new Error('Erro ao atualizar');
                         }
                         location.reload();
                     })
-                    .catch(function (erro) {
+                    .catch(function(erro) {
                         alert('Não foi possível salvar a edição.');
                         console.error(erro);
                     });
@@ -249,7 +257,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para preencher o modal baixa de telha  -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const modalBaixar = document.getElementById('modalBaixar');
 
@@ -322,7 +330,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                         ' | ' + registro.aco + ' | Peso ' + registro.peso +
                         (jaBaixado ? ' <span class="badge bg-success">já baixado</span>' : '');
 
-                    item.addEventListener('click', function () {
+                    item.addEventListener('click', function() {
                         selecionarRegistro(registro);
                     });
 
@@ -352,7 +360,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
             }
 
             // Busca por pedido enquanto o usuário digita (com debounce)
-            inputPedido.addEventListener('input', function () {
+            inputPedido.addEventListener('input', function() {
 
                 clearTimeout(debounceTimer);
 
@@ -365,7 +373,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                     return;
                 }
 
-                debounceTimer = setTimeout(function () {
+                debounceTimer = setTimeout(function() {
 
                     fetch('index.php?page=prog_diaria_baixar&pedido=' + encodeURIComponent(pedido))
                         .then(response => response.json())
@@ -388,7 +396,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
             });
 
             // Envia a atualização do peso real
-            form.addEventListener('submit', function (e) {
+            form.addEventListener('submit', function(e) {
 
                 e.preventDefault();
 
@@ -402,9 +410,9 @@ $pagina = $_GET['page'] ?? 'dashboard';
                 dadosForm.append('peso_real', inputPesoReal.value);
 
                 fetch('index.php?page=prog_diaria_baixa_salvar', {
-                    method: 'POST',
-                    body: dadosForm
-                })
+                        method: 'POST',
+                        body: dadosForm
+                    })
                     .then(response => response.json())
                     .then(resposta => {
 
@@ -419,9 +427,11 @@ $pagina = $_GET['page'] ?? 'dashboard';
                         console.error('Erro ao atualizar:', erro);
                     });
             });
-            modalBaixar.addEventListener('shown.bs.modal', function () {
+            modalBaixar.addEventListener('shown.bs.modal', function() {
                 const campo = document.getElementById('baixa_pedido');
-                setTimeout(function () { campo.focus(); }, 100);
+                setTimeout(function() {
+                    campo.focus();
+                }, 100);
             });
             // Se o usuário fechar o modal no meio do processo, garante estado limpo na próxima abertura
             modalBaixar.addEventListener('hidden.bs.modal', resetarModal);
@@ -431,8 +441,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para classificar a tabela de programação diária  -->
     <script>
-
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const tbody = document.getElementById('tabelaDados');
 
             if (!tbody) return; // guarda de segurança, igual você já faz com os cards
@@ -442,27 +451,30 @@ $pagina = $_GET['page'] ?? 'dashboard';
                 handle: 'td:first-child', // arraste iniciado pela primeira célula (data). Remova esta linha se quiser arrastar de qualquer ponto da linha
 
                 // Impede soltar a linha num ponto onde a data seja diferente
-                onMove: function (evt) {
+                onMove: function(evt) {
                     const dataOrigem = evt.dragged.dataset.data;
                     const dataDestino = evt.related.dataset.data;
                     return dataOrigem === dataDestino;
                 },
 
-                onEnd: function () {
+                onEnd: function() {
                     // Depois de soltar, pega todas as linhas do MESMO dia da linha movida
                     // e envia a nova ordem pro backend
                     const linhas = Array.from(tbody.querySelectorAll('tr'));
 
                     // Agrupa por data, mantendo a ordem atual do DOM
                     const grupos = {};
-                    linhas.forEach(function (linha, index) {
+                    linhas.forEach(function(linha, index) {
                         const data = linha.dataset.data;
                         if (!grupos[data]) grupos[data] = [];
-                        grupos[data].push({ id: linha.dataset.id, posicao: grupos[data].length });
+                        grupos[data].push({
+                            id: linha.dataset.id,
+                            posicao: grupos[data].length
+                        });
                     });
 
                     // Envia cada grupo (normalmente só um vai ter mudado, mas é seguro reenviar todos)
-                    Object.values(grupos).forEach(function (grupo) {
+                    Object.values(grupos).forEach(function(grupo) {
                         salvarOrdem(grupo);
                     });
                 }
@@ -470,10 +482,14 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
             function salvarOrdem(itens) {
                 fetch(`index.php?page=prog_diaria_reordenar`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ itens: itens })
-                })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            itens: itens
+                        })
+                    })
                     .then(response => response.json())
                     .then(data => {
                         if (!data.sucesso) {
@@ -483,30 +499,29 @@ $pagina = $_GET['page'] ?? 'dashboard';
                     .catch(error => console.error('Erro na requisição:', error));
             }
         });
-
     </script>
 
     <!-- Função para filtrar a tabela de programação diária  -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const checkbox = document.getElementById('exibir_baixados');
             const tbody = document.getElementById('tabelaDados');
 
             if (!checkbox || !tbody) return;
 
-            checkbox.addEventListener('change', function () {
+            checkbox.addEventListener('change', function() {
 
                 const exibir = checkbox.checked ? '1' : '0';
 
                 fetch(`index.php?page=prog_diaria_filtrar&exibir_baixados=${exibir}`)
-                    .then(function (response) {
+                    .then(function(response) {
                         return response.text();
                     })
-                    .then(function (html) {
+                    .then(function(html) {
                         tbody.innerHTML = html;
                     })
-                    .catch(function (erro) {
+                    .catch(function(erro) {
                         console.error('Erro ao filtrar programação:', erro);
                     });
             });
@@ -521,13 +536,13 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para preencher a descrição produto ao sair do codigo -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const codigoInput = document.getElementById('codigo');
             const descricaoInput = document.getElementById('descricao_sem');
             const pesoLiquidoInput = document.getElementById('peso_liquido');
             const espessuraInput = document.getElementById('espessura_prod');
 
-            codigoInput.addEventListener('blur', function () {
+            codigoInput.addEventListener('blur', function() {
 
                 const codigo = this.value.trim();
 
@@ -586,12 +601,12 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para preencher a descrição produto ao sair do codigo DENTRO DO MODAL -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const codigoEditInput = document.getElementById('edit_sem_codigo_s');
             const descricaoEditInput = document.getElementById('edit_descricao_COMP');
             const pesoLiquidoEditInput = document.getElementById('edit_sem_peso_liquido');
 
-            codigoEditInput.addEventListener('blur', function () {
+            codigoEditInput.addEventListener('blur', function() {
 
                 const codigoEdit = this.value.trim();
                 fetch(`index.php?page=prog_semanal_buscarCodigo&codigo=${encodeURIComponent(codigoEdit)}`)
@@ -643,12 +658,12 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para multiplicar peso líquido por quantidade -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const quantidadeInput = document.querySelector('input[name="quantidade"]');
             const pesoLiquidoInput = document.getElementById('peso_liquido');
             const pesoInput = document.querySelector('input[name="peso"]');
 
-            quantidadeInput.addEventListener('input', function () {
+            quantidadeInput.addEventListener('input', function() {
                 const quantidade = parseFloat(this.value);
                 const pesoLiquido = parseFloat(pesoLiquidoInput.value);
 
@@ -663,12 +678,12 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para Dividir peso pelo peso liquido -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const quantidadeInput = document.querySelector('input[name="quantidade"]');
             const pesoLiquidoInput = document.getElementById('peso_liquido');
             const pesoInput = document.querySelector('input[name="peso"]');
 
-            pesoInput.addEventListener('input', function () {
+            pesoInput.addEventListener('input', function() {
                 const quantidade = parseFloat(this.value);
                 const pesoLiquido = parseFloat(pesoLiquidoInput.value);
 
@@ -683,8 +698,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para limitar a data com base na semana -->
     <script>
-
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const semanaInput = document.getElementById('semana');
             const dataInput = document.getElementById('data');
@@ -767,23 +781,23 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para preencher o modal  -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const modalEditarSemanal = document.getElementById('modalEditarSemanal');
             const formEditarSemanal = document.getElementById('formEditarSemanal');
 
-            modalEditarSemanal.addEventListener('show.bs.modal', function (event) {
+            modalEditarSemanal.addEventListener('show.bs.modal', function(event) {
                 const botao = event.relatedTarget;
                 const id = botao.dataset.id;
 
                 fetch("index.php?page=prog_semanal_buscar&id=" + id)
-                    .then(function (resposta) {
+                    .then(function(resposta) {
                         if (!resposta.ok) {
                             throw new Error('Erro ao buscar registro');
                         }
                         return resposta.json();
                     })
-                    .then(function (registro) {
+                    .then(function(registro) {
                         document.getElementById('edit_sem_id').value = registro.id;
                         document.getElementById('edit_sem_recurso').value = registro.maquina_id;
                         document.getElementById('edit_sem_data').value = registro.data_programacao;
@@ -809,47 +823,49 @@ $pagina = $_GET['page'] ?? 'dashboard';
                         document.getElementById('edit_sem_peso_realizado').value = registro.peso_realizado;
                         document.getElementById('edit_sem_observacao').value = registro.obs;
                     })
-                    .catch(function (erro) {
+                    .catch(function(erro) {
                         alert('Não foi possível carregar o registro para edição.');
                         console.error(erro);
                     });
             });
 
-            formEditarSemanal.addEventListener('submit', function (event) {
+            formEditarSemanal.addEventListener('submit', function(event) {
                 event.preventDefault();
 
                 const formData = new FormData(formEditarSemanal);
 
                 fetch('index.php?page=prog_semanal_editar', {
-                    method: 'POST',
-                    body: formData
-                })
-                    .then(function (resposta) {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(function(resposta) {
                         if (!resposta.ok) {
                             throw new Error('Erro ao atualizar');
                         }
                         location.reload();
                     })
-                    .catch(function (erro) {
+                    .catch(function(erro) {
                         alert('Não foi possível salvar a edição.');
                         console.error(erro);
                     });
             });
-            modalEditarSemanal.addEventListener('shown.bs.modal', function () {
+            modalEditarSemanal.addEventListener('shown.bs.modal', function() {
                 const campo = document.getElementById('edit_sem_quantidade_realizada');
-                setTimeout(function () { campo.focus(); }, 100);
+                setTimeout(function() {
+                    campo.focus();
+                }, 100);
             });
         });
     </script>
 
     <!-- Função para multiplicar peso líquido por quantidade dentro do modal -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const editarquantidadeInput = document.querySelector('input[name="peca_realizada"]');
             const editarpesoInput = document.querySelector('input[name="peso_realizado"]');
             const editarpesoLiquidoInput = document.getElementById('edit_sem_peso_liquido');
 
-            editarquantidadeInput.addEventListener('input', function () {
+            editarquantidadeInput.addEventListener('input', function() {
                 const quantidade_sem = parseFloat(this.value);
                 const pesoLiquido_sem = parseFloat(editarpesoLiquidoInput.value);
 
@@ -864,11 +880,11 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Filtro de equipamento e data para o formulário semanal -->
     <script>
-        document.getElementById('recurso_filtro').addEventListener('change', function () {
+        document.getElementById('recurso_filtro').addEventListener('change', function() {
             const recursoSelecionado = this.value;
             const linhas = document.querySelectorAll('#tabelaSemanal tr');
 
-            linhas.forEach(function (linha) {
+            linhas.forEach(function(linha) {
                 if (recursoSelecionado === '' || linha.dataset.recurso === recursoSelecionado) {
                     linha.style.display = '';
                 } else {
@@ -898,16 +914,16 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
             const tbodys = document.querySelectorAll('.tabelaSemanal');
 
-            tbodys.forEach(function (tbody) {
+            tbodys.forEach(function(tbody) {
                 Sortable.create(tbody, {
                     animation: 150,
                     handle: 'td:first-child',
                     group: 'semanal', // MESMO nome em todos os tbody -> permite mover entre eles
 
-                    onEnd: function (evt) {
+                    onEnd: function(evt) {
                         const linhaMovida = evt.item;
-                        const tbodyDestino = evt.to;   // <tbody> onde a linha caiu
-                        const tbodyOrigem = evt.from;  // <tbody> de onde ela saiu
+                        const tbodyDestino = evt.to; // <tbody> onde a linha caiu
+                        const tbodyOrigem = evt.from; // <tbody> de onde ela saiu
 
                         const novaData = tbodyDestino.dataset.data;
                         const dataAnterior = linhaMovida.dataset.data; // ainda guarda o valor antigo, por enquanto
@@ -930,7 +946,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                 const novaData = tbody.dataset.data;
                 const linhas = Array.from(tbody.querySelectorAll('tr'));
 
-                const itens = linhas.map(function (linha, index) {
+                const itens = linhas.map(function(linha, index) {
                     return {
                         id: linha.dataset.id,
                         posicao: index,
@@ -941,10 +957,14 @@ $pagina = $_GET['page'] ?? 'dashboard';
                 if (itens.length === 0) return; // dia ficou vazio, nada pra salvar
 
                 fetch('index.php?page=prog_semanal_reordenar', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ itens: itens })
-                })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            itens: itens
+                        })
+                    })
                     .then(response => response.json())
                     .then(data => {
                         if (!data.sucesso) {
@@ -954,7 +974,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                     .catch(error => console.error('Erro na requisição:', error));
             }
         }
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             inicializarSortableSemanal();
         });
     </script>
@@ -987,7 +1007,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função para realizar a busca do filtro semanal -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const inputSemana = document.getElementById('semana_filtro');
             const inputRecurso = document.getElementById('recurso_filtro');
             inputSemana.addEventListener('change', carregarSemana);
@@ -1011,17 +1031,17 @@ $pagina = $_GET['page'] ?? 'dashboard';
                 params.append('recurso_filtro', recurso);
             }
             fetch('index.php?' + params.toString())
-                .then(function (resposta) {
+                .then(function(resposta) {
                     if (!resposta.ok) {
                         throw new Error('Erro ao buscar semana');
                     }
                     return resposta.text();
                 })
-                .then(function (html) {
+                .then(function(html) {
                     document.getElementById('areaSemanal').innerHTML = html;
                     inicializarSortableSemanal();
                 })
-                .catch(function (erro) {
+                .catch(function(erro) {
 
                     alert('Não foi possível carregar a semana selecionada.');
                     console.error(erro);
@@ -1031,7 +1051,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função de multiplicação dentro do modal de chapa -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const espessuraInput = document.querySelector('input[name="espessura_chapa"]');
 
@@ -1064,7 +1084,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
             larguraInput.addEventListener('input', calcularPeso);
             comprimentoInput.addEventListener('input', calcularPeso);
 
-            quantidadeInput.addEventListener('input', function () {
+            quantidadeInput.addEventListener('input', function() {
                 const quantidade = parseFloat(this.value);
                 const pesoLiquido = parseFloat(pesoLiquidoInput.value);
 
@@ -1074,7 +1094,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                     pesoInput.value = '';
                 }
             });
-            pesoInput.addEventListener('input', function () {
+            pesoInput.addEventListener('input', function() {
                 const peso = parseFloat(this.value);
                 const pesoLiquido = parseFloat(pesoLiquidoInput.value);
 
@@ -1090,7 +1110,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
             // adiciona o evento que captura o envio do formulário para atualizar os campos no formulário principal
             const btnAplicarCalculoChapa = document.getElementById('btnAplicarCalculoChapa');
 
-            btnAplicarCalculoChapa.addEventListener('click', function (e) {
+            btnAplicarCalculoChapa.addEventListener('click', function(e) {
 
                 const quantidade = parseFloat(quantidadeInput.value);
                 const peso = parseFloat(pesoInput.value);
@@ -1124,11 +1144,10 @@ $pagina = $_GET['page'] ?? 'dashboard';
             });
 
         });
-
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const modalCalculoChapa = document.getElementById('modalCalculo_chapa');
             const espessuraSemanal = document.getElementById('espessura_prod');
@@ -1138,7 +1157,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                 return;
             }
 
-            modalCalculoChapa.addEventListener('show.bs.modal', function () {
+            modalCalculoChapa.addEventListener('show.bs.modal', function() {
                 espessuraModal.value = espessuraSemanal.value;
             });
 
@@ -1148,7 +1167,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Função de multiplicação dentro do modal de perfil -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const btnAplicarCalculoPerfil = document.getElementById('btnAplicarCalculoPerfil');
 
@@ -1156,7 +1175,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                 return;
             }
 
-            btnAplicarCalculoPerfil.addEventListener('click', function (e) {
+            btnAplicarCalculoPerfil.addEventListener('click', function(e) {
 
                 // ==================================================
                 // CAMPOS DO MODAL DE CÁLCULO DE PERFIL
@@ -1231,7 +1250,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
     <!-- Funcçao da busca do codigo -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
             const botaoBusca = document.getElementById('btn_buscaCodigo');
             const modalElemento = document.getElementById('modalBuscaCodigo');
@@ -1246,11 +1265,11 @@ $pagina = $_GET['page'] ?? 'dashboard';
             const modal = new bootstrap.Modal(modalElemento);
 
             // Abrir modal
-            botaoBusca.addEventListener('click', function () {
+            botaoBusca.addEventListener('click', function() {
 
                 campoPesquisa.value = '';
 
-                tabela.querySelectorAll('tr').forEach(function (linha) {
+                tabela.querySelectorAll('tr').forEach(function(linha) {
                     linha.style.display = '';
                 });
 
@@ -1258,11 +1277,11 @@ $pagina = $_GET['page'] ?? 'dashboard';
             });
 
             // Filtrar pela descrição
-            campoPesquisa.addEventListener('input', function () {
+            campoPesquisa.addEventListener('input', function() {
 
                 const busca = this.value.toLowerCase().trim();
 
-                tabela.querySelectorAll('tr').forEach(function (linha) {
+                tabela.querySelectorAll('tr').forEach(function(linha) {
 
                     const descricao = linha.cells[1].textContent.toLowerCase();
 
@@ -1272,7 +1291,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
             });
 
             // Selecionar código
-            tabela.addEventListener('click', function (event) {
+            tabela.addEventListener('click', function(event) {
 
                 const botao = event.target.closest('.btnSelecionarCodigo');
 
@@ -1293,14 +1312,16 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
                     campoCodigo.focus();
 
-                }, { once: true });
+                }, {
+                    once: true
+                });
 
                 // Fecha o modal
                 modal.hide();
             });
 
             // Foco automático na pesquisa
-            modalElemento.addEventListener('shown.bs.modal', function () {
+            modalElemento.addEventListener('shown.bs.modal', function() {
                 campoPesquisa.focus();
             });
 
@@ -1313,6 +1334,10 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
 <?php if ($pagina === 'prog_quinzena'): ?>
 
+<?php endif; ?>
 
-
+<?php if ($pagina === 'pedidos'): ?>
+    <script>
+        
+    </script>
 <?php endif; ?>

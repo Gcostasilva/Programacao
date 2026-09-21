@@ -14,7 +14,7 @@ Router::add(
 );
 Router::add(
     'pedidos',
-    'pages/pedidos/index.php',
+    'controllers/PedidosController.php',
     'Pedidos na Industria'
 );
 Router::add(
@@ -145,4 +145,12 @@ Router::add(
     'temas',
     'pages/temas.php',
     'Selecione seu tema'
+);
+
+// pedidos -------------------------------------------
+
+Router::add(
+    'pedidos_salvar',
+    'pages/pedidos/salvar.php',
+    'Pedidos na industria'
 );

@@ -57,7 +57,7 @@ class ProgramacaoModel extends BaseModel
                 ':vendedor' => $dados['vendedor'],
                 ':peso' => $dados['peso'],
                 ':falta_mp' => isset($_POST['falta_mp']) ? 1 : 0,
-                ':observacao' => $dados['observacao']
+                ':observacao' => strtoupper($dados['observacao'])
 
             ]);
 
@@ -194,7 +194,7 @@ class ProgramacaoModel extends BaseModel
                 ':vendedor' => $dados['vendedor'],
                 ':peso' => $dados['peso'],
                 ':falta_mp' => $dados['falta_mp'],
-                ':observacao' => $dados['observacao']
+                ':observacao' => strtoupper($dados['observacao'])
 
             ]);
 
@@ -305,12 +305,12 @@ class ProgramacaoModel extends BaseModel
                 ':semana' => $dados['semana'],
                 ':recurso' => $dados['recurso'],
                 ':data_prog' => $dados['data'],
-                ':demanda' => $dados['demanda'],
+                ':demanda' => strtoupper($dados['demanda']),
                 ':produto' => $dados['codigo'],
-                'complemento_descricao' => $dados['complemento_descricao'],
+                'complemento_descricao' => strtoupper($dados['complemento_descricao']),
                 ':qtd' => $dados['quantidade'],
                 ':peso' => $dados['peso'],
-                ':observacao' => $dados['observacao']
+                ':observacao' => strtoupper($dados['observacao'])
 
             ]);
 
@@ -358,14 +358,14 @@ class ProgramacaoModel extends BaseModel
                 ':semana' => $dados['semana'],
                 ':recurso' => $dados['recurso'],
                 ':data_prog' => $dados['data'],
-                ':demanda' => $dados['demanda'],
+                ':demanda' => strtoupper($dados['demanda']),
                 ':produto' => $dados['codigo'],
-                ':descricao_COMP' => $dados['descricao_COMP'],
+                ':descricao_COMP' => strtoupper($dados['descricao_COMP']),
                 ':qtd' => $dados['quantidade'],
                 ':peso' => $dados['peso'],
                 ':peca_realizada' => $dados['peca_realizada'],
                 ':peso_realizado' => $dados['peso_realizado'],
-                ':observacao' => $dados['observacao'],
+                ':observacao' => strtoupper($dados['observacao']),
                 ':id' => $dados['id']
             ]);
             error_log('ID recebido: ' . var_export($dados['id'], true));

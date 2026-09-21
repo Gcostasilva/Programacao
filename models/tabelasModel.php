@@ -179,4 +179,32 @@ class tabelasModel extends BaseModel
             throw $erro;
         }
     }
+
+    public function tabelaPedidos()
+    {
+        try {
+            $sql = "SELECT * FROM pedidos_industria";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $erro) {
+            throw $erro;
+        }
+    }
+
+    public function tabelaPedidos_filtrado(string $pedido)
+    {
+        try {
+            $sql = "SELECT * FROM pedidos_industria where pedido = :pedido order by entrada";
+
+            $stmt = $this->pdo->prepare($sql);
+            $stmt->execute([':pedido' => $pedido]);
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $erro) {
+            throw $erro;
+        }
+    }
 }
