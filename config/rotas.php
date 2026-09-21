@@ -28,6 +28,11 @@ Router::add(
     'Relatórios'
 );
 Router::add(
+    'relatorio_programacao',
+    'pages/relatorios/programacao.php',
+    'Relatório de Programação'
+);
+Router::add(
     'relatorio_programacao_dados',
     'controllers/RelatorioProgramacao_Controller.php',
     'Dados do Relatório de Programação'
