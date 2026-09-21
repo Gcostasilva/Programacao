@@ -1,16 +1,16 @@
 <?php
 
 require_once __DIR__ . '/../models/ProgramacaoQuinzenalModel.php';
-require_once __DIR__ . '/../models/tabelasModel.php';
+require_once __DIR__ . '/../models/ProdutoModel.php';
 
 $model = new ProgramacaoQuinzenalModel();
 $model->garantirEstrutura();
-$tabelas = new tabelasModel();
+$produtosModel = new ProdutoModel();
 
 $quinzena = $_GET['quinzena'] ?? date('Y-m') . '-' . (date('d') <= 15 ? '1' : '2');
 
 $dados = [
-    'produtos' => $tabelas->listaCodigos(),
+    'produtos' => $produtosModel->listarCodigosQuinzenal(),
     'quinzena' => $quinzena,
 ];
 
