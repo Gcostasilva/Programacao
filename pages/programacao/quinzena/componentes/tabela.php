@@ -1,6 +1,22 @@
+<?php
+$partesQuinzena = explode('-', $quinzena);
+$anoMes = $partesQuinzena[0] . '-' . $partesQuinzena[1];
+$numeroQuinzena = (int)($partesQuinzena[2] ?? 1);
+$anterior = $numeroQuinzena === 2 ? $anoMes . '-1' : date('Y-m', strtotime($anoMes . '-01 -1 month')) . '-2';
+$proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMes . '-01 +1 month')) . '-1';
+?>
+
 <div class="card mb-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h3 class="card-title mb-0">Programação de Produção — <?= htmlspecialchars($quinzena) ?></h3>
+    <div class="card-header d-flex justify-content-between align-items-center gap-2">
+        <div class="d-flex align-items-center gap-2">
+            <a class="btn btn-sm btn-outline-secondary" href="index.php?page=prog_quinzenal&quinzena=<?= urlencode($anterior) ?>" title="Quinzena anterior">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            <h3 class="card-title mb-0">Programação de Produção — <?= htmlspecialchars($quinzena) ?></h3>
+            <a class="btn btn-sm btn-outline-secondary" href="index.php?page=prog_quinzenal&quinzena=<?= urlencode($proxima) ?>" title="Próxima quinzena">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
         <span class="text-muted small"><?= count($tabela) ?> item(ns)</span>
     </div>
     <div class="card-body p-0">
@@ -38,9 +54,7 @@
                                     <?= number_format($produzido, 3, ',', '.') ?>
                                 </span>
                             </td>
-                            <td class="text-end text-nowrap fw-semibold">
-                                <?= number_format($saldo, 3, ',', '.') ?>
-                            </td>
+                            <td class="text-end text-nowrap fw-semibold"><?= number_format($saldo, 3, ',', '.') ?></td>
                             <td class="text-nowrap"><?= htmlspecialchars($item['ordem_producao'] ?? '') ?></td>
                             <td><?= htmlspecialchars($item['obs'] ?? '') ?></td>
                             <td class="text-center text-nowrap">
@@ -69,30 +83,12 @@
             <div class="modal-body">
                 <input type="hidden" name="id" id="edit_q_id">
                 <div class="row g-3">
-                    <div class="col-md-4">
-                        <label class="form-label">Quinzena</label>
-                        <input class="form-control" name="quinzena" id="edit_q_quinzena" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Código</label>
-                        <input class="form-control" name="produto_id" id="edit_q_produto" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Quantidade a produzir</label>
-                        <input class="form-control" type="number" name="quantidade" id="edit_q_quantidade" min="0.001" step="0.001" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Produzido</label>
-                        <input class="form-control" type="number" name="peca_realizada" id="edit_q_produzido" min="0" step="0.001" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Ordem de Produção</label>
-                        <input class="form-control" name="ordem_producao" id="edit_q_op">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Observação</label>
-                        <input class="form-control" name="obs" id="edit_q_obs">
-                    </div>
+                    <div class="col-md-4"><label class="form-label">Quinzena</label><input class="form-control" name="quinzena" id="edit_q_quinzena" readonly></div>
+                    <div class="col-md-4"><label class="form-label">Código</label><input class="form-control" name="produto_id" id="edit_q_produto" required></div>
+                    <div class="col-md-4"><label class="form-label">Quantidade a produzir</label><input class="form-control" type="number" name="quantidade" id="edit_q_quantidade" min="0.001" step="0.001" required></div>
+                    <div class="col-md-4"><label class="form-label">Produzido</label><input class="form-control" type="number" name="peca_realizada" id="edit_q_produzido" min="0" step="0.001" required></div>
+                    <div class="col-md-4"><label class="form-label">Ordem de Produção</label><input class="form-control" name="ordem_producao" id="edit_q_op"></div>
+                    <div class="col-md-4"><label class="form-label">Observação</label><input class="form-control" name="obs" id="edit_q_obs"></div>
                 </div>
             </div>
             <div class="modal-footer">
