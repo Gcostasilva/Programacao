@@ -57,7 +57,7 @@ function formatarDataRelatorio(string $data): string
 
 function formatarNumeroRelatorio(float $valor): string
 {
-    return number_format($valor, 2, ',', '.');
+    return number_format($valor, 0, ',', '.');
 }
 
 function nomeDiaRelatorio(string $data): string
@@ -169,13 +169,7 @@ function nomeDiaRelatorio(string $data): string
                         </div>
                     </div>
 
-                    <?php if ($recursoId !== null && !empty($relatorio['equipamentos'])): ?>
-                        <div class="report-equipment-highlight">
-                            <?= htmlspecialchars($relatorio['equipamentos'][0]['nome']) ?>
-                        </div>
-                    <?php else: ?>
-                        <div class="report-equipment-highlight">Todos os equipamentos</div>
-                    <?php endif; ?>
+                    
                 </div>
             </header>
 
@@ -191,7 +185,7 @@ function nomeDiaRelatorio(string $data): string
                         <span><?= htmlspecialchars($equipamento['nome']) ?></span>
                         <span class="report-equipment-total">
                             Total programado:
-                            <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado'] / 1000) ?> Ton
+                            <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado'] ) ?> kg
                         </span>
                     </div>
 
@@ -200,8 +194,8 @@ function nomeDiaRelatorio(string $data): string
                             <div class="report-day-header">
                                 <span class="report-day-name"><?= nomeDiaRelatorio($dia['data']) ?></span>
                                 <span><?= formatarDataRelatorio($dia['data']) ?></span>
-                                <span class="report-day-total">
-                                    <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado'] / 1000) ?> Ton
+                                <span class="report-day-total">Total programado:
+                                    <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado'] ) ?> kg
                                 </span>
                             </div>
 
@@ -209,10 +203,10 @@ function nomeDiaRelatorio(string $data): string
                                 <thead>
                                     <tr>
                                         <th class="col-codigo">Código</th>
-                                        <th>Descrição</th>
+                                        <th class="col-descricao">Descrição</th>
                                         <th class="col-demanda">Demanda</th>
-                                        <th class="col-quantidade text-end">Qtd.</th>
-                                        <th class="col-peso text-end">Produção estimada (Ton)</th>
+                                        <th class="col-quantidade ">Qtd.</th>
+                                        <th class="col-peso">Peso estimado (kg)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -232,22 +226,11 @@ function nomeDiaRelatorio(string $data): string
                                                 <?= formatarNumeroRelatorio((float) $item['quantidade']) ?>
                                             </td>
                                             <td class="text-end">
-                                                <?= formatarNumeroRelatorio((float) $item['peso_estimado'] / 1000) ?>
+                                                <?= formatarNumeroRelatorio((float) $item['peso_estimado']) ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td colspan="3" class="text-end">Total do dia</td>
-                                        <td class="text-end">
-                                            <?= formatarNumeroRelatorio((float) $dia['totais']['quantidade']) ?>
-                                        </td>
-                                        <td class="text-end">
-                                            <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado'] / 1000) ?> Ton
-                                        </td>
-                                    </tr>
-                                </tfoot>
                             </table>
                         </div>
                     <?php endforeach; ?>
@@ -349,18 +332,19 @@ function nomeDiaRelatorio(string $data): string
         font-weight: 700;
         white-space: nowrap;
     }
-
+    
     .report-equipment {
         margin: 0 10px 12px;
         break-inside: avoid;
     }
-
+    
     .report-equipment-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         padding: 5px 8px;
-        background: #e9ecef;
+        background: #696766;
+        color: #fff;
         border: 1px solid #495057;
         border-bottom: 0;
         font-size: .78rem;
@@ -373,7 +357,7 @@ function nomeDiaRelatorio(string $data): string
     }
 
     .report-day {
-        margin-bottom: 7px;
+        margin-bottom: 1px;
         break-inside: avoid;
     }
 
@@ -424,18 +408,27 @@ function nomeDiaRelatorio(string $data): string
 
     .report-table .col-codigo {
         width: 11%;
+        text-align: center;
+    }
+    .report-table .col-descricao {
+        text-align: center;
     }
 
     .report-table .col-demanda {
         width: 13%;
+        text-align: center;
     }
 
     .report-table .col-quantidade {
         width: 9%;
+        text-align: center;
+        font-weight: bold;
     }
 
     .report-table .col-peso {
         width: 13%;
+        text-align: center;
+        font-weight: bold;
     }
 
     .report-table tfoot td {
@@ -463,7 +456,7 @@ function nomeDiaRelatorio(string $data): string
 
     @media print {
         @page {
-            size: A4 portrait;
+            size: A4 landscape;
             margin: 9mm;
         }
 
