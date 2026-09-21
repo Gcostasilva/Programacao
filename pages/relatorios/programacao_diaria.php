@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../models/RecursoModel.php';
 
 $data = $_GET['data'] ?? date('Y-m-d');
 $recursoId = isset($_GET['recurso_id']) && $_GET['recurso_id'] !== '' ? filter_var($_GET['recurso_id'], FILTER_VALIDATE_INT) : null;
-$recursos = (new RecursoModel())->listarSemanal();
+$recursos = (new RecursoModel())->listarDiario();
 $relatorio = null;
 $erro = null;
 

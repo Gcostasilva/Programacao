@@ -11,6 +11,18 @@
             <div class="card h-100 shadow-sm">
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="fs-2 text-warning"><i class="bi bi-calendar-day"></i></div>
+                        <div><h5 class="card-title mb-1">Programação Diária</h5><div class="text-muted small">Modelo RP 09.</div></div>
+                    </div>
+                    <p class="card-text text-muted flex-grow-1">Modelo separado para uma data e equipamento, seguindo a estrutura do documento diário fornecido.</p>
+                    <a href="?page=relatorio_programacao_diaria" class="btn btn-warning"><i class="bi bi-file-earmark-text"></i> Abrir relatório</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
                         <div class="fs-2 text-primary"><i class="bi bi-calendar-week"></i></div>
                         <div><h5 class="card-title mb-1">Programação Semanal</h5><div class="text-muted small">Modelo atualmente em uso.</div></div>
                     </div>
@@ -33,17 +45,5 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-xl-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="fs-2 text-warning"><i class="bi bi-calendar-day"></i></div>
-                        <div><h5 class="card-title mb-1">Programação Diária</h5><div class="text-muted small">Modelo RP 09.</div></div>
-                    </div>
-                    <p class="card-text text-muted flex-grow-1">Modelo separado para uma data e equipamento, seguindo a estrutura do documento diário fornecido.</p>
-                    <a href="?page=relatorio_programacao_diaria" class="btn btn-warning"><i class="bi bi-file-earmark-text"></i> Abrir relatório</a>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
