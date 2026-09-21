@@ -9,8 +9,10 @@ class ProgramacaoSemanalModel extends BaseModel
         try {
             $this->pdo->beginTransaction();
 
+            // A semana é determinada pela data da programação. A coluna
+            // semana_id não é preenchida aqui porque os registros antigos
+            // da programação também não dependem dela.
             $sql = "INSERT INTO programacao (
-                        semana_id,
                         maquina_id,
                         data,
                         demanda,
@@ -20,7 +22,6 @@ class ProgramacaoSemanalModel extends BaseModel
                         peso,
                         obs
                     ) VALUES (
-                        :semana,
                         :recurso,
                         :data_prog,
                         :demanda,
@@ -33,14 +34,13 @@ class ProgramacaoSemanalModel extends BaseModel
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([
-                ':semana' => $dados['semana'],
                 ':recurso' => $dados['recurso'],
                 ':data_prog' => $dados['data'],
-                ':demanda' => strtoupper($dados['demanda']),
+                ':demanda' => strtoupper($dados['demanda'] ?? ''),
                 ':produto' => $dados['codigo'],
                 ':complemento_descricao' => strtoupper($dados['complemento_descricao'] ?? ''),
                 ':qtd' => $dados['quantidade'],
-                ':peso' => $dados['peso'] !== '' ? $dados['peso'] : null,
+                ':peso' => ($dados['peso'] ?? '') !== '' ? $dados['peso'] : null,
                 ':observacao' => strtoupper($dados['observacao'] ?? '')
             ]);
 
