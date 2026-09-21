@@ -35,7 +35,6 @@ function periodoDaSemana(string $semana): array
     $segunda = new DateTime();
     $segunda->setISODate($ano, $numeroSemana, 1);
 
-    // A programação semanal considera segunda a sexta-feira.
     $sexta = clone $segunda;
     $sexta->modify('+4 days');
 
@@ -99,34 +98,38 @@ function nomeDiaRelatorio(string $data): string
         <input type="hidden" name="page" value="relatorio_programacao">
         <div class="card-body">
             <div class="row g-3 align-items-end">
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label class="form-label">Semana</label>
-                    <input type="week" class="form-control" id="semana" name="semana" value="<?php $semanaAtual = date('o-\WW');
-                                                                                                echo $semanaAtual; ?>" required>
+                    <input
+                        type="week"
+                        class="form-control"
+                        id="semana"
+                        name="semana"
+                        value="<?= htmlspecialchars($semana) ?>"
+                        required
+                    >
                 </div>
-                <input type="date" name="inicio" class="form-control" value="<?= htmlspecialchars($inicio) ?>" required>
-                <input type="date" name="fim" class="form-control" value="<?= htmlspecialchars($fim) ?>" required>
-                <div class="col-md-4">
+
+                <div class="col-md-5">
                     <label class="form-label">Equipamento</label>
                     <select name="recurso_id" class="form-select">
                         <option value="">Todos os equipamentos</option>
                         <?php foreach ($recursos as $recurso): ?>
-                            <option value="<?= (int) $recurso['id'] ?>" <?= $recursoId === (int) $recurso['id'] ? 'selected' : '' ?>>
+                            <option
+                                value="<?= (int) $recurso['id'] ?>"
+                                <?= $recursoId === (int) $recurso['id'] ? 'selected' : '' ?>
+                            >
                                 <?= htmlspecialchars($recurso['descricao']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div class="col-md-4 col-lg-2">
+
+                <div class="col-md-4">
                     <button class="btn btn-primary w-100">
                         <i class="bi bi-search"></i> Gerar relatório
                     </button>
                 </div>
-                <?php if ($inicio && $fim): ?>
-                    <div class="col-lg-4 d-none d-lg-block text-end text-muted small pb-1">
-                        <?= formatarDataRelatorio($inicio) ?> a <?= formatarDataRelatorio($fim) ?>
-                    </div>
-                <?php endif; ?>
             </div>
         </div>
     </form>
@@ -143,10 +146,12 @@ function nomeDiaRelatorio(string $data): string
                         <div class="report-brand-name">PERFINASA</div>
                         <div class="report-brand-subtitle">PERFILADOS DE AÇO</div>
                     </div>
+
                     <div class="report-document-title">
                         <div class="fw-bold">SISTEMA DE GESTÃO DA QUALIDADE</div>
                         <div>REGISTRO DE PRODUÇÃO</div>
                     </div>
+
                     <div class="report-document-code">
                         <div><strong>Código:</strong> RP 04</div>
                         <div><strong>Revisão:</strong> 04</div>
@@ -163,6 +168,7 @@ function nomeDiaRelatorio(string $data): string
                             a <?= formatarDataRelatorio($relatorio['periodo']['fim']) ?>
                         </div>
                     </div>
+
                     <?php if ($recursoId !== null && !empty($relatorio['equipamentos'])): ?>
                         <div class="report-equipment-highlight">
                             <?= htmlspecialchars($relatorio['equipamentos'][0]['nome']) ?>
@@ -180,11 +186,12 @@ function nomeDiaRelatorio(string $data): string
             <?php endif; ?>
 
             <?php foreach ($relatorio['equipamentos'] as $equipamento): ?>
-                <section class="report-equipment mb-5">
-                    <div class="report-section-title d-flex justify-content-between align-items-center border rounded-top px-3 py-2">
-                        <strong><?= htmlspecialchars($equipamento['nome']) ?></strong>
-                        <span class="text-muted small">
-                            Total programado: <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado']/1000) ?> Ton
+                <section class="report-equipment">
+                    <div class="report-equipment-header">
+                        <span><?= htmlspecialchars($equipamento['nome']) ?></span>
+                        <span class="report-equipment-total">
+                            Total programado:
+                            <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado'] / 1000) ?> Ton
                         </span>
                     </div>
 
@@ -194,7 +201,7 @@ function nomeDiaRelatorio(string $data): string
                                 <span class="report-day-name"><?= nomeDiaRelatorio($dia['data']) ?></span>
                                 <span><?= formatarDataRelatorio($dia['data']) ?></span>
                                 <span class="report-day-total">
-                                    <?= formatarNumeroRelatorio((float) $dia['totais']['quantidade']) ?> programado
+                                    <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado'] / 1000) ?> Ton
                                 </span>
                             </div>
 
@@ -205,7 +212,7 @@ function nomeDiaRelatorio(string $data): string
                                         <th>Descrição</th>
                                         <th class="col-demanda">Demanda</th>
                                         <th class="col-quantidade text-end">Qtd.</th>
-                                        <th class="col-peso text-end">Produção estimada (t)</th>
+                                        <th class="col-peso text-end">Produção estimada (Ton)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -215,20 +222,30 @@ function nomeDiaRelatorio(string $data): string
                                             <td>
                                                 <div><?= htmlspecialchars($item['descricao']) ?></div>
                                                 <?php if (!empty($item['observacao'])): ?>
-                                                    <div class="report-observation">Obs.: <?= htmlspecialchars($item['observacao']) ?></div>
+                                                    <div class="report-observation">
+                                                        Obs.: <?= htmlspecialchars($item['observacao']) ?>
+                                                    </div>
                                                 <?php endif; ?>
                                             </td>
                                             <td><?= htmlspecialchars((string) ($item['demanda'] ?? '')) ?></td>
-                                            <td class="text-end"><?= formatarNumeroRelatorio((float) $item['quantidade']) ?></td>
-                                            <td class="text-end"><?= formatarNumeroRelatorio((float) $item['peso_estimado']) ?></td>
+                                            <td class="text-end">
+                                                <?= formatarNumeroRelatorio((float) $item['quantidade']) ?>
+                                            </td>
+                                            <td class="text-end">
+                                                <?= formatarNumeroRelatorio((float) $item['peso_estimado'] / 1000) ?>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="3" class="text-end">Total do dia</td>
-                                        <td class="text-end"><?= formatarNumeroRelatorio((float) $dia['totais']['quantidade']) ?></td>
-                                        <td class="text-end"><?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado']) ?> t</td>
+                                        <td class="text-end">
+                                            <?= formatarNumeroRelatorio((float) $dia['totais']['quantidade']) ?>
+                                        </td>
+                                        <td class="text-end">
+                                            <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado'] / 1000) ?> Ton
+                                        </td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -238,15 +255,9 @@ function nomeDiaRelatorio(string $data): string
             <?php endforeach; ?>
 
             <footer class="report-footer">
-                <div>
-                    <strong>RP 04</strong> — Programação de Produção
-                </div>
-                <div>
-                    Revisão 04
-                </div>
-                <div>
-                    Documento controlado — uso interno
-                </div>
+                <div><strong>RP 04</strong> — Programação de Produção</div>
+                <div>Revisão 04</div>
+                <div>Documento controlado — uso interno</div>
             </footer>
         </div>
     <?php endif; ?>
@@ -385,6 +396,7 @@ function nomeDiaRelatorio(string $data): string
     .report-day-total {
         margin-left: auto;
         color: #495057;
+        font-weight: 600;
     }
 
     .report-table {
@@ -442,27 +454,17 @@ function nomeDiaRelatorio(string $data): string
         grid-template-columns: 1fr 1fr 1fr;
         gap: 8px;
         border: 1px solid #343a40;
-        padding: 5px 8px;
-        margin-top: 6px;
-        font-size: .58rem;
-        color: #343a40;
-    }
-
-    .report-footer div:nth-child(2) {
+        border-top: 0;
+        padding: 6px 10px;
+        font-size: .62rem;
+        color: #495057;
         text-align: center;
     }
 
-    .report-footer div:nth-child(3) {
-        text-align: right;
-    }
-
     @media print {
-<<<<<<< HEAD
-
-=======
         @page {
             size: A4 portrait;
-            margin: 10mm 9mm 12mm 9mm;
+            margin: 9mm;
         }
 
         body {
@@ -470,18 +472,17 @@ function nomeDiaRelatorio(string $data): string
         }
 
         .report-toolbar,
->>>>>>> 3d08d5287b9406c25816d2dfa7c8794840bdfe4d
         .app-sidebar,
         .app-header,
         .app-footer,
-        nav,
-        .sidebar,
-        .navbar {
+        .btn,
+        nav {
             display: none !important;
         }
 
-        .report-page,
-        .container-fluid {
+        .app-main,
+        .container-fluid,
+        .report-page {
             padding: 0 !important;
             margin: 0 !important;
             width: 100% !important;
@@ -492,15 +493,6 @@ function nomeDiaRelatorio(string $data): string
             max-width: none;
             border: 0 !important;
             box-shadow: none !important;
-            margin: 0 !important;
-        }
-
-        .report-header-top,
-        .report-equipment-header,
-        .report-day-header,
-        .report-table thead {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
         }
 
         .report-equipment,
@@ -516,8 +508,14 @@ function nomeDiaRelatorio(string $data): string
             display: table-row-group;
         }
 
-        .report-footer {
+        .report-table tr {
             break-inside: avoid;
+        }
+
+        .report-header,
+        .report-footer {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
     }
 </style>
