@@ -13,6 +13,7 @@
                         </select></div>
                     <div class="col-md-2"><label class="form-label">Data</label><input type="date" class="form-control" id="data" name="data" required></div>
                     <div class="col-md-2"><label class="form-label">Demanda</label><input class="form-control" name="demanda" id="demanda" required autocomplete="off"></div>
+                    <div></div>
                     <div class="col-md-3"><label class="form-label">Código</label>
                         <div class="input-group">
                             <input type="text" class="form-control" name="codigo_s" id="codigo" autocomplete="off" required>
@@ -20,7 +21,7 @@
                             <button class="btn btn-primary ms-1" type="button" id="btn_buscaDemanda" title="Selecionar demanda"><i class="bi bi-boxes"></i></button>
                         </div>
                     </div>
-                    <div class="col-md-6 mt-2"><label class="form-label">Descrição</label><input class="form-control" name="descricao" id="descricao_sem" readonly><input type="hidden" name="complemento_descricao" id="complemento_descricao"></div>
+                    <div class="col-md-5 mt-2"><label class="form-label">Descrição</label><input class="form-control" name="descricao" id="descricao_sem" readonly><input type="hidden" name="complemento_descricao" id="complemento_descricao"></div>
                     <div class="col-md-2 mt-2"><label class="form-label">Quantidade</label><input class="form-control" name="quantidade" id="quantidade" required inputmode="decimal"></div>
                     <div class="col-md-2 mt-2"><label class="form-label">Peso</label><input class="form-control" name="peso" id="peso" inputmode="decimal"></div>
                     <div class="col-md-10 mt-2"><label class="form-label">Observação</label><input class="form-control" name="observacao" id="observacao" autocomplete="off"></div>

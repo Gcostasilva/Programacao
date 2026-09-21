@@ -5,8 +5,9 @@
             <label class="form-check-label" for="exibir_baixados" role="button">Exibir Baixados</label>
 
         </div>
-
         <div class="row">
+
+
             <div class="mini-box-row h3" id="rowIndicadores">
             <div class="mini-box bg-primary" id="boxProgramacao">
                 <div class="mini-box-valor" id="boxProgramacaoValor">--</div>

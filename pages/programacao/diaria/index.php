@@ -2,11 +2,7 @@
 <div class="container-fluid">
 
     <div class="row mt-3">
-        <div class="col-12 d-flex justify-content-end mb-2 no-print">
-            <button type="button" class="btn btn-primary" id="btnImprimirProgramacaoDiaria">
-                <i class="bi bi-printer"></i> Imprimir programação
-            </button>
-        </div>
+
         <div class="col-12">
             <?php include 'pages\programacao\diaria\componentes\formulario.php'; ?>
         </div>

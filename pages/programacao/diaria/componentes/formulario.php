@@ -82,9 +82,13 @@
                     </div>
                 </div>
                 <div style="grid-column: 2/2;flex-direction: column;display: flex;margin-right:  20px;">
-                    <a data-bs-toggle="modal" data-bs-target="#modalBaixar" class="btn btn-primary mt-2" > <i class="bi bi-download"></i> Baixar</a>
-                    <button class="btn btn-primary mt-2" type="submit">  <i class="bi bi-save"></i> Salvar</button>
+                    <a data-bs-toggle="modal" data-bs-target="#modalBaixar" class="btn btn-primary mt-2"> <i class="bi bi-download"></i> Baixar</a>
+                    <button class="btn btn-primary mt-2" type="submit"> <i class="bi bi-save"></i> Salvar</button>
                     <button class="btn btn-primary mt-2" type="reset"> <i class="bi bi-x-circle"></i> Desistir</button>
+
+                    <button type="button" class="btn btn-primary mt-2" id="btnImprimirProgramacaoDiaria">
+                        <i class="bi bi-printer"></i> Imprimir programação</button>
+
                 </div>
             </form>
         </div>
@@ -92,32 +96,32 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const recurso = document.getElementById('recurso');
-    const data = document.getElementById('data');
-    const form = document.getElementById('formDiario');
-    const chave = 'programacaoDiaria_filtros';
+    document.addEventListener('DOMContentLoaded', function() {
+        const recurso = document.getElementById('recurso');
+        const data = document.getElementById('data');
+        const form = document.getElementById('formDiario');
+        const chave = 'programacaoDiaria_filtros';
 
-    if (!recurso || !data || !form) return;
+        if (!recurso || !data || !form) return;
 
-    // Recupera os últimos valores usados após o POST e recarregamento da página.
-    try {
-        const salvo = JSON.parse(localStorage.getItem(chave) || '{}');
-        if (salvo.recurso) recurso.value = salvo.recurso;
-        if (salvo.data) data.value = salvo.data;
-    } catch (e) {
-        console.warn('Não foi possível recuperar os filtros da programação diária.', e);
-    }
+        // Recupera os últimos valores usados após o POST e recarregamento da página.
+        try {
+            const salvo = JSON.parse(localStorage.getItem(chave) || '{}');
+            if (salvo.recurso) recurso.value = salvo.recurso;
+            if (salvo.data) data.value = salvo.data;
+        } catch (e) {
+            console.warn('Não foi possível recuperar os filtros da programação diária.', e);
+        }
 
-    function salvarFiltros() {
-        localStorage.setItem(chave, JSON.stringify({
-            recurso: recurso.value,
-            data: data.value
-        }));
-    }
+        function salvarFiltros() {
+            localStorage.setItem(chave, JSON.stringify({
+                recurso: recurso.value,
+                data: data.value
+            }));
+        }
 
-    recurso.addEventListener('change', salvarFiltros);
-    data.addEventListener('change', salvarFiltros);
-    form.addEventListener('submit', salvarFiltros);
-});
+        recurso.addEventListener('change', salvarFiltros);
+        data.addEventListener('change', salvarFiltros);
+        form.addEventListener('submit', salvarFiltros);
+    });
 </script>

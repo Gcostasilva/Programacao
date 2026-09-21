@@ -4,7 +4,7 @@
         <button type="button" onclick="adjustWeek(-1)"><i class="bi bi-dash"></i></button>
         <button type="button" onclick="adjustWeek(1)"><i class="bi bi-plus"></i></button>
         <input type="week" class="form-control" id="semana_filtro" name="semana" value="<?php $semanaAtual = date('o-\WW');
-        echo $semanaAtual; ?>" required>
+                                                                                        echo $semanaAtual; ?>" required>
     </div>
     <div class="col-md-3">
         <label class="form-label">Recurso</label>
@@ -18,6 +18,11 @@
             }
             ?>
         </select>
+    </div>
+    <div class="col-md-5 align-self-center ms-auto">
+        <button type="button" class="btn btn-primary" id="btnImprimirProgramacaoSemanal">
+            <i class="bi bi-printer"></i> Imprimir programação
+        </button>
     </div>
 </div>
 
@@ -38,4 +43,3 @@ $hoje = date('Y-m-d');
     <!-- para alterar a tabela em si vá no arquivo dias.php -->
     <?php include __DIR__ . '../../dias.php'; ?>
 </div>
-
