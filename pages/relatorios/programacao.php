@@ -106,8 +106,7 @@ function nomeDiaRelatorio(string $data): string
                         id="semana"
                         name="semana"
                         value="<?= htmlspecialchars($semana) ?>"
-                        required
-                    >
+                        required>
                 </div>
 
                 <div class="col-md-5">
@@ -117,8 +116,7 @@ function nomeDiaRelatorio(string $data): string
                         <?php foreach ($recursos as $recurso): ?>
                             <option
                                 value="<?= (int) $recurso['id'] ?>"
-                                <?= $recursoId === (int) $recurso['id'] ? 'selected' : '' ?>
-                            >
+                                <?= $recursoId === (int) $recurso['id'] ? 'selected' : '' ?>>
                                 <?= htmlspecialchars($recurso['descricao']) ?>
                             </option>
                         <?php endforeach; ?>
@@ -133,59 +131,60 @@ function nomeDiaRelatorio(string $data): string
             </div>
         </div>
     </form>
-
     <?php if ($erro): ?>
         <div class="alert alert-danger report-toolbar">
             <?= htmlspecialchars($erro) ?>
         </div>
     <?php elseif ($relatorio): ?>
-        <div class="report-preview bg-white border shadow-sm">
-            <header class="report-header">
-                <div class="report-header-top">
-                    <div class="report-brand">
-                        <div class="report-brand-name">PERFINASA</div>
-                        <div class="report-brand-subtitle">PERFILADOS DE AÇO</div>
-                    </div>
 
-                    <div class="report-document-title">
-                        <div class="fw-bold">SISTEMA DE GESTÃO DA QUALIDADE</div>
-                        <div>REGISTRO DE PRODUÇÃO</div>
-                    </div>
+        <?php foreach ($relatorio['equipamentos'] as $equipamento): ?>
+            <div class="report-preview bg-white border shadow-sm">
+                <header class="report-header">
+                    <div class="report-header-top">
+                        <div class="report-brand">
+                            <div class="report-brand-name">PERFINASA</div>
+                            <div class="report-brand-subtitle">PERFILADOS DE AÇO</div>
+                        </div>
 
-                    <div class="report-document-code">
-                        <div><strong>Código:</strong> RP 04</div>
-                        <div><strong>Revisão:</strong> 04</div>
-                    </div>
-                </div>
+                        <div class="report-document-title">
+                            <div class="fw-bold">SISTEMA DE GESTÃO DA QUALIDADE</div>
+                            <div>REGISTRO DE PRODUÇÃO</div>
+                        </div>
 
-                <div class="report-title-row">
-                    <div>
-                        <div class="report-title">PROGRAMAÇÃO DE PRODUÇÃO</div>
-                        <div class="report-subtitle">
-                            Semana <?= htmlspecialchars($semana) ?>
-                            &nbsp;|&nbsp;
-                            <?= formatarDataRelatorio($relatorio['periodo']['inicio']) ?>
-                            a <?= formatarDataRelatorio($relatorio['periodo']['fim']) ?>
+                        <div class="report-document-code">
+                            <div><strong>Código:</strong> RP 04</div>
+                            <div><strong>Revisão:</strong> 04</div>
                         </div>
                     </div>
 
-                    
-                </div>
-            </header>
+                    <div class="report-title-row">
+                        <div>
+                            <div class="report-title">PROGRAMAÇÃO DE PRODUÇÃO</div>
+                            <div class="report-subtitle">
+                                Semana <?= htmlspecialchars($semana) ?>
+                                &nbsp;|&nbsp;
+                                <?= formatarDataRelatorio($relatorio['periodo']['inicio']) ?>
+                                a <?= formatarDataRelatorio($relatorio['periodo']['fim']) ?>
+                            </div>
+                        </div>
 
-            <?php if (empty($relatorio['equipamentos'])): ?>
-                <div class="alert alert-info m-3 mb-0">
-                    Não há programação para a semana e equipamento selecionados.
-                </div>
-            <?php endif; ?>
 
-            <?php foreach ($relatorio['equipamentos'] as $equipamento): ?>
+                    </div>
+                </header>
+
+                <?php if (empty($relatorio['equipamentos'])): ?>
+                    <div class="alert alert-info m-3 mb-0">
+                        Não há programação para a semana e equipamento selecionados.
+                    </div>
+                <?php endif; ?>
+
+
                 <section class="report-equipment">
                     <div class="report-equipment-header">
                         <span><?= htmlspecialchars($equipamento['nome']) ?></span>
                         <span class="report-equipment-total">
                             Total programado:
-                            <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado'] ) ?> kg
+                            <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado']) ?> kg
                         </span>
                     </div>
 
@@ -195,7 +194,7 @@ function nomeDiaRelatorio(string $data): string
                                 <span class="report-day-name"><?= nomeDiaRelatorio($dia['data']) ?></span>
                                 <span><?= formatarDataRelatorio($dia['data']) ?></span>
                                 <span class="report-day-total">Total programado:
-                                    <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado'] ) ?> kg
+                                    <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado']) ?> kg
                                 </span>
                             </div>
 
@@ -235,15 +234,15 @@ function nomeDiaRelatorio(string $data): string
                         </div>
                     <?php endforeach; ?>
                 </section>
-            <?php endforeach; ?>
 
-            <footer class="report-footer">
-                <div><strong>RP 04</strong> — Programação de Produção</div>
-                <div>Revisão 04</div>
-                <div>Documento controlado — uso interno</div>
-            </footer>
-        </div>
-    <?php endif; ?>
+                <footer class="report-footer">
+                    <div><strong>RP 04</strong> — Programação de Produção</div>
+                    <div>Revisão 04</div>
+                    <div>Documento controlado — uso interno</div>
+                </footer>
+            <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
 </div>
 
 <style>
@@ -332,12 +331,12 @@ function nomeDiaRelatorio(string $data): string
         font-weight: 700;
         white-space: nowrap;
     }
-    
+
     .report-equipment {
         margin: 0 10px 12px;
         break-inside: avoid;
     }
-    
+
     .report-equipment-header {
         display: flex;
         justify-content: space-between;
@@ -410,6 +409,7 @@ function nomeDiaRelatorio(string $data): string
         width: 11%;
         text-align: center;
     }
+
     .report-table .col-descricao {
         text-align: center;
     }
