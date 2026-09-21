@@ -21,6 +21,7 @@ class RelatorioProgramacaoService
      *
      * Estrutura:
      * - periodo
+     * - totais
      * - equipamentos
      *   - id / nome
      *   - totais
@@ -48,10 +49,8 @@ class RelatorioProgramacaoService
                 'fim' => $dataFim,
             ],
             'totais' => [
-                'quantidade' => 0,
+                'quantidade' => 0.0,
                 'peso_estimado' => 0.0,
-                'pecas_realizadas' => 0,
-                'peso_realizado' => 0.0,
             ],
             'equipamentos' => [],
         ];
@@ -88,31 +87,17 @@ class RelatorioProgramacaoService
                 ),
                 'quantidade' => $this->numero($registro['quantidade']),
                 'peso_estimado' => $this->numero($registro['peso_estimado']),
-                'pecas_realizadas' => $this->numero($registro['pecas_realizadas']),
-                'peso_realizado' => $this->numero($registro['peso_realizado']),
                 'observacao' => $registro['observacao'],
                 'ordem' => $registro['ordem'],
             ];
 
             $relatorio['equipamentos'][$equipamentoId]['dias'][$data]['itens'][] = $item;
 
-            $this->adicionarTotais(
-                $relatorio['totais'],
-                $item
-            );
-
-            $this->adicionarTotais(
-                $relatorio['equipamentos'][$equipamentoId]['totais'],
-                $item
-            );
-
-            $this->adicionarTotais(
-                $relatorio['equipamentos'][$equipamentoId]['dias'][$data]['totais'],
-                $item
-            );
+            $this->adicionarTotais($relatorio['totais'], $item);
+            $this->adicionarTotais($relatorio['equipamentos'][$equipamentoId]['totais'], $item);
+            $this->adicionarTotais($relatorio['equipamentos'][$equipamentoId]['dias'][$data]['totais'], $item);
         }
 
-        // Converte os mapas associativos em listas, facilitando o consumo pela view.
         foreach ($relatorio['equipamentos'] as &$equipamento) {
             $equipamento['dias'] = array_values($equipamento['dias']);
         }
@@ -126,10 +111,8 @@ class RelatorioProgramacaoService
     private function totaisVazios(): array
     {
         return [
-            'quantidade' => 0,
+            'quantidade' => 0.0,
             'peso_estimado' => 0.0,
-            'pecas_realizadas' => 0,
-            'peso_realizado' => 0.0,
         ];
     }
 
@@ -137,8 +120,6 @@ class RelatorioProgramacaoService
     {
         $totais['quantidade'] += $item['quantidade'];
         $totais['peso_estimado'] += $item['peso_estimado'];
-        $totais['pecas_realizadas'] += $item['pecas_realizadas'];
-        $totais['peso_realizado'] += $item['peso_realizado'];
     }
 
     private function numero(mixed $valor): float
