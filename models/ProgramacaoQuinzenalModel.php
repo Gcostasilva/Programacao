@@ -9,7 +9,7 @@ class ProgramacaoQuinzenalModel extends BaseModel
         $sql = "
             CREATE TABLE IF NOT EXISTS programacao_quinzenal (
                 id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-                quinzena VARCHAR(7) NOT NULL,
+                quinzena VARCHAR(8) NOT NULL,
                 produto_id VARCHAR(50) NOT NULL,
                 quantidade DECIMAL(15,3) NOT NULL DEFAULT 0,
                 peca_realizada DECIMAL(15,3) NOT NULL DEFAULT 0,
@@ -23,6 +23,14 @@ class ProgramacaoQuinzenalModel extends BaseModel
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
         ";
         $this->pdo->exec($sql);
+
+        // Versões anteriores criaram a coluna com VARCHAR(7), mas o formato
+        // usado pelo sistema é YYYY-MM-1 / YYYY-MM-2 (8 caracteres).
+        $stmt = $this->pdo->query("SHOW COLUMNS FROM programacao_quinzenal LIKE 'quinzena'");
+        $coluna = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($coluna && preg_match('/varchar\\((\\d+)\\)/i', $coluna['Type'], $match) && (int) $match[1] < 8) {
+            $this->pdo->exec("ALTER TABLE programacao_quinzenal MODIFY quinzena VARCHAR(8) NOT NULL");
+        }
     }
 
     public function listar(?string $quinzena = null): array
