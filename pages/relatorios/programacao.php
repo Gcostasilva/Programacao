@@ -75,14 +75,13 @@ function nomeDiaRelatorio(string $data): string
         <input type="hidden" name="page" value="relatorio_programacao">
         <div class="card-body">
             <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label">Data inicial</label>
-                    <input type="date" name="inicio" class="form-control" value="<?= htmlspecialchars($inicio) ?>" required>
+                <div class="col-md-2">
+                    <label class="form-label">Semana</label>
+                    <input type="week" class="form-control" id="semana" name="semana" value="<?php $semanaAtual = date('o-\WW');
+                                                                                                echo $semanaAtual; ?>" required>
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Data final</label>
-                    <input type="date" name="fim" class="form-control" value="<?= htmlspecialchars($fim) ?>" required>
-                </div>
+                <input type="date" name="inicio" class="form-control" value="<?= htmlspecialchars($inicio) ?>" required>
+                <input type="date" name="fim" class="form-control" value="<?= htmlspecialchars($fim) ?>" required>
                 <div class="col-md-4">
                     <label class="form-label">Equipamento</label>
                     <select name="recurso_id" class="form-select">
@@ -137,7 +136,7 @@ function nomeDiaRelatorio(string $data): string
                     <div class="report-section-title d-flex justify-content-between align-items-center border rounded-top px-3 py-2">
                         <strong><?= htmlspecialchars($equipamento['nome']) ?></strong>
                         <span class="text-muted small">
-                            Total programado: <?= formatarNumeroRelatorio((float) $equipamento['totais']['quantidade']) ?>
+                            Total programado: <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado']/1000) ?> Ton
                         </span>
                     </div>
 
@@ -220,6 +219,7 @@ function nomeDiaRelatorio(string $data): string
     }
 
     @media print {
+
         .app-sidebar,
         .app-header,
         .app-footer,
