@@ -29,6 +29,7 @@ $quinzenaAtual = $dados['quinzena'] ?? (date('Y-m') . '-' . (date('d') <= 15 ? '
                     <div class="input-group">
                         <input class="form-control" name="produto_id" id="produto_id" required autocomplete="off">
                         <button class="btn btn-primary" type="button" id="btn_buscaCodigoQuinzena" title="Selecionar código"><i class="bi bi-search"></i></button>
+                        <button class="btn btn-primary" type="button" id="btn_buscaDemandaQuinzena" title="Selecionar demanda"><i class="bi bi-boxes"></i></button>
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -75,12 +76,7 @@ $quinzenaAtual = $dados['quinzena'] ?? (date('Y-m') . '-' . (date('d') <= 15 ? '
                 <div class="table-responsive">
                     <table class="table table-sm table-hover align-middle" id="tabelaCodigosQuinzena">
                         <thead>
-                            <tr>
-                                <th>Código</th>
-                                <th>Descrição</th>
-                                <th>Peso líquido</th>
-                                <th></th>
-                            </tr>
+                            <tr><th>Código</th><th>Descrição</th><th>Peso líquido</th><th></th></tr>
                         </thead>
                         <tbody>
                             <?php foreach (($dados['produtos'] ?? []) as $produto): ?>
@@ -88,13 +84,7 @@ $quinzenaAtual = $dados['quinzena'] ?? (date('Y-m') . '-' . (date('d') <= 15 ? '
                                     <td><?= htmlspecialchars($produto['codigo'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($produto['descricao'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($produto['peso_liquido'] ?? '') ?></td>
-                                    <td class="text-end">
-                                        <button type="button" class="btn btn-sm btn-primary btn-selecionar-codigo-quinzena"
-                                            data-codigo="<?= htmlspecialchars($produto['codigo'] ?? '', ENT_QUOTES) ?>"
-                                            data-descricao="<?= htmlspecialchars($produto['descricao'] ?? '', ENT_QUOTES) ?>">
-                                            <i class="bi bi-check-lg"></i>
-                                        </button>
-                                    </td>
+                                    <td class="text-end"><button type="button" class="btn btn-sm btn-primary btn-selecionar-codigo-quinzena" data-codigo="<?= htmlspecialchars($produto['codigo'] ?? '', ENT_QUOTES) ?>" data-descricao="<?= htmlspecialchars($produto['descricao'] ?? '', ENT_QUOTES) ?>"><i class="bi bi-check-lg"></i></button></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>
@@ -104,6 +94,8 @@ $quinzenaAtual = $dados['quinzena'] ?? (date('Y-m') . '-' . (date('d') <= 15 ? '
         </div>
     </div>
 </div>
+
+<?php include __DIR__ . '/modal_demanda_selecao.php'; ?>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -117,7 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function atualizarQuinzena() {
         if (mes.value && numero.value) hidden.value = mes.value + '-' + numero.value;
     }
-
     function atualizarDescricao() {
         const produto = lista.find(p => String(p.codigo) === String(codigo.value).trim());
         descricao.value = produto ? (produto.descricao || '') : '';
