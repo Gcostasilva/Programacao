@@ -18,7 +18,7 @@
                         <div class="input-group">
                             <input type="text" class="form-control" name="codigo_s" id="codigo" autocomplete="off" required>
                             <button class="btn btn-primary" type="button" id="btn_buscaCodigo" title="Selecionar código de produto"><i class="bi bi-search"></i></button>
-                            <button class="btn btn-primary ms-1" type="button" id="btn_buscaDemanda" title="Selecionar demanda"><i class="bi bi-boxes"></i></button>
+                            <button class="btn btn-primary" type="button" id="btn_buscaDemanda" title="Selecionar demanda"><i class="bi bi-boxes"></i></button>
                         </div>
                     </div>
                     <div class="col-md-5 mt-2"><label class="form-label">Descrição</label><input class="form-control" name="descricao" id="descricao_sem" readonly><input type="hidden" name="complemento_descricao" id="complemento_descricao"></div>
