@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../../models/ProgramacaoModel.php';
+require_once __DIR__ . '/../../../models/ProgramacaoSemanalModel.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     header('Location: index.php?page=prog_semanal');
@@ -23,7 +23,7 @@ try {
         throw new InvalidArgumentException('Preencha os campos obrigatórios da programação semanal.');
     }
 
-    (new ProgramacaoModel())->salvar_semanal($dados);
+    (new ProgramacaoSemanalModel())->salvar($dados);
 
     header('Location: index.php?page=prog_semanal&semana=' . urlencode($dados['semana']) . '&status=sucesso');
     exit;
