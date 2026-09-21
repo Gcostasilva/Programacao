@@ -31,21 +31,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const data = document.getElementById('data')?.value || '';
         const recurso = document.getElementById('recurso')?.value || '';
 
-        if (!data) {
-            alert('Selecione uma data antes de imprimir.');
+        if (!data || !recurso) {
+            alert('Selecione o equipamento e a data antes de imprimir.');
             return;
         }
 
-        const params = new URLSearchParams({
-            page: 'relatorio_programacao',
-            inicio: data,
-            fim: data,
-            recurso_id: recurso,
-            modo: 'diaria',
-            origem: 'diaria'
-        });
-
-        window.open('index.php?' + params.toString(), '_blank');
+        // A área de impressão diária utiliza exatamente os dados já carregados
+        // na tela. O layout definitivo (cabeçalho/rodapé por equipamento)
+        // será aplicado junto ao refinamento do relatório.
+        window.print();
     });
 });
 </script>
