@@ -50,8 +50,6 @@ class RelatorioProgramacaoService
             'totais' => [
                 'quantidade' => 0,
                 'peso_estimado' => 0.0,
-                'pecas_realizadas' => 0,
-                'peso_realizado' => 0.0,
             ],
             'equipamentos' => [],
         ];
@@ -88,8 +86,6 @@ class RelatorioProgramacaoService
                 ),
                 'quantidade' => $this->numero($registro['quantidade']),
                 'peso_estimado' => $this->numero($registro['peso_estimado']),
-                'pecas_realizadas' => $this->numero($registro['pecas_realizadas']),
-                'peso_realizado' => $this->numero($registro['peso_realizado']),
                 'observacao' => $registro['observacao'],
                 'ordem' => $registro['ordem'],
             ];
@@ -128,8 +124,6 @@ class RelatorioProgramacaoService
         return [
             'quantidade' => 0,
             'peso_estimado' => 0.0,
-            'pecas_realizadas' => 0,
-            'peso_realizado' => 0.0,
         ];
     }
 
@@ -137,8 +131,6 @@ class RelatorioProgramacaoService
     {
         $totais['quantidade'] += $item['quantidade'];
         $totais['peso_estimado'] += $item['peso_estimado'];
-        $totais['pecas_realizadas'] += $item['pecas_realizadas'];
-        $totais['peso_realizado'] += $item['peso_realizado'];
     }
 
     private function numero(mixed $valor): float
