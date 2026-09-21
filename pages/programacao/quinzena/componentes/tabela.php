@@ -8,10 +8,11 @@
             <table class="table table-sm table-hover align-middle mb-0">
                 <thead>
                     <tr>
-                        <th>Produto</th>
+                        <th>Código</th>
                         <th>Descrição</th>
-                        <th class="text-end">Quantidade</th>
+                        <th class="text-end">A produzir</th>
                         <th class="text-end">Produzido</th>
+                        <th class="text-end">Saldo</th>
                         <th>OP</th>
                         <th>Observação</th>
                         <th class="text-center" style="width:120px">Ações</th>
@@ -19,19 +20,28 @@
                 </thead>
                 <tbody>
                     <?php if (!$tabela): ?>
-                        <tr><td colspan="7" class="text-center text-muted py-4">Nenhuma programação cadastrada para esta quinzena.</td></tr>
+                        <tr><td colspan="8" class="text-center text-muted py-4">Nenhuma programação cadastrada para esta quinzena.</td></tr>
                     <?php endif; ?>
                     <?php foreach ($tabela as $item): ?>
+                        <?php
+                        $quantidade = (float)($item['quantidade'] ?? 0);
+                        $produzido = (float)($item['peca_realizada'] ?? 0);
+                        $saldo = max(0, $quantidade - $produzido);
+                        $descricao = trim((string)($item['descricao'] ?? ''));
+                        ?>
                         <tr>
-                            <td><?= htmlspecialchars($item['produto_id']) ?></td>
-                            <td><?= htmlspecialchars($item['descricao']) ?></td>
-                            <td class="text-end"><?= number_format((float)$item['quantidade'], 3, ',', '.') ?></td>
-                            <td class="text-end">
-                                <span class="badge <?= (float)$item['peca_realizada'] > 0 ? 'bg-success' : 'bg-warning text-dark' ?>">
-                                    <?= number_format((float)$item['peca_realizada'], 3, ',', '.') ?>
+                            <td class="text-nowrap fw-semibold"><?= htmlspecialchars($item['produto_id']) ?></td>
+                            <td><?= htmlspecialchars($descricao !== '' ? $descricao : 'Produto não localizado') ?></td>
+                            <td class="text-end text-nowrap"><?= number_format($quantidade, 3, ',', '.') ?></td>
+                            <td class="text-end text-nowrap">
+                                <span class="badge <?= $produzido > 0 ? 'bg-success' : 'bg-secondary' ?>">
+                                    <?= number_format($produzido, 3, ',', '.') ?>
                                 </span>
                             </td>
-                            <td><?= htmlspecialchars($item['ordem_producao'] ?? '') ?></td>
+                            <td class="text-end text-nowrap fw-semibold">
+                                <?= number_format($saldo, 3, ',', '.') ?>
+                            </td>
+                            <td class="text-nowrap"><?= htmlspecialchars($item['ordem_producao'] ?? '') ?></td>
                             <td><?= htmlspecialchars($item['obs'] ?? '') ?></td>
                             <td class="text-center text-nowrap">
                                 <button type="button" class="btn btn-sm btn-outline-primary btn-editar-quinzena" data-item='<?= htmlspecialchars(json_encode($item, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>' title="Editar">
