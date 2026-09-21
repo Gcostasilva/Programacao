@@ -3,37 +3,597 @@ require_once __DIR__ . '/../../services/RelatorioProgramacaoService.php';
 require_once __DIR__ . '/../../models/RecursoModel.php';
 
 $data = $_GET['data'] ?? date('Y-m-d');
-$recursoId = isset($_GET['recurso_id']) && $_GET['recurso_id'] !== '' ? filter_var($_GET['recurso_id'], FILTER_VALIDATE_INT) : null;
+$recursoId = isset($_GET['recurso_id']) && $_GET['recurso_id'] !== ''
+    ? filter_var($_GET['recurso_id'], FILTER_VALIDATE_INT)
+    : null;
+
 $recursos = (new RecursoModel())->listarDiario();
 $relatorio = null;
 $erro = null;
 
-function rdData(string $d): string { return (new DateTime($d))->format('d/m/Y'); }
-function rdNumero(float $v): string { return number_format($v, 0, ',', '.'); }
-function rdDia(string $d): string { $map=['Sunday'=>'Domingo','Monday'=>'Segunda-feira','Tuesday'=>'Terça-feira','Wednesday'=>'Quarta-feira','Thursday'=>'Quinta-feira','Friday'=>'Sexta-feira','Saturday'=>'Sábado']; return $map[(new DateTime($d))->format('l')] ?? ''; }
+function rdData(string $d): string
+{
+    return (new DateTime($d))->format('d/m/Y');
+}
+
+function rdNumero(float $v): string
+{
+    return number_format($v, 0, ',', '.');
+}
 
 try {
     $valida = DateTime::createFromFormat('Y-m-d', $data);
-    if (!$valida || $valida->format('Y-m-d') !== $data) throw new InvalidArgumentException('Informe uma data válida.');
+
+    if (!$valida || $valida->format('Y-m-d') !== $data) {
+        throw new InvalidArgumentException('Informe uma data válida.');
+    }
+
     $relatorio = (new RelatorioProgramacaoService())->gerar($data, $data, $recursoId);
-} catch (Throwable $e) { $erro = $e->getMessage(); }
+} catch (Throwable $e) {
+    $erro = $e->getMessage();
+}
 ?>
+
 <div class="container-fluid py-3 relatorio-modelo">
     <div class="d-flex justify-content-between align-items-center mb-3 relatorio-toolbar">
-        <div><h2 class="mb-1">Relatório de Programação — Diária</h2><div class="text-muted small">Modelo RP 09 — programação de produção</div></div>
-        <div class="d-flex gap-2"><a href="?page=relatorios" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Relatórios</a><?php if($relatorio && !empty($relatorio['equipamentos'])): ?><button type="button" class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button><?php endif; ?></div>
+        <div>
+            <h2 class="mb-1">Relatório de Programação — Diária</h2>
+            <div class="text-muted small">Modelo RP 09 — Registro de Produção</div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <a href="?page=relatorios" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Relatórios
+            </a>
+
+            <?php if ($relatorio && !empty($relatorio['equipamentos'])): ?>
+                <button type="button" class="btn btn-primary" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Imprimir
+                </button>
+            <?php endif; ?>
+        </div>
     </div>
-    <form method="get" class="card shadow-sm mb-3 relatorio-toolbar"><input type="hidden" name="page" value="relatorio_programacao_diaria"><div class="card-body"><div class="row g-3 align-items-end"><div class="col-md-3"><label class="form-label">Data</label><input type="date" name="data" class="form-control" value="<?=htmlspecialchars($data)?>" required></div><div class="col-md-5"><label class="form-label">Equipamento</label><select name="recurso_id" class="form-select"><option value="">Todos os equipamentos</option><?php foreach($recursos as $r): ?><option value="<?= (int)$r['id']?>" <?=$recursoId===(int)$r['id']?'selected':''?>><?=htmlspecialchars($r['descricao'])?></option><?php endforeach; ?></select></div><div class="col-md-4"><button class="btn btn-primary w-100"><i class="bi bi-search"></i> Gerar relatório</button></div></div></div></form>
-    <?php if($erro): ?><div class="alert alert-danger relatorio-toolbar"><?=htmlspecialchars($erro)?></div>
-    <?php elseif($relatorio && empty($relatorio['equipamentos'])): ?><div class="alert alert-info relatorio-toolbar">Não há programação para a data e equipamento selecionados.</div>
-    <?php elseif($relatorio): foreach($relatorio['equipamentos'] as $equipamento): $dia=$equipamento['dias'][0]??null; if(!$dia) continue; ?>
-    <article class="modelo-documento">
-        <header class="doc-cabecalho"><div class="doc-cabecalho-top"><div class="doc-marca"><strong>PERFINASA</strong><small>PERFILADOS DE AÇO</small></div><div class="doc-titulo"><strong>SISTEMA DE GESTÃO DA QUALIDADE</strong><span>REGISTRO DE PRODUÇÃO</span></div><div class="doc-codigo"><strong>CÓD.: RP 09</strong><span>Revisão: 04</span><span>PAG 1</span></div></div><div class="doc-titulo-principal">PROGRAMAÇÃO DE PRODUÇÃO</div><div class="doc-meta"><span><strong>Equipamento:</strong> <?=htmlspecialchars($equipamento['nome'])?></span><span><strong>Data Inicial:</strong> <?=rdData($data)?></span><span><strong>Data Final:</strong> <?=rdData($data)?></span><span><strong>Responsável:</strong> ENC. DE PRODUÇÃO</span></div></header>
-        <div class="doc-corpo"><div class="doc-info">Programação de produção — <?=rdDia($data)?>, <?=rdData($data)?></div><table class="doc-tabela"><thead><tr><th>Nº DO PEDIDO / DEMANDA</th><th>ESPESSURA / PRODUTO</th><th>PESO (KG)</th><th>QUANTIDADE</th></tr></thead><tbody><?php foreach($dia['itens'] as $item): ?><tr><td><?=htmlspecialchars((string)($item['demanda']??''))?></td><td><?=htmlspecialchars($item['descricao'])?></td><td class="num"><?=rdNumero((float)$item['peso_estimado'])?></td><td class="num"><?=rdNumero((float)$item['quantidade'])?></td></tr><?php endforeach; ?></tbody><tfoot><tr><th colspan="2">Peso Total</th><th class="num"><?=rdNumero((float)$equipamento['totais']['peso_estimado'])?></th><th class="num"><?=rdNumero((float)$equipamento['totais']['quantidade'])?></th></tr></tfoot></table><div class="doc-observacoes"><strong>Observação:</strong><?php foreach($dia['itens'] as $item): if(!empty($item['observacao'])): ?><div><?=htmlspecialchars($item['observacao'])?></div><?php endif; endforeach; ?></div></div>
-        <footer class="doc-rodape"><div><strong>Programado:</strong> ANALISTA DE PCP</div><div><strong>Analisado:</strong> SUPERVISOR DE PRODUÇÃO</div><div><strong>Aprovado:</strong> GERENTE INDUSTRIAL</div><div class="doc-rodape-sistema">Sistema de Gestão da Qualidade — REGISTRO DE PRODUÇÃO — CÓD.: RP 09</div></footer>
-    </article>
-    <?php endforeach; endif; ?>
+
+    <form method="get" class="card shadow-sm mb-3 relatorio-toolbar">
+        <input type="hidden" name="page" value="relatorio_programacao_diaria">
+
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                    <label class="form-label">Data</label>
+                    <input
+                        type="date"
+                        name="data"
+                        class="form-control"
+                        value="<?= htmlspecialchars($data) ?>"
+                        required>
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-label">Equipamento</label>
+                    <select name="recurso_id" class="form-select">
+                        <option value="">Todos os equipamentos</option>
+                        <?php foreach ($recursos as $recurso): ?>
+                            <option
+                                value="<?= (int) $recurso['id'] ?>"
+                                <?= $recursoId === (int) $recurso['id'] ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($recurso['descricao']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <button class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i> Gerar relatório
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <?php if ($erro): ?>
+        <div class="alert alert-danger relatorio-toolbar">
+            <?= htmlspecialchars($erro) ?>
+        </div>
+
+    <?php elseif ($relatorio && empty($relatorio['equipamentos'])): ?>
+        <div class="alert alert-info relatorio-toolbar">
+            Não há programação para a data e equipamento selecionados.
+        </div>
+
+    <?php elseif ($relatorio): ?>
+        <?php foreach ($relatorio['equipamentos'] as $equipamento): ?>
+            <?php
+                $dia = $equipamento['dias'][0] ?? null;
+                if (!$dia) {
+                    continue;
+                }
+            ?>
+
+            <article class="rp09-page">
+                <div class="rp09-document">
+                    <header class="rp09-header">
+                        <div class="rp09-header-main">
+                            <div class="rp09-logo-cell">
+                                <div class="rp09-logo-mark">P</div>
+                                <div class="rp09-logo-name">PERFINASA</div>
+                            </div>
+
+                            <div class="rp09-quality">
+                                <strong>Sistema de Gestão da Qualidade</strong>
+                                <strong>REGISTRO DE PRODUÇÃO</strong>
+                            </div>
+
+                            <div class="rp09-control">
+                                <div><strong>CÓD.:</strong> RP 09</div>
+                                <div class="rp09-control-grid">
+                                    <span>PAG</span>
+                                    <span>Revisão</span>
+                                    <span>1</span>
+                                    <span>4</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rp09-title">
+                            Programação de produção.
+                        </div>
+
+                        <div class="rp09-approval-row">
+                            <div>Programado : <strong>ANALISTA DE PCP</strong></div>
+                            <div>Analisado: <strong>SUPERVISOR DE PRODUÇÃO</strong></div>
+                            <div>Aprovado: <strong>GERENTE INDUSTRIAL</strong></div>
+                        </div>
+
+                        <div class="rp09-info-row">
+                            <div>Equipamento: <strong><?= htmlspecialchars($equipamento['nome']) ?></strong></div>
+                            <div>Data Inicial: <strong><?= rdData($data) ?></strong></div>
+                            <div>Data Final: <strong><?= rdData($data) ?></strong></div>
+                            <div>Responsável: <strong>ENC. DE PRODUÇÃO</strong></div>
+                        </div>
+                    </header>
+
+                    <section class="rp09-production">
+                        <table class="rp09-table rp09-production-table">
+                            <colgroup>
+                                <col class="col-pedido">
+                                <col class="col-vendedor">
+                                <col class="col-espessura">
+                                <col class="col-aco">
+                                <col class="col-peso">
+                            </colgroup>
+
+                            <thead>
+                                <tr>
+                                    <th>Nº do pedido</th>
+                                    <th>Vendedor</th>
+                                    <th>Espessura do produto (mm)</th>
+                                    <th>Aço</th>
+                                    <th>PESO (KG)</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <?php foreach ($dia['itens'] as $item): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars((string) ($item['demanda'] ?? '')) ?></td>
+                                        <td><?= htmlspecialchars((string) ($item['vendedor'] ?? '')) ?></td>
+                                        <td><?= htmlspecialchars((string) ($item['espessura'] ?? '')) ?></td>
+                                        <td><?= htmlspecialchars((string) ($item['aco'] ?? '')) ?></td>
+                                        <td class="rp09-number"><?= rdNumero((float) $item['peso_estimado']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+
+                                <?php for ($i = count($dia['itens']); $i < 4; $i++): ?>
+                                    <tr class="rp09-empty-row">
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                <?php endfor; ?>
+                            </tbody>
+
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4" class="rp09-total-label">Peso Total:</td>
+                                    <td class="rp09-number"><?= rdNumero((float) $equipamento['totais']['peso_estimado']) ?></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="rp09-observation-title">Observação:</div>
+                        <div class="rp09-observation-body">
+                            <?php foreach ($dia['itens'] as $item): ?>
+                                <?php if (!empty($item['observacao'])): ?>
+                                    <div><?= htmlspecialchars($item['observacao']) ?></div>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </div>
+                    </section>
+
+                    <section class="rp09-retention">
+                        <div>Armazenagem</div>
+                        <div>Disposição</div>
+                        <div>Proteção</div>
+                        <div>Recuperação</div>
+                        <div>Retenção</div>
+                        <div>PRODUÇÃO</div>
+                        <div>LIXO</div>
+                        <div>PASTA/ELETRÔNICO</div>
+                        <div>DATA</div>
+                        <div>1 ANO</div>
+                    </section>
+                </div>
+
+                <footer class="rp09-page-footer">
+                    <span>SENADOR CANEDO, <?= rdData($data) ?></span>
+                    <span>1/1</span>
+                </footer>
+            </article>
+        <?php endforeach; ?>
+    <?php endif; ?>
 </div>
+
 <style>
-.relatorio-modelo{font-family:Arial,Helvetica,sans-serif;color:#212529}.modelo-documento{max-width:1120px;margin:0 auto 20px;background:#fff;border:1px solid #343a40}.doc-cabecalho{border-bottom:1px solid #343a40}.doc-cabecalho-top{display:grid;grid-template-columns:1.15fr 2fr 1fr;min-height:62px;border-bottom:1px solid #343a40}.doc-marca,.doc-titulo,.doc-codigo{padding:7px 10px;display:flex;flex-direction:column;justify-content:center}.doc-marca{border-right:1px solid #343a40}.doc-marca strong{font-size:1.3rem}.doc-marca small{font-size:.55rem;letter-spacing:.1em}.doc-titulo{text-align:center;font-size:.72rem;line-height:1.4}.doc-codigo{font-size:.68rem;line-height:1.5}.doc-titulo-principal{text-align:center;font-weight:800;font-size:.9rem;padding:7px;border-bottom:1px solid #343a40}.doc-meta{display:flex;justify-content:space-between;gap:12px;padding:6px 9px;font-size:.67rem}.doc-corpo{padding:10px}.doc-info{font-size:.7rem;font-weight:700;margin-bottom:6px}.doc-tabela{width:100%;border-collapse:collapse;table-layout:fixed}.doc-tabela th,.doc-tabela td{border:1px solid #adb5bd;padding:5px;font-size:.68rem}.doc-tabela th{background:#f1f3f5}.doc-tabela th:first-child{width:23%}.doc-tabela th:nth-child(3){width:16%}.doc-tabela th:nth-child(4){width:15%}.num{text-align:right}.doc-tabela tfoot th{background:#f8f9fa}.doc-observacoes{min-height:42px;border:1px solid #adb5bd;border-top:0;padding:7px;font-size:.68rem}.doc-rodape{border-top:1px solid #343a40;display:grid;grid-template-columns:1fr 1fr 1fr;gap:0}.doc-rodape>div{padding:7px;border-right:1px solid #adb5bd;font-size:.62rem;text-align:center}.doc-rodape>div:nth-child(3){border-right:0}.doc-rodape-sistema{grid-column:1/-1;border-top:1px solid #adb5bd!important;border-right:0!important}.relatorio-modelo .btn{white-space:nowrap}@media print{@page{size:A4 landscape;margin:8mm}body{background:#fff!important}.relatorio-toolbar,.app-sidebar,.app-header,.app-footer,nav,.btn{display:none!important}.app-main,.container-fluid{margin:0!important;padding:0!important;width:100%!important;max-width:none!important}.modelo-documento{max-width:none;border:0;margin:0}.doc-tabela tr{break-inside:avoid}.doc-cabecalho,.doc-rodape{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    .relatorio-modelo {
+        color: #212529;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    /* ---------------------------------------------------------
+       RP 09 — estrutura visual baseada no modelo fornecido
+       --------------------------------------------------------- */
+    .rp09-page {
+        width: 100%;
+        max-width: 1180px;
+        min-height: 190mm;
+        margin: 0 auto 24px;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+    }
+
+    .rp09-document {
+        width: 100%;
+        border: 2px solid #111;
+        background: #fff;
+    }
+
+    .rp09-header-main {
+        display: grid;
+        grid-template-columns: 26% 48% 26%;
+        height: 76px;
+        background: #d9d9d9;
+        border-bottom: 1px solid #111;
+    }
+
+    .rp09-logo-cell,
+    .rp09-quality,
+    .rp09-control {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .rp09-logo-cell {
+        gap: 7px;
+        padding: 10px;
+        border-right: 1px solid #111;
+    }
+
+    .rp09-logo-mark {
+        width: 39px;
+        height: 39px;
+        flex: 0 0 39px;
+        display: grid;
+        place-items: center;
+        background: #f4511e;
+        color: #fff;
+        font-size: 29px;
+        font-weight: 900;
+        font-style: italic;
+        line-height: 1;
+    }
+
+    .rp09-logo-name {
+        padding: 5px 10px;
+        background: #064d12;
+        color: #fff;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: .02em;
+        line-height: 1;
+    }
+
+    .rp09-quality {
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        text-align: center;
+        border-right: 1px solid #111;
+        font-size: 14px;
+        line-height: 1.15;
+    }
+
+    .rp09-control {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        font-size: 13px;
+        text-align: center;
+    }
+
+    .rp09-control > div:first-child {
+        height: 31px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #111;
+    }
+
+    .rp09-control-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 22px 22px;
+        height: 44px;
+    }
+
+    .rp09-control-grid span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #111;
+        border-bottom: 1px solid #111;
+    }
+
+    .rp09-control-grid span:nth-child(2n) {
+        border-right: 0;
+    }
+
+    .rp09-control-grid span:nth-child(n + 3) {
+        border-bottom: 0;
+    }
+
+    .rp09-title {
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #d9d9d9;
+        border-bottom: 1px solid #111;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .rp09-approval-row,
+    .rp09-info-row {
+        display: grid;
+        background: #d9d9d9;
+        border-bottom: 1px solid #111;
+        font-size: 12px;
+        line-height: 1.15;
+    }
+
+    .rp09-approval-row {
+        grid-template-columns: 1fr 1.35fr 1fr;
+    }
+
+    .rp09-info-row {
+        grid-template-columns: 1.15fr 1fr 1fr 1.15fr;
+    }
+
+    .rp09-approval-row > div,
+    .rp09-info-row > div {
+        min-width: 0;
+        min-height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3px 5px;
+        text-align: center;
+        border-right: 1px solid #111;
+        white-space: nowrap;
+    }
+
+    .rp09-approval-row > div:last-child,
+    .rp09-info-row > div:last-child {
+        border-right: 0;
+    }
+
+    .rp09-production {
+        background: #fff;
+    }
+
+    .rp09-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+    }
+
+    .rp09-table th,
+    .rp09-table td {
+        border-right: 1px solid #111;
+        border-bottom: 1px solid #111;
+        padding: 3px 5px;
+        height: 22px;
+        font-size: 12px;
+        line-height: 1.15;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .rp09-table th:last-child,
+    .rp09-table td:last-child {
+        border-right: 0;
+    }
+
+    .rp09-table thead th {
+        height: 25px;
+        background: #d9d9d9;
+        font-weight: 700;
+    }
+
+    .rp09-table .col-pedido {
+        width: 13%;
+    }
+
+    .rp09-table .col-vendedor {
+        width: 12%;
+    }
+
+    .rp09-table .col-espessura {
+        width: 25%;
+    }
+
+    .rp09-table .col-aco {
+        width: 25%;
+    }
+
+    .rp09-table .col-peso {
+        width: 25%;
+    }
+
+    .rp09-table tbody td {
+        background: #fff;
+    }
+
+    .rp09-empty-row td {
+        height: 22px;
+    }
+
+    .rp09-number {
+        text-align: right !important;
+        padding-right: 9px !important;
+    }
+
+    .rp09-total-label {
+        height: 28px !important;
+        background: #fff;
+        text-align: right !important;
+        font-weight: 400;
+        padding-right: 8px !important;
+    }
+
+    .rp09-observation-title {
+        height: 25px;
+        display: flex;
+        align-items: center;
+        padding: 0 4px;
+        background: #d9d9d9;
+        border-bottom: 1px solid #111;
+        font-size: 12px;
+    }
+
+    .rp09-observation-body {
+        min-height: 45px;
+        padding: 5px;
+        border-bottom: 1px solid #111;
+        font-size: 11px;
+        line-height: 1.25;
+    }
+
+    .rp09-retention {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.8fr 1.8fr 1.7fr;
+        background: #d9d9d9;
+    }
+
+    .rp09-retention > div {
+        min-height: 29px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 5px;
+        border-right: 1px solid #111;
+        border-bottom: 1px solid #111;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .rp09-retention > div:nth-child(5),
+    .rp09-retention > div:nth-child(10) {
+        border-right: 0;
+    }
+
+    .rp09-retention > div:nth-child(n + 6) {
+        border-bottom: 0;
+    }
+
+    .rp09-page-footer {
+        position: relative;
+        min-height: 24px;
+        margin-top: auto;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 0 4px;
+        font-size: 12px;
+    }
+
+    .rp09-page-footer span:last-child {
+        position: absolute;
+        right: 4px;
+        bottom: 0;
+    }
+
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 9mm 10mm 8mm;
+        }
+
+        html,
+        body {
+            background: #fff !important;
+        }
+
+        .relatorio-toolbar,
+        .app-sidebar,
+        .app-header,
+        .app-footer,
+        nav,
+        .btn {
+            display: none !important;
+        }
+
+        .app-main,
+        .container-fluid,
+        .relatorio-modelo {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .rp09-page {
+            width: 100%;
+            max-width: none;
+            min-height: 190mm;
+            margin: 0;
+            break-after: page;
+        }
+
+        .rp09-page:last-child {
+            break-after: auto;
+        }
+
+        .rp09-document {
+            border-width: 2px;
+            break-inside: avoid;
+        }
+
+        .rp09-header-main,
+        .rp09-title,
+        .rp09-approval-row,
+        .rp09-info-row,
+        .rp09-table thead th,
+        .rp09-observation-title,
+        .rp09-retention {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
 </style>
