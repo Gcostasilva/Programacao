@@ -21,6 +21,7 @@ class RelatorioProgramacaoService
      *
      * Estrutura:
      * - periodo
+     * - totais
      * - equipamentos
      *   - id / nome
      *   - totais
@@ -48,7 +49,7 @@ class RelatorioProgramacaoService
                 'fim' => $dataFim,
             ],
             'totais' => [
-                'quantidade' => 0,
+                'quantidade' => 0.0,
                 'peso_estimado' => 0.0,
             ],
             'equipamentos' => [],
@@ -92,23 +93,11 @@ class RelatorioProgramacaoService
 
             $relatorio['equipamentos'][$equipamentoId]['dias'][$data]['itens'][] = $item;
 
-            $this->adicionarTotais(
-                $relatorio['totais'],
-                $item
-            );
-
-            $this->adicionarTotais(
-                $relatorio['equipamentos'][$equipamentoId]['totais'],
-                $item
-            );
-
-            $this->adicionarTotais(
-                $relatorio['equipamentos'][$equipamentoId]['dias'][$data]['totais'],
-                $item
-            );
+            $this->adicionarTotais($relatorio['totais'], $item);
+            $this->adicionarTotais($relatorio['equipamentos'][$equipamentoId]['totais'], $item);
+            $this->adicionarTotais($relatorio['equipamentos'][$equipamentoId]['dias'][$data]['totais'], $item);
         }
 
-        // Converte os mapas associativos em listas, facilitando o consumo pela view.
         foreach ($relatorio['equipamentos'] as &$equipamento) {
             $equipamento['dias'] = array_values($equipamento['dias']);
         }
@@ -122,7 +111,7 @@ class RelatorioProgramacaoService
     private function totaisVazios(): array
     {
         return [
-            'quantidade' => 0,
+            'quantidade' => 0.0,
             'peso_estimado' => 0.0,
         ];
     }

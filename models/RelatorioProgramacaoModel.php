@@ -6,7 +6,7 @@ require_once __DIR__ . '/BaseModel.php';
  * Acesso aos dados necessários para os relatórios de programação.
  *
  * Este model não monta HTML/PDF e não contém regras de apresentação.
- * Ele entrega somente os dados brutos já relacionados e ordenados.
+ * Ele entrega somente os dados necessários para a programação planejada.
  */
 class RelatorioProgramacaoModel extends BaseModel
 {
@@ -33,8 +33,6 @@ class RelatorioProgramacaoModel extends BaseModel
                 pr.desc_complementar AS descricao_complementar,
                 pr.qtd AS quantidade,
                 pr.peso AS peso_estimado,
-                pr.peca_realizada AS pecas_realizadas,
-                pr.peso_realizado AS peso_realizado,
                 pr.obs AS observacao,
                 pr.ordem AS ordem
             FROM programacao AS pr

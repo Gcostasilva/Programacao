@@ -28,6 +28,16 @@ Router::add(
     'Relatórios'
 );
 Router::add(
+    'relatorio_programacao',
+    'pages/relatorios/programacao.php',
+    'Relatório de Programação'
+);
+Router::add(
+    'relatorio_programacao_dados',
+    'controllers/RelatorioProgramacao_Controller.php',
+    'Dados do Relatório de Programação'
+);
+Router::add(
     'dashboard',
     'pages/dashboard/index.php',
     'Dashboard'
@@ -124,7 +134,7 @@ Router::add(
     'Reordenar Programação Semanal'
 );
 Router::add(
-    'prog_semanal_filtrar',
+    'prog_semanal_filtrar', 
     'pages/programacao/semanal/prog_semanal_filtrar.php',
     'Filtrar Programação Semanal'
 );
