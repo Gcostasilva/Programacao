@@ -11,7 +11,7 @@ class PedidosInteracaoModel extends BaseModel
                      WHERE c.pedido_industria_id = p.id) AS total_comentarios
                 FROM pedidos_industria p
                 WHERE p.pedido = :pedido
-                ORDER BY p.entrada";
+                ORDER BY p.tipo, p.entrada";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':pedido' => $pedido]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);

@@ -9,7 +9,7 @@
             </div>
         </div>
 
-        <div class="card-body" style="display: inline; grid-template-columns: 1fr 1fr;">
+        <div class="card-body row" style="display: inline; grid-template-columns: 1fr 1fr;">
             <form action="index.php?page=pedidos_salvar" method="POST" style="display:flex;" id="formPedido">
                 <div id="formSemanal" class="form-pedido col" style="width:90%;">
                     <div class="row">
@@ -48,21 +48,19 @@
             </form>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-responsive table-responsive-sm col-md-8">
             <table class="table table-sm table-hover align-middle mb-0">
                 <thead>
                     <tr>
                         <th>Tipo</th>
                         <th>Entrada</th>
-                        <th>Usu Entrada</th>
                         <th>Previsão</th>
                         <th>Saída</th>
-                        <th>Usu Saída</th>
                         <th class="text-center" style="width:90px">Ação</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaDados">
-                    <tr id="pedidoSemDados">
+                    <tr id="pedidoSemDados" >
                         <td colspan="7" class="text-center text-muted py-3">Digite um pedido e pressione Tab para consultar as entradas.</td>
                     </tr>
                 </tbody>
@@ -125,13 +123,13 @@ document.addEventListener('DOMContentLoaded', function () {
         registros.forEach(registro => {
             const tr = document.createElement('tr');
             const comentarios = Number(registro.total_comentarios || 0);
+            const saida = registro.saida ?? ""
             tr.innerHTML = `
                 <td>${escapeHtml(registro.tipo)}</td>
-                <td>${escapeHtml(registro.entrada)}</td>
-                <td>${escapeHtml(registro.user_entrada)}</td>
+                <td>${escapeHtml(registro.entrada + " - " + registro.user_entrada)}</td>
                 <td>${escapeHtml(registro.previsao)}</td>
-                <td>${escapeHtml(registro.saida)}</td>
-                <td>${escapeHtml(registro.user_saida)}</td>
+                <td>${escapeHtml(saida  + " - " + registro.user_saida)}</td>
+
                 <td class="text-center">
                     <button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido"
                             data-id="${escapeHtml(registro.id)}"
