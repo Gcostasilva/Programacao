@@ -66,7 +66,23 @@ try {
 
     <?php if ($erro): ?><div class="alert alert-danger rp04-toolbar"><?= htmlspecialchars($erro) ?></div>
     <?php elseif ($relatorio && empty($relatorio['equipamentos'])): ?><div class="alert alert-info rp04-toolbar">Não há programação para a semana e equipamento selecionados.</div>
-        <?php elseif ($relatorio): foreach ($relatorio['equipamentos'] as $equipamento): ?>
+    <?php elseif ($relatorio):
+        $totalSemanaQuantidade = 0;
+        $totalSemanaPeso = 0;
+        foreach ($relatorio['equipamentos'] as $equipamentoSemana) {
+            foreach ($equipamentoSemana['dias'] as $diaSemana) {
+                $totalSemanaQuantidade += (float)($diaSemana['totais']['quantidade'] ?? 0);
+                $totalSemanaPeso += (float)($diaSemana['totais']['peso_estimado'] ?? 0);
+            }
+        }
+        foreach ($relatorio['equipamentos'] as $equipamento):
+            $totalEquipamentoQuantidade = 0;
+            $totalEquipamentoPeso = 0;
+            foreach ($equipamento['dias'] as $dia) {
+                $totalEquipamentoQuantidade += (float)($dia['totais']['quantidade'] ?? 0);
+                $totalEquipamentoPeso += (float)($dia['totais']['peso_estimado'] ?? 0);
+            }
+    ?>
             <article class="rp04-document">
                 <header class="rp04-header">
                     <div class="rp04-top">
@@ -92,7 +108,7 @@ try {
                     <?php foreach ($equipamento['dias'] as $dia): ?>
                         <div class="rp04-day">
                             <div class="rp04-day-title">
-                                <strong><?= htmlspecialchars(rsDia($dia['data'])) ?> - <?=  rsData($dia['data']) ?></sTRONG>
+                                <strong><?= htmlspecialchars(rsDia($dia['data'])) ?> - <?= rsData($dia['data']) ?></strong>
                                 <span>Total: <?= rsNumero((float)$dia['totais']['peso_estimado']) ?> kg</span>
                             </div>
                             <table class="rp04-table">
@@ -117,12 +133,16 @@ try {
                             </table>
                         </div>
                     <?php endforeach; ?>
+
+                    <div class="rp04-total-equipamento">
+                        <span>TOTAL PROGRAMADO — <?= htmlspecialchars($equipamento['nome']) ?></span>
+                        <span><?= rsNumero($totalEquipamentoQuantidade) ?> PEÇAS</span>
+                        <span><?= rsNumero($totalEquipamentoPeso) ?> KG</span>
+                    </div>
                 </section>
                 <section class="rp04-observacoes">
                     <div><strong>Observações:</strong></div>
-                    <div class="rp04-obs-area"><?php foreach ($equipamento['dias'] as $dia): foreach ($dia['itens'] as $item): if (!empty($item['observacao'])): ?><div><strong><?= htmlspecialchars((string)$item['produto_id']) ?>:</strong> <?= htmlspecialchars($item['observacao']) ?></div><?php endif;
-                                                                                                                                                                                                                                                                                            endforeach;
-                                                                                                                                                                                                                                                                                        endforeach; ?></div>
+                    <div class="rp04-obs-area"><?php foreach ($equipamento['dias'] as $dia): foreach ($dia['itens'] as $item): if (!empty($item['observacao'])): ?><div><strong><?= htmlspecialchars((string)$item['produto_id']) ?>:</strong> <?= htmlspecialchars($item['observacao']) ?></div><?php endif; endforeach; endforeach; ?></div>
                 </section>
                 <section class="rp04-storage">
                     <table>
@@ -148,312 +168,71 @@ try {
                 </section>
             </article>
             <DIV> </DIV>
-    <?php endforeach;
-    endif; ?>
+    <?php endforeach; ?>
+
+        <div class="rp04-total-semana">
+            <span>TOTAL DA SEMANA</span>
+            <span><?= rsNumero($totalSemanaQuantidade) ?> PEÇAS</span>
+            <span><?= rsNumero($totalSemanaPeso) ?> KG</span>
+        </div>
+    <?php endif; ?>
 </div>
 
 <style>
-    .rp04-page {
-        font-family: Arial, Helvetica, sans-serif;
-        color: #111
-    }
-
-    .rp04-document {
-        max-width: 1120px;
-        margin: 0 auto;
-        background: #fff;
-        border: 2px solid #111
-    }
-
-    .rp04-header {
-        border-bottom: 1px solid #111
-    }
-
-    .rp04-top {
-        display: grid;
-        grid-template-columns: 1.05fr 2fr .95fr;
-        min-height: 55px;
-        border-bottom: 1px solid #111
-    }
-
-    .rp04-logo {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        padding: 4px 7px;
-        border-right: 1px solid #111
-    }
-
-    .rp04-logo-mark {
-        width: 38px;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #f15a24;
-        color: #fff;
-        font-weight: 900;
-        font-size: 29px;
-        border-right: 10px solid #064b0b
-    }
-
-    .rp04-logo strong {
-        display: block;
-        font-size: 1.35rem;
-        line-height: 1
-    }
-
-    .rp04-logo small {
-        display: block;
-        font-size: .48rem;
-        letter-spacing: .09em;
-        margin-top: 2px
-    }
-
-    .rp04-system,
-    .rp04-code {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: .72rem;
-        line-height: 1.3
-    }
-
-    .rp04-system {
-        border-right: 1px solid #111
-    }
-
-    .rp04-system strong {
-        font-size: .8rem
-    }
-
-    .rp04-title {
-        text-align: center;
-        font-weight: 800;
-        font-size: .88rem;
-        padding: 6px;
-        border-bottom: 1px solid #111
-    }
-
-    .rp04-date {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        font-size: .68rem
-    }
-
-    .rp04-date span {
-        padding: 5px 7px
-    }
-
-    .rp04-date span+span {
-        border-left: 1px solid #111
-    }
-
-    .rp04-responsaveis {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        border-bottom: 1px solid #111
-    }
-
-    .rp04-responsaveis div {
-        padding: 5px 6px;
-        font-size: .66rem;
-        text-align: center;
-        border-right: 1px solid #111;
-        min-height: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: center
-    }
-
-    .rp04-responsaveis div:last-child {
-        border-right: 0
-    }
-
-    .rp04-content {
-        padding: 0
-    }
-
-    .rp04-day {
-        break-inside: avoid
-    }
-
-    .rp04-day-title {
-        display: grid;
-        grid-template-columns: 1fr auto 1fr;
-        gap: 8px;
-        align-items: center;
-        background: #f1f3f5;
-        border-top: 1px solid #111;
-        border-bottom: 1px solid #111;
-        padding: 4px 6px;
-        font-size: .7rem
-    }
-
-    .rp04-day-title span:nth-child(2) {
-        text-align: center
-    }
-
-    .rp04-day-title span:last-child {
-        text-align: right
-    }
-
-    .rp04-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed
-    }
-
-    .rp04-table th,
-    .rp04-table td {
-        border: 1px solid #111;
-        padding: 3px 5px;
-        font-size: .65rem;
-        line-height: 1.2
-    }
-
-    .rp04-table th {
-        height: 29px;
-        font-size: .66rem
-    }
-
-    .rp04-table th:nth-child(1) {
-        width: 15%
-    }
-
-    .rp04-table th:nth-child(2) {
-        width: 37%
-    }
-
-    .rp04-table th:nth-child(3) {
-        width: 15%
-    }
-
-    .rp04-table th:nth-child(4) {
-        width: 17%
-    }
-
-    .rp04-table th:nth-child(5) {
-        width: 16%
-    }
-
-    .rp04-table td:first-child,
-    .rp04-table th:first-child {
-        text-align: center
-    }
-
-    .rp04-table small {
-        display: block;
-        color: #555;
-        font-size: .57rem;
-        margin-top: 2px
-    }
-
-    .num {
-        text-align: right
-    }
-
-    .rp04-observacoes {
-        border-top: 1px solid #111
-    }
-
-    .rp04-observacoes>div:first-child {
-        padding: 3px 5px;
-        border-bottom: 1px solid #111;
-        font-size: .68rem
-    }
-
-    .rp04-obs-area {
-        min-height: 45px;
-        padding: 5px;
-        font-size: .64rem
-    }
-
-    .rp04-storage table {
-        width: 100%;
-        border-collapse: collapse
-    }
-
-    .rp04-storage th,
-    .rp04-storage td {
-        border: 1px solid #111;
-        text-align: center;
-        padding: 5px 4px;
-        font-size: .64rem
-    }
-
-    .rp04-storage th {
-        font-size: .68rem
-    }
-
-    .rp04-print-footer {
-        max-width: 1120px;
-        margin: 25px auto 80px;
-        display: flex;
-        justify-content: space-between;
-        font: 12px Arial, sans-serif
-    }
-
-    .rp04-toolbar .btn {
-        white-space: nowrap
-    }
-
+    .rp04-page { font-family: Arial, Helvetica, sans-serif; color: #111 }
+    .rp04-document { max-width: 1120px; margin: 0 auto; background: #fff; border: 2px solid #111 }
+    .rp04-header { border-bottom: 1px solid #111 }
+    .rp04-top { display: grid; grid-template-columns: 1.05fr 2fr .95fr; min-height: 55px; border-bottom: 1px solid #111 }
+    .rp04-logo { display: flex; align-items: center; gap: 7px; padding: 4px 7px; border-right: 1px solid #111 }
+    .rp04-logo-mark { width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; background: #f15a24; color: #fff; font-weight: 900; font-size: 29px; border-right: 10px solid #064b0b }
+    .rp04-logo strong { display: block; font-size: 1.35rem; line-height: 1 }
+    .rp04-logo small { display: block; font-size: .48rem; letter-spacing: .09em; margin-top: 2px }
+    .rp04-system, .rp04-code { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: .72rem; line-height: 1.3 }
+    .rp04-system { border-right: 1px solid #111 }
+    .rp04-system strong { font-size: .8rem }
+    .rp04-title { text-align: center; font-weight: 800; font-size: .88rem; padding: 6px; border-bottom: 1px solid #111 }
+    .rp04-date { display: grid; grid-template-columns: 1fr 1fr 1fr; font-size: .68rem }
+    .rp04-date span { padding: 5px 7px }
+    .rp04-date span+span { border-left: 1px solid #111 }
+    .rp04-responsaveis { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid #111 }
+    .rp04-responsaveis div { padding: 5px 6px; font-size: .66rem; text-align: center; border-right: 1px solid #111; min-height: 28px; display: flex; align-items: center; justify-content: center }
+    .rp04-responsaveis div:last-child { border-right: 0 }
+    .rp04-content { padding: 0 }
+    .rp04-day { break-inside: avoid }
+    .rp04-day-title { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; background: #f1f3f5; border-top: 1px solid #111; border-bottom: 1px solid #111; padding: 4px 6px; font-size: .7rem }
+    .rp04-day-title span { text-align: right }
+    .rp04-table { width: 100%; border-collapse: collapse; table-layout: fixed }
+    .rp04-table th, .rp04-table td { border: 1px solid #111; padding: 3px 5px; font-size: .65rem; line-height: 1.2 }
+    .rp04-table th { height: 29px; font-size: .66rem }
+    .rp04-table th:nth-child(1) { width: 15% }
+    .rp04-table th:nth-child(2) { width: 37% }
+    .rp04-table th:nth-child(3) { width: 15% }
+    .rp04-table th:nth-child(4) { width: 17% }
+    .rp04-table th:nth-child(5) { width: 16% }
+    .rp04-table td:first-child, .rp04-table th:first-child { text-align: center }
+    .rp04-table small { display: block; color: #555; font-size: .57rem; margin-top: 2px }
+    .num { text-align: right }
+    .rp04-total-equipamento, .rp04-total-semana { display: grid; grid-template-columns: 1fr auto auto; gap: 18px; align-items: center; background: #f1f3f5; border-top: 2px solid #111; border-bottom: 2px solid #111; padding: 7px 8px; font-size: .72rem; font-weight: 800 }
+    .rp04-total-equipamento { break-inside: avoid }
+    .rp04-total-semana { max-width: 1120px; margin: 10px auto 25px; background: #e9ecef; font-size: .78rem }
+    .rp04-observacoes { border-top: 1px solid #111 }
+    .rp04-observacoes>div:first-child { padding: 3px 5px; border-bottom: 1px solid #111; font-size: .68rem }
+    .rp04-obs-area { min-height: 45px; padding: 5px; font-size: .64rem }
+    .rp04-storage table { width: 100%; border-collapse: collapse }
+    .rp04-storage th, .rp04-storage td { border: 1px solid #111; text-align: center; padding: 5px 4px; font-size: .64rem }
+    .rp04-storage th { font-size: .68rem }
+    .rp04-print-footer { max-width: 1120px; margin: 25px auto 80px; display: flex; justify-content: space-between; font: 12px Arial, sans-serif }
+    .rp04-toolbar .btn { white-space: nowrap }
     @media print {
-        @page {
-            size: A4 landscape;
-            margin: 8mm
-        }
-
-        body {
-            background: #fff !important
-        }
-
-        .rp04-toolbar,
-        .app-sidebar,
-        .app-header,
-        .app-footer,
-        nav,
-        .btn {
-            display: none !important
-        }
-
-        .app-main,
-        .container-fluid,
-        .rp04-page {
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            max-width: none !important
-        }
-
-        .rp04-document {
-            max-width: none;
-            margin: 0;
-            border: 2px solid #111;
-            box-shadow: none
-        }
-
-        .rp04-document:not(:first-of-type) {
-            break-before: page
-        }
-
-        .rp04-day,
-        .rp04-table tr {
-            break-inside: avoid
-        }
-
-        .rp04-print-footer {
-            max-width: none;
-            margin: 15px 0 0;
-            font-size: 10px
-        }
-
-        .rp04-header,
-        .rp04-responsaveis,
-        .rp04-storage {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact
-        }
+        @page { size: A4 landscape; margin: 8mm }
+        body { background: #fff !important }
+        .rp04-toolbar, .app-sidebar, .app-header, .app-footer, nav, .btn { display: none !important }
+        .app-main, .container-fluid, .rp04-page { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important }
+        .rp04-document { max-width: none; margin: 0; border: 2px solid #111; box-shadow: none }
+        .rp04-document:not(:first-of-type) { break-before: page }
+        .rp04-day, .rp04-table tr, .rp04-total-equipamento { break-inside: avoid }
+        .rp04-total-semana { max-width: none; margin: 8px 0 0; font-size: .72rem }
+        .rp04-print-footer { max-width: none; margin: 15px 0 0; font-size: 10px }
+        .rp04-header, .rp04-responsaveis, .rp04-storage, .rp04-total-equipamento, .rp04-total-semana { -webkit-print-color-adjust: exact; print-color-adjust: exact }
     }
 </style>
