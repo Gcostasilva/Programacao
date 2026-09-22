@@ -4,7 +4,7 @@
     <div class="row mt-3">
 
         <div class="col-12">
-            <?php include 'pages\programacao\diaria\componentes\formulario.php'; ?>
+            <?php include 'pages\\programacao\\diaria\\componentes\\formulario.php'; ?>
         </div>
     </div>
 
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
             origem: 'diaria'
         });
 
-        window.open('index.php?' + params.toString(), '_blank');
+        window.location.href = 'index.php?' + params.toString();
     });
 });
 </script>
