@@ -17,13 +17,20 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                 <i class="bi bi-chevron-right"></i>
             </a>
         </div>
+
         <span class="text-muted small"><?= count($tabela) ?> item(ns)</span>
+
+        <button type="button" class="btn btn-primary" id="btnImprimirProgramacaoQuinzena">
+            <i class="bi bi-printer"></i> Imprimir programação
+        </button>
+
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-sm table-hover align-middle mb-0">
                 <thead>
                     <tr>
+                        <th class="text-center" style="width:120px">Ações</th>
                         <th>Código</th>
                         <th>Descrição</th>
                         <th class="text-end">A produzir</th>
@@ -31,12 +38,13 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                         <th class="text-end">Saldo</th>
                         <th>OP</th>
                         <th>Observação</th>
-                        <th class="text-center" style="width:120px">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!$tabela): ?>
-                        <tr><td colspan="8" class="text-center text-muted py-4">Nenhuma programação cadastrada para esta quinzena.</td></tr>
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">Nenhuma programação cadastrada para esta quinzena.</td>
+                        </tr>
                     <?php endif; ?>
                     <?php foreach ($tabela as $item): ?>
                         <?php
@@ -46,6 +54,15 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                         $descricao = trim((string)($item['descricao'] ?? ''));
                         ?>
                         <tr>
+                            <td class="text-center text-nowrap">
+                                <i class="bi bi-arrows-move"></i>
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-editar-quinzena" data-item='<?= htmlspecialchars(json_encode($item, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>' title="Editar">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <a class="btn btn-sm btn-outline-danger" href="index.php?page=prog_quinzenal_excluir&id=<?= (int)$item['id'] ?>&quinzena=<?= urlencode($quinzena) ?>" onclick="return confirm('Excluir este item da programação quinzenal?')" title="Excluir">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
                             <td class="text-nowrap fw-semibold"><?= htmlspecialchars($item['produto_id']) ?></td>
                             <td><?= htmlspecialchars($descricao !== '' ? $descricao : 'Produto não localizado') ?></td>
                             <td class="text-end text-nowrap"><?= number_format($quantidade, 3, ',', '.') ?></td>
@@ -57,14 +74,7 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                             <td class="text-end text-nowrap fw-semibold"><?= number_format($saldo, 3, ',', '.') ?></td>
                             <td class="text-nowrap"><?= htmlspecialchars($item['ordem_producao'] ?? '') ?></td>
                             <td><?= htmlspecialchars($item['obs'] ?? '') ?></td>
-                            <td class="text-center text-nowrap">
-                                <button type="button" class="btn btn-sm btn-outline-primary btn-editar-quinzena" data-item='<?= htmlspecialchars(json_encode($item, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>' title="Editar">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <a class="btn btn-sm btn-outline-danger" href="index.php?page=prog_quinzenal_excluir&id=<?= (int)$item['id'] ?>&quinzena=<?= urlencode($quinzena) ?>" onclick="return confirm('Excluir este item da programação quinzenal?')" title="Excluir">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </td>
+
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -100,19 +110,19 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('.btn-editar-quinzena').forEach(function (botao) {
-        botao.addEventListener('click', function () {
-            const item = JSON.parse(this.dataset.item);
-            document.getElementById('edit_q_id').value = item.id;
-            document.getElementById('edit_q_quinzena').value = item.quinzena;
-            document.getElementById('edit_q_produto').value = item.produto_id;
-            document.getElementById('edit_q_quantidade').value = item.quantidade;
-            document.getElementById('edit_q_produzido').value = item.peca_realizada;
-            document.getElementById('edit_q_op').value = item.ordem_producao || '';
-            document.getElementById('edit_q_obs').value = item.obs || '';
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarQuinzena')).show();
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.btn-editar-quinzena').forEach(function(botao) {
+            botao.addEventListener('click', function() {
+                const item = JSON.parse(this.dataset.item);
+                document.getElementById('edit_q_id').value = item.id;
+                document.getElementById('edit_q_quinzena').value = item.quinzena;
+                document.getElementById('edit_q_produto').value = item.produto_id;
+                document.getElementById('edit_q_quantidade').value = item.quantidade;
+                document.getElementById('edit_q_produzido').value = item.peca_realizada;
+                document.getElementById('edit_q_op').value = item.ordem_producao || '';
+                document.getElementById('edit_q_obs').value = item.obs || '';
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEditarQuinzena')).show();
+            });
         });
     });
-});
 </script>

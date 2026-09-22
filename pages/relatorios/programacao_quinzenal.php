@@ -102,11 +102,19 @@ try {
             <section class="rp05-table-wrap">
                 <table class="rp05-table">
                     <thead>
-                        <tr><th>CÓD</th><th>DESCRIÇÃO</th><th>QUANTIDADE DE PEÇAS</th></tr>
+                        <tr>
+                            <th>CÓD</th>
+                            <th>DESCRIÇÃO</th>
+                            <th>QUANTIDADE DE PEÇAS</th>
+                        </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($relatorio['itens'] as $item): ?>
-                            <tr><td><?= htmlspecialchars((string) $item['produto_id']) ?></td><td><?= htmlspecialchars($item['descricao']) ?></td><td class="num"><?= rqNumero($item['quantidade']) ?></td></tr>
+                            <tr>
+                                <td><?= htmlspecialchars((string) $item['produto_id']) ?></td>
+                                <td><?= htmlspecialchars($item['descricao']) ?></td>
+                                <td class="num"><?= rqNumero($item['quantidade']) ?></td>
+                            </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
@@ -115,14 +123,31 @@ try {
             <section class="rp05-observacoes">
                 <div class="rp05-section-label">Observações:</div>
                 <div class="rp05-observacoes-area">
-                    <?php foreach ($relatorio['itens'] as $item): if (!empty($item['observacao'])): ?><div><strong><?= htmlspecialchars((string) $item['produto_id']) ?>:</strong> <?= htmlspecialchars($item['observacao']) ?></div><?php endif; endforeach; ?>
+                    <?php foreach ($relatorio['itens'] as $item): if (!empty($item['observacao'])): ?><div><strong><?= htmlspecialchars((string) $item['produto_id']) ?>:</strong> <?= htmlspecialchars($item['observacao']) ?></div><?php endif;
+                                                                                                                                                                                                                                endforeach; ?>
                 </div>
             </section>
 
             <section class="rp05-storage">
                 <table>
-                    <thead><tr><th>Armazenamento</th><th>Preservação</th><th>Recuperação</th><th>Retenção</th><th>Disposição</th></tr></thead>
-                    <tbody><tr><td>Pasta Produção</td><td>Back up/TI</td><td>Por data</td><td>03 anos</td><td>Deletar</td></tr></tbody>
+                    <thead>
+                        <tr>
+                            <th>Armazenamento</th>
+                            <th>Preservação</th>
+                            <th>Recuperação</th>
+                            <th>Retenção</th>
+                            <th>Disposição</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Pasta Produção</td>
+                            <td>Back up/TI</td>
+                            <td>Por data</td>
+                            <td>03 anos</td>
+                            <td>Deletar</td>
+                        </tr>
+                    </tbody>
                 </table>
             </section>
         </article>
@@ -131,16 +156,311 @@ try {
 
 <script>
     (() => {
-        const mes = document.getElementById('rp05Mes'), metade = document.getElementById('rp05Metade'), hidden = document.getElementById('rp05Quinzena');
+        const mes = document.getElementById('rp05Mes'),
+            metade = document.getElementById('rp05Metade'),
+            hidden = document.getElementById('rp05Quinzena');
         if (!mes || !metade || !hidden) return;
-        const sync = () => { if (mes.value) hidden.value = mes.value + '-' + metade.value; };
+        const sync = () => {
+            if (mes.value) hidden.value = mes.value + '-' + metade.value;
+        };
         mes.addEventListener('change', sync);
         metade.addEventListener('change', sync);
     })();
 </script>
 
 <style>
-    .rp05-page{font-family:Arial,Helvetica,sans-serif;color:#111}.rp05-document{width:100%;max-width:1120px;margin:0 auto;background:#fff;border:2px solid #111}.rp05-header{border-bottom:1px solid #111}.rp05-header-grid{display:grid;grid-template-columns:1.05fr 2fr .95fr}.rp05-header-top{min-height:52px}.rp05-logo{display:flex;align-items:center;gap:7px;padding:4px 7px;border-right:1px solid #111}.rp05-logo-mark{width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:#f15a24;color:#fff;font-weight:900;font-size:29px;border-right:10px solid #064b0b}.rp05-logo strong{display:block;font-size:1.35rem;line-height:1}.rp05-logo small{display:block;font-size:.48rem;letter-spacing:.09em;margin-top:2px}.rp05-cell{display:flex;align-items:center;justify-content:center;border-right:1px solid #111;padding:3px 6px;font-size:.72rem}.rp05-cell:last-child{border-right:0}.rp05-system{flex-direction:column;line-height:1.2}.rp05-system strong{font-size:.78rem}.rp05-system span{font-size:.68rem}
-    .rp05-header-mid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;min-height:52px}.rp05-ident{grid-column:1 / 3;grid-row:1;border-right:0!important;border-bottom:1px solid #111;flex-direction:column;font-size:.72rem}.rp05-liberado{grid-column:1;grid-row:2;font-weight:700;border-right:1px solid #111}.rp05-versao{grid-column:2;grid-row:2;justify-content:space-between;padding:3px 8px}.rp05-title{text-align:center;font-weight:800;font-size:.82rem;padding:5px;border-top:1px solid #111}.rp05-meta{border-bottom:1px solid #111}.rp05-line{min-height:24px;padding:3px 6px;border-top:1px solid #777;font-size:.7rem}.rp05-line:first-child{border-top:0}.rp05-dates{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #111;font-size:.7rem}.rp05-dates span{padding:4px 6px}.rp05-dates span+span{border-left:1px solid #111}.rp05-table{width:100%;border-collapse:collapse;table-layout:fixed}.rp05-table th,.rp05-table td{border:1px solid #111;padding:3px 5px;font-size:.68rem;height:21px}.rp05-table th{height:40px;text-align:center;font-size:.74rem}.rp05-table th:nth-child(1){width:18%}.rp05-table th:nth-child(2){width:49%}.rp05-table th:nth-child(3){width:33%}.rp05-table td:first-child{text-align:center}.rp05-table td:nth-child(2){white-space:nowrap}.num{text-align:center}.rp05-section-label{border-top:1px solid #111;border-bottom:1px solid #111;padding:3px 5px;font-size:.68rem}.rp05-observacoes-area{min-height:74px;padding:5px;font-size:.67rem;border-bottom:1px solid #111}.rp05-storage table{width:100%;border-collapse:collapse;table-layout:fixed}.rp05-storage th,.rp05-storage td{border:1px solid #111;padding:5px 4px;text-align:center;font-size:.66rem}.rp05-storage th{font-size:.7rem;height:28px}.rp05-print-footer{max-width:1120px;margin:125px auto 0;display:flex;justify-content:space-between;font:14px Arial,sans-serif}.rp05-toolbar .btn{white-space:nowrap}
-    @media print{@page{size:A4 portrait;margin:8mm 8mm 10mm}body{background:#fff!important}.rp05-toolbar,.app-sidebar,.app-header,.app-footer,nav,.btn{display:none!important}.app-main,.container-fluid,.rp05-page{margin:0!important;padding:0!important;width:100%!important;max-width:none!important}.rp05-document{max-width:none;border:2px solid #111;margin:0;box-shadow:none}.rp05-print-footer{max-width:none;margin:118px 0 0;font-size:11px}.rp05-table tr{break-inside:avoid}.rp05-header,.rp05-storage{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+    .rp05-page {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #111
+    }
+
+    .rp05-document {
+        width: 100%;
+        max-width: 1120px;
+        margin: 0 auto;
+        background: #fff;
+        border: 2px solid #111
+    }
+
+    .rp05-header {
+        border-bottom: 1px solid #111
+    }
+
+    .rp05-header-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 2fr .95fr
+    }
+
+    .rp05-header-top {
+        min-height: 52px
+    }
+
+    .rp05-logo {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 4px 7px;
+        border-right: 1px solid #111
+    }
+
+    .rp05-logo-mark {
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f15a24;
+        color: #fff;
+        font-weight: 900;
+        font-size: 29px;
+        border-right: 10px solid #064b0b
+    }
+
+    .rp05-logo strong {
+        display: block;
+        font-size: 1.35rem;
+        line-height: 1
+    }
+
+    .rp05-logo small {
+        display: block;
+        font-size: .48rem;
+        letter-spacing: .09em;
+        margin-top: 2px
+    }
+
+    .rp05-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid #111;
+        padding: 3px 6px;
+        font-size: .72rem
+    }
+
+    .rp05-cell:last-child {
+        border-right: 0
+    }
+
+    .rp05-system {
+        flex-direction: column;
+        line-height: 1.2
+    }
+
+    .rp05-system strong {
+        font-size: .78rem
+    }
+
+    .rp05-system span {
+        font-size: .68rem
+    }
+
+    .rp05-header-mid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+        min-height: 52px
+    }
+
+    .rp05-ident {
+        grid-column: 1 / 3;
+        grid-row: 1;
+        border-right: 0 !important;
+        border-bottom: 1px solid #111;
+        flex-direction: column;
+        font-size: .72rem
+    }
+
+    .rp05-liberado {
+        grid-column: 1;
+        grid-row: 2;
+        font-weight: 700;
+        border-right: 1px solid #111
+    }
+
+    .rp05-versao {
+        grid-column: 2;
+        grid-row: 2;
+        justify-content: space-between;
+        padding: 3px 8px
+    }
+
+    .rp05-title {
+        text-align: center;
+        font-weight: 800;
+        font-size: .82rem;
+        padding: 5px;
+        border-top: 1px solid #111
+    }
+
+    .rp05-meta {
+        border-bottom: 1px solid #111
+    }
+
+    .rp05-line {
+        min-height: 24px;
+        padding: 3px 6px;
+        border-top: 1px solid #777;
+        font-size: .7rem
+    }
+
+    .rp05-line:first-child {
+        border-top: 0
+    }
+
+    .rp05-dates {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-top: 1px solid #111;
+        font-size: .7rem
+    }
+
+    .rp05-dates span {
+        padding: 4px 6px
+    }
+
+    .rp05-dates span+span {
+        border-left: 1px solid #111
+    }
+
+    .rp05-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed
+    }
+
+    .rp05-table th,
+    .rp05-table td {
+        border: 1px solid #111;
+        padding: 3px 5px;
+        font-size: .68rem;
+        height: 21px
+    }
+
+    .rp05-table th {
+        height: 40px;
+        text-align: center;
+        font-size: .74rem
+    }
+
+    .rp05-table th:nth-child(1) {
+        width: 18%
+    }
+
+    .rp05-table th:nth-child(2) {
+        width: 49%
+    }
+
+    .rp05-table th:nth-child(3) {
+        width: 33%
+    }
+
+    .rp05-table td:first-child {
+        text-align: center
+    }
+
+    .rp05-table td:nth-child(2) {
+        white-space: nowrap
+    }
+
+    .num {
+        text-align: center
+    }
+
+    .rp05-section-label {
+        border-top: 1px solid #111;
+        border-bottom: 1px solid #111;
+        padding: 3px 5px;
+        font-size: .68rem
+    }
+
+    .rp05-observacoes-area {
+        min-height: 74px;
+        padding: 5px;
+        font-size: .67rem;
+        border-bottom: 1px solid #111
+    }
+
+    .rp05-storage table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed
+    }
+
+    .rp05-storage th,
+    .rp05-storage td {
+        border: 1px solid #111;
+        padding: 5px 4px;
+        text-align: center;
+        font-size: .66rem
+    }
+
+    .rp05-storage th {
+        font-size: .7rem;
+        height: 28px
+    }
+
+    .rp05-print-footer {
+        max-width: 1120px;
+        margin: 125px auto 0;
+        display: flex;
+        justify-content: space-between;
+        font: 14px Arial, sans-serif
+    }
+
+    .rp05-toolbar .btn {
+        white-space: nowrap
+    }
+
+    @media print {
+        @page {
+            size: A4 portrait;
+            margin: 8mm 8mm 10mm
+        }
+
+        body {
+            background: #fff !important
+        }
+
+        .rp05-toolbar,
+        .app-sidebar,
+        .app-header,
+        .app-footer,
+        nav,
+        .btn {
+            display: none !important
+        }
+
+        .app-main,
+        .container-fluid,
+        .rp05-page {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: none !important
+        }
+
+        .rp05-document {
+            max-width: none;
+            border: 2px solid #111;
+            margin: 0;
+            box-shadow: none
+        }
+
+        .rp05-print-footer {
+            max-width: none;
+            margin: 118px 0 0;
+            font-size: 11px
+        }
+
+        .rp05-table tr {
+            break-inside: avoid
+        }
+
+        .rp05-header,
+        .rp05-storage {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact
+        }
+    }
 </style>
