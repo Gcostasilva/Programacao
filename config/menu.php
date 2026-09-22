@@ -50,7 +50,7 @@ $MENU = [
             ],
             [
                 "titulo" => "Aço",
-                "icone" => "bi-box-seam",
+                "icone" => "bi-layers",
                 "url" => "index.php?page=cadastro_aco",
             ],
             [
