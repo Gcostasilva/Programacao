@@ -53,7 +53,6 @@ class RelatorioProgramacaoModel extends BaseModel
 
     /**
      * Retorna exatamente os campos utilizados pela tabela da Programação Diária.
-     * A consulta segue a mesma origem da tela diária: PROGRAMACAO + maquinas + vendedores.
      */
     public function listarProgramacaoDiaria(
         string $data,
@@ -92,6 +91,35 @@ class RelatorioProgramacaoModel extends BaseModel
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Dados da Programação Quinzenal. Não existe equipamento nesta programação.
+     * A origem é a mesma utilizada pela tela quinzenal: programacao_quinzenal + produtos.
+     */
+    public function listarProgramacaoQuinzenal(string $quinzena): array
+    {
+        $sql = "
+            SELECT
+                q.id AS id,
+                q.quinzena AS quinzena,
+                q.produto_id AS produto_id,
+                COALESCE(p.descricao, '') AS descricao,
+                COALESCE(p.peso_liquido, 0) AS peso_liquido,
+                q.quantidade AS quantidade,
+                q.peca_realizada AS peca_realizada,
+                q.ordem_producao AS ordem_producao,
+                q.obs AS observacao
+            FROM programacao_quinzenal AS q
+            LEFT JOIN produtos AS p ON p.codigo = q.produto_id
+            WHERE q.quinzena = :quinzena
+            ORDER BY q.id ASC
+        ";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':quinzena' => $quinzena]);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
