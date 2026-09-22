@@ -32,10 +32,14 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        // A área de impressão diária utiliza exatamente os dados já carregados
-        // na tela. O layout definitivo (cabeçalho/rodapé por equipamento)
-        // será aplicado junto ao refinamento do relatório.
-        window.print();
+        const params = new URLSearchParams({
+            page: 'relatorio_programacao_diaria',
+            data: data,
+            recurso_id: recurso,
+            origem: 'diaria'
+        });
+
+        window.open('index.php?' + params.toString(), '_blank');
     });
 });
 </script>
