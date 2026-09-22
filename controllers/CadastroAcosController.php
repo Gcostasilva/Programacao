@@ -61,4 +61,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $registros = $model->listarCadastro();
-include __DIR__ . '/../pages/cadastros/acos/index.php';
+include __DIR__ . '/../pages/cadastros/aco/index.php';
