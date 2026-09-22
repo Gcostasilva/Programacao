@@ -1332,9 +1332,9 @@ $pagina = $_GET['page'] ?? 'dashboard';
 
 
 <?php if ($pagina === 'prog_quinzenal'): ?>
-    // ======================================================
+    <!-- ======================================================
     // SELEÇÃO DE DEMANDA - PROGRAMAÇÃO QUINZENAL
-    // ======================================================
+    // ====================================================== -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const botao = document.getElementById('btn_buscaDemandaQuinzena');
@@ -1398,6 +1398,135 @@ $pagina = $_GET['page'] ?? 'dashboard';
             });
         });
     </script>
+
+    <!-- ============================================================
+     PROGRAMAÇÃO QUINZENAL — REORDENAÇÃO POR ARRASTAR E SOLTAR
+     ============================================================ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const tbody = document.getElementById('tabelaProgramacaoQuinzenal');
+
+            if (!tbody) {
+                return;
+            }
+
+            if (typeof Sortable === 'undefined') {
+                console.error('Sortable.js não está carregado.');
+                return;
+            }
+
+            // Evita inicializar duas vezes caso o script seja carregado novamente
+            if (tbody.dataset.sortableInicializado === '1') {
+                return;
+            }
+
+            tbody.dataset.sortableInicializado = '1';
+
+            new Sortable(tbody, {
+
+                animation: 150,
+
+                // Somente o ícone/alça inicia o arraste
+                handle: '.handle-ordenacao',
+
+                // Não iniciar arraste ao clicar nos controles
+                filter: 'button, a, input, select, textarea',
+
+                preventOnFilter: true,
+
+                ghostClass: 'sortable-ghost',
+
+                chosenClass: 'sortable-chosen',
+
+                dragClass: 'sortable-drag',
+
+                onEnd: function(evt) {
+
+                    if (evt.oldIndex === evt.newIndex) {
+                        return;
+                    }
+
+                    const linhas = Array.from(
+                        tbody.querySelectorAll('tr[data-id]')
+                    );
+
+                    const ordem = linhas.map(function(linha, index) {
+                        return {
+                            id: parseInt(linha.dataset.id, 10),
+                            ordem: index + 1
+                        };
+                    });
+
+                    console.log(
+                        'Nova ordem da programação quinzenal:',
+                        ordem
+                    );
+
+                    fetch('?page=prog_quinzenal_reordenar', {
+                            method: 'POST',
+
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+
+                            body: JSON.stringify({
+                                quinzena: tbody.dataset.quinzena,
+                                ordem: ordem
+                            })
+                        })
+                        .then(function(response) {
+
+                            if (!response.ok) {
+                                throw new Error(
+                                    'Erro HTTP ' + response.status
+                                );
+                            }
+
+                            return response.json();
+                        })
+                        .then(function(resultado) {
+
+                            if (!resultado.success) {
+                                throw new Error(
+                                    resultado.message ||
+                                    'Não foi possível salvar a nova ordem.'
+                                );
+                            }
+
+                            // Atualiza data-ordem das linhas
+                            linhas.forEach(function(linha, index) {
+                                linha.dataset.ordem = index + 1;
+                            });
+
+                            // Feedback visual
+                            tbody.classList.add('ordem-salva');
+
+                            setTimeout(function() {
+                                tbody.classList.remove('ordem-salva');
+                            }, 500);
+                        })
+                        .catch(function(erro) {
+
+                            console.error(
+                                'Erro ao salvar ordenação da programação quinzenal:',
+                                erro
+                            );
+
+                            alert(
+                                'Não foi possível salvar a nova ordem da programação.'
+                            );
+
+                            // Volta para a ordem persistida no banco
+                            //window.location.reload();
+                        });
+                }
+            });
+
+        });
+    </script>
+
 <?php endif; ?>
 
 <?php if ($pagina === 'pedidos'): ?>

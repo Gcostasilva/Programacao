@@ -21,6 +21,8 @@ $rotasAjax = [
     'prog_semanal_editar',
     'prog_semanal_filtrar',
 
+    'prog_quinzenal_reordenar',
+
     'salvar_pedido'
     // vá adicionando aqui outras rotas "buscar" que você criar
     // ex: 'prog_semanal_buscar', 'corte_dobra_buscar'...

@@ -40,7 +40,7 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                         <th>Observação</th>
                     </tr>
                 </thead>
-                <tbody id="tabelaQuinzenal" data-quinzena="<?= htmlspecialchars($quinzena) ?>">
+                <tbody id="tabelaProgramacaoQuinzenal" data-quinzena="<?= htmlspecialchars($quinzena) ?>">
                     <?php if (!$tabela): ?>
                         <tr>
                             <td colspan="8" class="text-center text-muted py-4">Nenhuma programação cadastrada para esta quinzena.</td>
@@ -55,7 +55,9 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                         ?>
                         <tr data-id="<?= (int)$item['id'] ?>" data-ordem="<?= (int)($item['ordem'] ?? 0) ?>">
                             <td class="text-center text-nowrap">
-                                <i class="bi bi-arrows-move cursor-move me-1" title="Arrastar para reordenar"></i>
+                                <span class="handle-ordenacao" style="cursor: grab;">
+                                    <i class="bi bi-arrows-move cursor-move me-1"></i>
+                                </span>
                                 <button type="button" class="btn btn-sm btn-outline-primary btn-editar-quinzena" data-item='<?= htmlspecialchars(json_encode($item, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>' title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </button>
@@ -105,10 +107,25 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
 </div>
 
 <style>
-    #tabelaQuinzenal tr { cursor: default; }
-    #tabelaQuinzenal tr.sortable-ghost { opacity: .35; }
-    #tabelaQuinzenal .cursor-move { cursor: grab; }
-    #tabelaQuinzenal .cursor-move:active { cursor: grabbing; }
+    #tabelaProgramacaoQuinzenal tr {
+        cursor: default;
+    }
+
+    #tabelaProgramacaoQuinzenal tr.sortable-ghost {
+        opacity: .35;
+    }
+
+    #tabelaProgramacaoQuinzenal .handle-ordenacao {
+        cursor: grab;
+    }
+
+    #tabelaProgramacaoQuinzenal .handle-ordenacao:active {
+        cursor: grabbing;
+    }
+
+    #tabelaProgramacaoQuinzenal .ordem-salva {
+        transition: background-color .3s ease;
+    }
 </style>
 
 <script>
