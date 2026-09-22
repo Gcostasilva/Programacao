@@ -10,50 +10,54 @@
         </div>
 
         <div class="card-body">
-            <form action="index.php?page=pedidos_salvar" method="POST" id="formPedido">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-2">
-                        <label class="form-label">Pedido</label>
-                        <div class="input-group">
-                            <input class="form-control" id="pedido" name="pedido" required autocomplete="off">
-                            <button class="btn btn-primary bt-especial" type="button" id="btn_informacao" title="Informações">
-                                <i class="bi bi-exclamation"></i>
-                            </button>
+            <div class="row g-4 align-items-start">
+                <!-- Formulário à esquerda -->
+                <div class="col-12 col-xl-5">
+                    <form action="index.php?page=pedidos_salvar" method="POST" id="formPedido">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-4">
+                                <label class="form-label">Pedido</label>
+                                <div class="input-group">
+                                    <input class="form-control" id="pedido" name="pedido" required autocomplete="off">
+                                    <button class="btn btn-primary bt-especial" type="button" id="btn_informacao" title="Informações">
+                                        <i class="bi bi-exclamation"></i>
+                                    </button>
+                                </div>
+                                <div id="pedidoConsultaStatus" class="form-text"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tipo</label>
+                                <select class="form-select" name="tipo_pedido" required>
+                                    <option value="" disabled selected>Selecione...</option>
+                                    <option value="E">Encomenda</option>
+                                    <option value="P">Padrão</option>
+                                    <option value="T">Telha</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Previsão</label>
+                                <input type="date" class="form-control" id="data" name="data" required>
+                            </div>
                         </div>
-                        <div id="pedidoConsultaStatus" class="form-text"></div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Tipo</label>
-                        <select class="form-select" name="tipo_pedido" required>
-                            <option value="" disabled selected>Selecione...</option>
-                            <option value="E">Encomenda</option>
-                            <option value="P">Padrão</option>
-                            <option value="T">Telha</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Previsão</label>
-                        <input type="date" class="form-control" id="data" name="data" required>
-                    </div>
+
+                        <div class="row mt-3">
+                            <div class="col-12 d-flex flex-wrap gap-2">
+                                <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button>
+                                <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button>
+                                <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída</button>
+                                <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i></button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="row mt-3">
-                    <div class="col-12 d-flex flex-wrap gap-2">
-                        <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button>
-                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button>
-                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída</button>
-                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i></button>
-                    </div>
-                </div>
-            </form>
-
-            <div class="row mt-4">
-                <div class="col-12">
+                <!-- Tabela de entradas à direita -->
+                <div class="col-12 col-xl-7">
                     <div class="table-responsive">
                         <table class="table table-sm table-hover align-middle mb-0" id="tabelaPedidosIndustria">
                             <thead>
                                 <tr>
-                                    <th class="text-center" style="width:90px">Ação</th>
+                                    <th class="text-center" style="width:75px">Ação</th>
                                     <th>Tipo</th>
                                     <th>Entrada</th>
                                     <th>Previsão</th>
@@ -166,20 +170,19 @@
 
                 tr.className = temSaida ? 'pedido-com-saida' : 'pedido-sem-saida';
                 tr.innerHTML = `
-            <td class="text-center">
-                <button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido"
-                        data-id="${escapeHtml(registro.id)}"
-                        data-pedido="${escapeHtml(registro.pedido)}"
-                        title="Adicionar comentário">
-                    <i class="bi bi-chat-left-text"></i>
-                    ${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}
-                </button>
-            </td>
-                <td>${escapeHtml(formatarTipo(registro.tipo))}</td>
-                <td>${escapeHtml((registro.entrada ?? '') + (registro.user_entrada ? ' - ' + registro.user_entrada : ''))}</td>
-                <td>${escapeHtml(registro.previsao)}</td>
-                <td>${escapeHtml(formatarSaida(registro))}</td>
-                `;
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido"
+                                data-id="${escapeHtml(registro.id)}"
+                                data-pedido="${escapeHtml(registro.pedido)}"
+                                title="Adicionar comentário">
+                            <i class="bi bi-chat-left-text"></i>
+                            ${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}
+                        </button>
+                    </td>
+                    <td>${escapeHtml(formatarTipo(registro.tipo))}</td>
+                    <td>${escapeHtml((registro.entrada ?? '') + (registro.user_entrada ? ' - ' + registro.user_entrada : ''))}</td>
+                    <td>${escapeHtml(registro.previsao)}</td>
+                    <td>${escapeHtml(formatarSaida(registro))}</td>`;
                 tabela.appendChild(tr);
             });
         }
@@ -235,10 +238,10 @@
                 }
 
                 listaComentarios.innerHTML = comentarios.map(c => `
-                <div class="border rounded p-2 mb-2">
-                    <div class="small text-muted mb-1">${escapeHtml(c.usuario || 'Usuário')} • ${escapeHtml(c.criado_em)}</div>
-                    <div>${escapeHtml(c.comentario).replace(/\n/g, '<br>')}</div>
-                </div>`).join('');
+                    <div class="border rounded p-2 mb-2">
+                        <div class="small text-muted mb-1">${escapeHtml(c.usuario || 'Usuário')} • ${escapeHtml(c.criado_em)}</div>
+                        <div>${escapeHtml(c.comentario).replace(/\n/g, '<br>')}</div>
+                    </div>`).join('');
             } catch (erro) {
                 console.error(erro);
                 listaComentarios.innerHTML = '<div class="text-danger small">Não foi possível carregar os comentários.</div>';
