@@ -14,10 +14,6 @@ Router::add('relatorio_programacao_dados', 'controllers/RelatorioProgramacao_Con
 Router::add('dashboard', 'pages/dashboard/index.php', 'Dashboard');
 
 // cadastros -------------------------------------
-Router::add('vendedores', 'controllers/CadastroVendedoresController.php', 'Cadastro de Vendedores');
-Router::add('acos', 'controllers/CadastroAcosController.php', 'Cadastro de Aço');
-Router::add('equipamentos', 'controllers/CadastroMaquinasController.php', 'Cadastro de Equipamentos');
-
 // diaria -------------------------------------
 Router::add('prog_diaria', 'controllers/ProgDiária_Controller.php', 'Programação Diária');
 Router::add('prog_diaria_salvar', 'pages/programacao/diaria/salvar.php', 'Nova Programação');
@@ -55,6 +51,6 @@ Router::add('pedidos_salvar', 'pages/pedidos/salvar.php', 'Pedidos na industria'
 
 // Cadastros ------------------------------------------
 
-Router::add('cadastro_aco', 'pages/cadastros/aco/index.php', 'Cadastro de Tipo de Aço');
-Router::add('cadastro_vendedores', 'pages/cadastros/vendedor/index.php', 'Cadastro de Vendedores');
-Router::add('cadastro_equipamentos', 'pages/cadastros/equipamento/index.php', 'Cadastro de equipamentos');
+Router::add('cadastro_aco', 'controllers/CadastroAcosController.php', 'Cadastro de Tipo de Aço');
+Router::add('cadastro_vendedores', 'controllers/CadastroVendedoresController.php', 'Cadastro de Vendedores');
+Router::add('cadastro_equipamentos', 'controllers/CadastroMaquinasController.php', 'Cadastro de equipamentos');
