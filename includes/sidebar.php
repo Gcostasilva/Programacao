@@ -74,7 +74,7 @@ $paginaAtual = $_GET['page'] ?? '';
                                     <li class="nav-item">
                                         <a href="<?= htmlspecialchars($sub['url'] ?? '#', ENT_QUOTES, 'UTF-8') ?>"
                                            class="nav-link <?= $subAtivo ? 'active' : '' ?>">
-                                            <i class="nav-icon bi bi-circle"></i>
+                                            <i class="nav-icon <?= htmlspecialchars($sub['icone'] ?? 'bi bi-circle', ENT_QUOTES, 'UTF-8') ?>"></i>
                                             <p><?= htmlspecialchars($sub['titulo'], ENT_QUOTES, 'UTF-8') ?></p>
                                         </a>
                                     </li>
