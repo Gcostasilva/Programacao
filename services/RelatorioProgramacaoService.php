@@ -2,11 +2,6 @@
 
 require_once __DIR__ . '/../models/RelatorioProgramacaoModel.php';
 
-/**
- * Organiza os dados brutos da programação em uma estrutura própria para
- * relatórios. A camada de apresentação (HTML/PDF) não deve precisar conhecer
- * a estrutura da tabela programacao.
- */
 class RelatorioProgramacaoService
 {
     private RelatorioProgramacaoModel $model;
@@ -16,42 +11,69 @@ class RelatorioProgramacaoService
         $this->model = $model ?? new RelatorioProgramacaoModel();
     }
 
-    /**
-     * Gera a estrutura consolidada do relatório de programação.
-     *
-     * Estrutura:
-     * - periodo
-     * - totais
-     * - equipamentos
-     *   - id / nome
-     *   - totais
-     *   - dias
-     *     - data
-     *     - totais
-     *     - itens
-     *
-     * @return array<string, mixed>
-     */
     public function gerar(
         string $dataInicio,
         string $dataFim,
         ?int $recursoId = null
     ): array {
-        $registros = $this->model->listarProgramacao(
-            $dataInicio,
-            $dataFim,
-            $recursoId
-        );
+        $registros = $this->model->listarProgramacao($dataInicio, $dataFim, $recursoId);
+        return $this->agruparProgramacao($registros, $dataInicio, $dataFim);
+    }
+
+    /**
+     * Gera o RP 09 usando os mesmos campos/origem da tabela da Programação Diária.
+     */
+    public function gerarDiaria(string $data, ?int $recursoId = null): array
+    {
+        $registros = $this->model->listarProgramacaoDiaria($data, $recursoId);
 
         $relatorio = [
-            'periodo' => [
-                'inicio' => $dataInicio,
-                'fim' => $dataFim,
-            ],
-            'totais' => [
-                'quantidade' => 0.0,
-                'peso_estimado' => 0.0,
-            ],
+            'periodo' => ['inicio' => $data, 'fim' => $data],
+            'totais' => ['peso' => 0.0, 'peso_realizado' => 0.0],
+            'equipamentos' => [],
+        ];
+
+        foreach ($registros as $registro) {
+            $equipamentoId = (int) $registro['recurso_id'];
+
+            if (!isset($relatorio['equipamentos'][$equipamentoId])) {
+                $relatorio['equipamentos'][$equipamentoId] = [
+                    'id' => $equipamentoId,
+                    'nome' => $registro['recurso'] ?: 'Equipamento não informado',
+                    'totais' => ['peso' => 0.0, 'peso_realizado' => 0.0],
+                    'itens' => [],
+                ];
+            }
+
+            $item = [
+                'id' => (int) $registro['id'],
+                'pedido' => $registro['pedido'],
+                'vendedor' => $registro['vendedor'],
+                'espessura' => $this->numero($registro['espessura']),
+                'aco' => $registro['aco'],
+                'peso' => $this->numero($registro['peso']),
+                'peso_realizado' => $this->numero($registro['peso_realizado']),
+                'observacao' => $registro['observacao'],
+                'falta_mp' => (int) $registro['falta_mp'],
+                'ordem' => $registro['ordem'],
+            ];
+
+            $relatorio['equipamentos'][$equipamentoId]['itens'][] = $item;
+            $relatorio['equipamentos'][$equipamentoId]['totais']['peso'] += $item['peso'];
+            $relatorio['equipamentos'][$equipamentoId]['totais']['peso_realizado'] += $item['peso_realizado'];
+            $relatorio['totais']['peso'] += $item['peso'];
+            $relatorio['totais']['peso_realizado'] += $item['peso_realizado'];
+        }
+
+        $relatorio['equipamentos'] = array_values($relatorio['equipamentos']);
+        return $relatorio;
+    }
+
+    private function agruparProgramacao(array $registros, string $dataInicio, string $dataFim): array
+    {
+        $relatorio = [
+            'periodo' => ['inicio' => $dataInicio, 'fim' => $dataFim],
+            'totais' => ['quantidade' => 0.0, 'peso_estimado' => 0.0],
             'equipamentos' => [],
         ];
 
@@ -63,7 +85,7 @@ class RelatorioProgramacaoService
                 $relatorio['equipamentos'][$equipamentoId] = [
                     'id' => $equipamentoId,
                     'nome' => $registro['recurso'] ?: 'Equipamento não informado',
-                    'totais' => $this->totaisVazios(),
+                    'totais' => ['quantidade' => 0.0, 'peso_estimado' => 0.0],
                     'dias' => [],
                 ];
             }
@@ -71,7 +93,7 @@ class RelatorioProgramacaoService
             if (!isset($relatorio['equipamentos'][$equipamentoId]['dias'][$data])) {
                 $relatorio['equipamentos'][$equipamentoId]['dias'][$data] = [
                     'data' => $data,
-                    'totais' => $this->totaisVazios(),
+                    'totais' => ['quantidade' => 0.0, 'peso_estimado' => 0.0],
                     'itens' => [],
                 ];
             }
@@ -80,11 +102,7 @@ class RelatorioProgramacaoService
                 'id' => (int) $registro['id'],
                 'demanda' => $registro['demanda'],
                 'produto_id' => $registro['produto_id'],
-                'descricao' => trim(
-                    ($registro['descricao_produto'] ?? '')
-                    . ' '
-                    . ($registro['descricao_complementar'] ?? '')
-                ),
+                'descricao' => trim(($registro['descricao_produto'] ?? '') . ' ' . ($registro['descricao_complementar'] ?? '')),
                 'quantidade' => $this->numero($registro['quantidade']),
                 'peso_estimado' => $this->numero($registro['peso_estimado']),
                 'observacao' => $registro['observacao'],
@@ -92,10 +110,12 @@ class RelatorioProgramacaoService
             ];
 
             $relatorio['equipamentos'][$equipamentoId]['dias'][$data]['itens'][] = $item;
-
-            $this->adicionarTotais($relatorio['totais'], $item);
-            $this->adicionarTotais($relatorio['equipamentos'][$equipamentoId]['totais'], $item);
-            $this->adicionarTotais($relatorio['equipamentos'][$equipamentoId]['dias'][$data]['totais'], $item);
+            $relatorio['equipamentos'][$equipamentoId]['dias'][$data]['totais']['quantidade'] += $item['quantidade'];
+            $relatorio['equipamentos'][$equipamentoId]['dias'][$data]['totais']['peso_estimado'] += $item['peso_estimado'];
+            $relatorio['equipamentos'][$equipamentoId]['totais']['quantidade'] += $item['quantidade'];
+            $relatorio['equipamentos'][$equipamentoId]['totais']['peso_estimado'] += $item['peso_estimado'];
+            $relatorio['totais']['quantidade'] += $item['quantidade'];
+            $relatorio['totais']['peso_estimado'] += $item['peso_estimado'];
         }
 
         foreach ($relatorio['equipamentos'] as &$equipamento) {
@@ -104,22 +124,7 @@ class RelatorioProgramacaoService
         unset($equipamento);
 
         $relatorio['equipamentos'] = array_values($relatorio['equipamentos']);
-
         return $relatorio;
-    }
-
-    private function totaisVazios(): array
-    {
-        return [
-            'quantidade' => 0.0,
-            'peso_estimado' => 0.0,
-        ];
-    }
-
-    private function adicionarTotais(array &$totais, array $item): void
-    {
-        $totais['quantidade'] += $item['quantidade'];
-        $totais['peso_estimado'] += $item['peso_estimado'];
     }
 
     private function numero(mixed $valor): float
@@ -127,7 +132,6 @@ class RelatorioProgramacaoService
         if ($valor === null || $valor === '') {
             return 0.0;
         }
-
         return (float) str_replace(',', '.', (string) $valor);
     }
 }
