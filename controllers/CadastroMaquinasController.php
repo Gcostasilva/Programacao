@@ -53,4 +53,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $registros = $model->listar();
-include __DIR__ . '/../pages/cadastros/equipamentos/index.php';
+include __DIR__ . '/../pages/cadastros/equipamento/index.php';
