@@ -9,66 +9,62 @@
             </div>
         </div>
 
-        <div class="card-body">
-            <form action="index.php?page=pedidos_salvar" method="POST" id="formPedido">
-                <div class="row g-3 align-items-end">
-                    <div class="col-md-2">
-                        <label class="form-label">Pedido</label>
-                        <div class="input-group">
-                            <input class="form-control" id="pedido" name="pedido" required autocomplete="off">
-                            <button class="btn btn-primary bt-especial" type="button" id="btn_informacao" title="Informações">
-                                <i class="bi bi-exclamation"></i>
-                            </button>
+        <div class="card-body row" style="display: inline; grid-template-columns: 1fr 1fr;">
+            <form action="index.php?page=pedidos_salvar" method="POST" style="display:flex;" id="formPedido">
+                <div id="formSemanal" class="form-pedido col" style="width:90%;">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label class="form-label">Pedido</label>
+                            <div class="input-group">
+                                <input class="form-control" id="pedido" name="pedido" required autocomplete="off">
+                                <button class="btn btn-primary bt-especial" type="button" id="btn_informacao" title="Informações">
+                                    <i class="bi bi-exclamation"></i>
+                                </button>
+                            </div>
+                            <div id="pedidoConsultaStatus" class="form-text"></div>
                         </div>
-                        <div id="pedidoConsultaStatus" class="form-text"></div>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Tipo</label>
-                        <select class="form-select" name="tipo_pedido" required>
-                            <option value="" disabled selected>Selecione...</option>
-                            <option value="E">Encomenda</option>
-                            <option value="P">Padrão</option>
-                            <option value="T">Telha</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">Previsão</label>
-                        <input type="date" class="form-control" id="data" name="data" required>
+                        <div class="col-md-2">
+                            <label class="form-label">Tipo</label>
+                            <select class="form-select" name="tipo_pedido" placeholder="Selecione..." required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="E">Encomenda</option>
+                                <option value="P">Padrão</option>
+                                <option value="T">Telha</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Semana</label>
+                            <input type="date" class="form-control" id="data" name="data" required>
+                        </div>
                     </div>
                 </div>
 
-                <div class="row mt-3">
-                    <div class="col-12 d-flex flex-wrap gap-2">
-                        <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button>
-                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button>
-                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída</button>
-                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i></button>
-                    </div>
+                <div class="col-md-5" style="grid-column: 2/2;flex-direction: row;display: flex;margin-right: 50px;">
+                    <button class="btn btn-primary me-2" type="submit"><i class="bi bi-save"></i> Salvar </button>
+                    <button class="btn btn-primary me-2" type="reset"><i class="bi bi-x-circle"></i> Desistir </button>
+                    <button class="btn btn-primary me-2" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída </button>
+                    <button class="btn btn-primary me-2" type="reset"><i class="bi bi-x-circle"></i></button>
                 </div>
             </form>
+        </div>
 
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="table-responsive">
-                        <table class="table table-sm table-hover align-middle mb-0" id="tabelaPedidosIndustria">
-                            <thead>
-                                <tr>
-                                    <th>Tipo</th>
-                                    <th>Entrada</th>
-                                    <th>Previsão</th>
-                                    <th>Saída</th>
-                                    <th class="text-center" style="width:90px">Ação</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tabelaDados">
-                                <tr id="pedidoSemDados">
-                                    <td colspan="5" class="text-center text-muted py-3">Digite um pedido e pressione Tab para consultar as entradas.</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <div class="table-responsive table-responsive-sm col-md-8">
+            <table class="table table-sm table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Entrada</th>
+                        <th>Previsão</th>
+                        <th>Saída</th>
+                        <th class="text-center" style="width:90px">Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaDados">
+                    <tr id="pedidoSemDados" >
+                        <td colspan="7" class="text-center text-muted py-3">Digite um pedido e pressione Tab para consultar as entradas.</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -89,28 +85,13 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-primary" id="btnSalvarComentarioPedido"><i class="bi bi-save me-1"></i> Salvar comentário</button>
+                <button type="button" class="btn btn-primary" id="btnSalvarComentarioPedido">
+                    <i class="bi bi-save me-1"></i> Salvar comentário
+                </button>
             </div>
         </div>
     </div>
 </div>
-
-<style>
-    #tabelaPedidosIndustria tbody tr.pedido-sem-saida td {
-        color: var(--bs-danger) !important;
-        background-color: rgba(var(--bs-danger-rgb), .06);
-    }
-
-    #tabelaPedidosIndustria tbody tr.pedido-com-saida td {
-        color: var(--bs-success) !important;
-        background-color: rgba(var(--bs-success-rgb), .06);
-    }
-
-    #tabelaPedidosIndustria tbody tr.pedido-sem-saida .btn-comentario-pedido,
-    #tabelaPedidosIndustria tbody tr.pedido-com-saida .btn-comentario-pedido {
-        color: inherit;
-    }
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -131,54 +112,33 @@ document.addEventListener('DOMContentLoaded', function () {
         return div.innerHTML;
     }
 
-    function formatarTipo(tipo) {
-        const valor = String(tipo ?? '').trim().toUpperCase();
-        if (valor === 'P') return 'P - Padrão';
-        if (valor === 'E') return 'E - Encomenda';
-        if (valor === 'T') return 'T - Telha';
-        return valor || '-';
-    }
-
-    function possuiSaida(registro) {
-        const saida = String(registro.saida ?? '').trim();
-        return saida !== '' && saida !== '0000-00-00' && saida !== '0000-00-00 00:00:00';
-    }
-
-    function formatarSaida(registro) {
-        if (!possuiSaida(registro)) return 'Sem saída';
-        const saida = String(registro.saida ?? '');
-        const usuario = String(registro.user_saida ?? '').trim();
-        return usuario ? `${saida} - ${usuario}` : saida;
-    }
-
     function renderizarEntradas(registros) {
         tabela.innerHTML = '';
 
         if (!registros.length) {
-            tabela.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">Nenhuma entrada encontrada para este pedido.</td></tr>';
+            tabela.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">Nenhuma entrada encontrada para este pedido.</td></tr>';
             return;
         }
 
         registros.forEach(registro => {
             const tr = document.createElement('tr');
             const comentarios = Number(registro.total_comentarios || 0);
-            const temSaida = possuiSaida(registro);
-
-            tr.className = temSaida ? 'pedido-com-saida' : 'pedido-sem-saida';
+            const saida = registro.saida ?? ""
             tr.innerHTML = `
-                <td>${escapeHtml(formatarTipo(registro.tipo))}</td>
-                <td>${escapeHtml((registro.entrada ?? '') + (registro.user_entrada ? ' - ' + registro.user_entrada : ''))}</td>
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido"
+                        data-id="${escapeHtml(registro.id)}"
+                        data-pedido="${escapeHtml(registro.pedido)}"
+                        title="Adicionar comentário">
+                    <i class="bi bi-chat-left-text"></i>
+                    ${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}
+                </button>
+            </td>
+                <td>${escapeHtml(registro.tipo)}</td>
+                <td>${escapeHtml(registro.entrada + " - " + registro.user_entrada)}</td>
                 <td>${escapeHtml(registro.previsao)}</td>
-                <td>${escapeHtml(formatarSaida(registro))}</td>
-                <td class="text-center">
-                    <button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido"
-                            data-id="${escapeHtml(registro.id)}"
-                            data-pedido="${escapeHtml(registro.pedido)}"
-                            title="Adicionar comentário">
-                        <i class="bi bi-chat-left-text"></i>
-                        ${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}
-                    </button>
-                </td>`;
+                <td>${escapeHtml(saida  + " - " + registro.user_saida)}</td>
+                `;
             tabela.appendChild(tr);
         });
     }
@@ -199,14 +159,17 @@ document.addEventListener('DOMContentLoaded', function () {
             status.className = 'form-text text-success';
         } catch (erro) {
             console.error(erro);
-            tabela.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-3">Erro ao consultar o pedido.</td></tr>';
+            tabela.innerHTML = '<tr><td colspan="7" class="text-center text-danger py-3">Erro ao consultar o pedido.</td></tr>';
             status.textContent = 'Não foi possível realizar a consulta.';
             status.className = 'form-text text-danger';
         }
     }
 
+    // A consulta acontece especificamente ao pressionar TAB no campo Pedido.
     campoPedido.addEventListener('keydown', function (event) {
-        if (event.key === 'Tab') consultarPedido();
+        if (event.key === 'Tab') {
+            consultarPedido();
+        }
     });
 
     tabela.addEventListener('click', async function (event) {
@@ -214,7 +177,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!botao) return;
 
         pedidoIdComentario = botao.dataset.id;
-        infoComentario.textContent = 'Pedido ' + botao.dataset.pedido + ' • Entrada #' + pedidoIdComentario;
+        const pedido = botao.dataset.pedido;
+        infoComentario.textContent = 'Pedido ' + pedido + ' • Entrada #' + pedidoIdComentario;
         textoComentario.value = '';
         listaComentarios.innerHTML = '<div class="text-muted small">Carregando comentários...</div>';
         modal.show();
