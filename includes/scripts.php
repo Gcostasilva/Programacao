@@ -1488,7 +1488,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                         })
                         .then(function(resultado) {
 
-                            if (!resultado.success) {
+                            if (!resultado.sucesso) {
                                 throw new Error(
                                     resultado.message ||
                                     'Não foi possível salvar a nova ordem.'
@@ -1519,7 +1519,7 @@ $pagina = $_GET['page'] ?? 'dashboard';
                             );
 
                             // Volta para a ordem persistida no banco
-                            //window.location.reload();
+                            window.location.reload();
                         });
                 }
             });
