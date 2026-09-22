@@ -34,10 +34,35 @@ $MENU = [
     ],
 
     [
-        "titulo" => "Importação",
-        "icone" => "bi-upload",
-        "url" => "index.php?page=importacao"
+        "titulo" => "Cadastros",
+        "icone" => "bi-gear",
+        "url" => "#",
+        "submenu" => [
+            [
+                "titulo" => "importação",
+                "icone" => "bi-upload",
+                "url" => "index.php?page=importacao",
+            ],
+            [
+                "titulo" => "Vendedores",
+                "icone" => "bi-people",
+                "url" => "",
+            ],
+            [
+                "titulo" => "Aço",
+                "icone" => "bi-box-seam",
+                "url" => "",
+            ],
+            [
+                "titulo" => "Equipamentos",
+                "icone" => "bi-tools",
+                "url" => "",
+            ]
+        ]
     ],
+
+
+
 
     [
         "titulo" => "Relatórios",

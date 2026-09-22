@@ -6,7 +6,7 @@ header('Content-Type: application/json; charset=utf-8');
 try {
     $dados = json_decode(file_get_contents('php://input'), true);
     $quinzena = trim((string)($dados['quinzena'] ?? ''));
-    $itens = $dados['itens'] ?? [];
+    $itens = $dados['ordem'] ?? [];
 
     if (!is_array($itens)) {
         throw new InvalidArgumentException('Lista de itens inválida.');

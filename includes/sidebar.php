@@ -1,12 +1,19 @@
-<?php require_once 'config/menu.php'; ?>
+<?php
+require_once 'config/menu.php';
 
-<aside class="app-sidebar shadow" >
+$paginaAtual = $_GET['page'] ?? '';
+?>
+
+<aside class="app-sidebar shadow">
 
     <div class="sidebar-brand border-0 align-self-center align-content-center ps-md-3">
 
         <a href="index.php" class="brand-link">
-            <img src="uploads/img/Logotipo_pequeno.jpeg" class="brand-image opacity-75 shadow">
-            <span class="brand-text  fw-bold">Perfinasa Metais</span>
+            <img src="uploads/img/Logotipo_eg
+
+            <span class=" brand-text fw-bold">
+            Perfinasa Metais
+            </span>
         </a>
 
     </div>
@@ -17,65 +24,95 @@
 
             <ul class="nav sidebar-menu flex-column"
                 data-lte-toggle="treeview"
-                data-accordion="false">
+                data-accordion="true">
 
-                <?php foreach($MENU as $item): ?>
+                <?php foreach ($MENU as $item): ?>
+                    <?php foreach ($MENU as $item): ?>
 
-                    <?php if(isset($item['submenu'])): ?>
+                        <?php
+                        $submenuAtivo = false;
 
-                        <li class="nav-item menu-open">
+                        if (isset($item['submenu'])) {
 
-                            <a href="#" class="nav-link">
+                            foreach ($item['submenu'] as $sub) {
 
-                                <i class="nav-icon bi <?= $item['icone'] ?>"></i>
+                                parse_str(
+                                    parse_url($sub['url'], PHP_URL_QUERY),
+                                    $parametros
+                                );
+
+                                if (($parametros['page'] ?? '') === $paginaAtual) {
+                                    $submenuAtivo = true;
+                                    break;
+                                }
+                            }
+                        }
+                        ?>
+
+                        <?php if (isset($item['submenu'])): ?>
+
+                            <li class="nav-item <?= $submenuAtivo ? 'menu-open' : '' ?>">
+
+                                #">
+
+                                <i class="nav-icon <?= $item['icone'] ?>"></i>
 
                                 <p>
-
                                     <?= $item['titulo'] ?>
-
                                     <i class="nav-arrow bi bi-chevron-right"></i>
-
                                 </p>
 
-                            </a>
+                                </a>
 
-                            <ul class="nav nav-treeview">
+                                <ul class="nav nav-treeview">
 
-                                <?php foreach($item['submenu'] as $sub): ?>
+                                    <?php foreach ($item['submenu'] as $sub): ?>
 
-                                    <li class="nav-item">
+                                        <?php
+                                        parse_str(
+                                            parse_url($sub['url'], PHP_URL_QUERY),
+                                            $parametrosSub
+                                        );
 
-                                        <a href="<?= $sub['url'] ?>" class="nav-link">
+                                        $subAtivo =
+                                            (($parametrosSub['page'] ?? '') === $paginaAtual);
+                                        ?>
+
+                                        <li class="nav-item">
+
+                                            <?= $sub['url'] ?> class="nav-link <?= $subAtivo ? 'active' : '' ?>">
 
                                             <i class="nav-icon bi bi-circle"></i>
 
                                             <p><?= $sub['titulo'] ?></p>
 
-                                        </a>
+                                            </a>
 
-                                    </li>
+                                        </li>
 
-                                <?php endforeach; ?>
+                                    <?php endforeach; ?>
 
-                            </ul>
+                                </ul>
 
-                        </li>
+                            </li>
 
-                    <?php else: ?>
+                        <?php else: ?>
 
-                        <li class="nav-item">
+                            <li class="nav-item">
 
-                            <a href="<?= $item['url'] ?>" class="nav-link">
+                                <?= $item['url'] ?> class="nav-link">
 
-                                <i class="nav-icon bi <?= $item['icone'] ?>"></i>
+                                <i class="nav-icon <?= $item['icone'] ?>"></i>
 
                                 <p><?= $item['titulo'] ?></p>
 
-                            </a>
+                                </a>
 
-                        </li>
+                            </li>
 
-                    <?php endif; ?>
+                        <?php endif; ?>
+
+                    <?php endforeach; ?>
 
                 <?php endforeach; ?>
 
