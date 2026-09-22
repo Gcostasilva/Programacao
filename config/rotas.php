@@ -41,6 +41,7 @@ Router::add('prog_quinzenal', 'controllers/ProgQuinzenal_Controller.php', 'Progr
 Router::add('prog_quinzenal_salvar', 'pages/programacao/quinzena/salvar.php', 'Nova Programação Quinzenal');
 Router::add('prog_quinzenal_editar', 'pages/programacao/quinzena/editar.php', 'Editar Programação Quinzenal');
 Router::add('prog_quinzenal_excluir', 'pages/programacao/quinzena/excluir.php', 'Excluir Programação Quinzenal');
+Router::add('prog_quinzenal_reordenar', 'pages/programacao/quinzena/reordenar.php', 'Reordenar Programação Quinzenal');
 
 Router::add('temas', 'pages/temas.php', 'Selecione seu tema');
 
