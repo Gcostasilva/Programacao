@@ -49,6 +49,7 @@ Router::add('temas', 'pages/temas.php', 'Selecione seu tema');
 // pedidos -------------------------------------------
 Router::add('pedidos_salvar', 'pages/pedidos/salvar.php', 'Pedidos na industria');
 Router::add('pedidos_buscar', 'pages/pedidos/buscar.php', 'Consultar entradas do pedido');
+Router::add('pedidos_comentario', 'pages/pedidos/comentario.php', 'Comentários do pedido');
 
 // Cadastros ------------------------------------------
 Router::add('cadastro_aco', 'controllers/CadastroAcosController.php', 'Cadastro de Tipo de Aço');
