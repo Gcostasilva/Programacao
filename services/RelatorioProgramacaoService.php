@@ -69,6 +69,69 @@ class RelatorioProgramacaoService
         return $relatorio;
     }
 
+    /**
+     * Gera o RP 05 diretamente da Programação Quinzenal.
+     * A programação quinzenal não possui equipamento, portanto o resultado é um único documento.
+     */
+    public function gerarQuinzenal(string $quinzena): array
+    {
+        $registros = $this->model->listarProgramacaoQuinzenal($quinzena);
+
+        $partes = explode('-', $quinzena);
+        if (count($partes) !== 3 || !in_array($partes[2], ['1', '2'], true)) {
+            throw new InvalidArgumentException('Quinzena inválida.');
+        }
+
+        $ano = (int) $partes[0];
+        $mes = (int) $partes[1];
+        $metade = (int) $partes[2];
+        $inicio = sprintf('%04d-%02d-%02d', $ano, $mes, $metade === 1 ? 1 : 16);
+        $fim = $metade === 1
+            ? sprintf('%04d-%02d-15', $ano, $mes)
+            : (new DateTime(sprintf('%04d-%02d-01', $ano, $mes)))->modify('last day of this month')->format('Y-m-d');
+
+        $relatorio = [
+            'quinzena' => $quinzena,
+            'periodo' => ['inicio' => $inicio, 'fim' => $fim],
+            'totais' => [
+                'quantidade' => 0.0,
+                'produzido' => 0.0,
+                'saldo' => 0.0,
+                'peso_estimado' => 0.0,
+            ],
+            'itens' => [],
+        ];
+
+        foreach ($registros as $registro) {
+            $quantidade = $this->numero($registro['quantidade']);
+            $produzido = $this->numero($registro['peca_realizada']);
+            $saldo = $quantidade - $produzido;
+            $pesoLiquido = $this->numero($registro['peso_liquido']);
+            $pesoEstimado = $quantidade * $pesoLiquido;
+
+            $item = [
+                'id' => (int) $registro['id'],
+                'produto_id' => $registro['produto_id'],
+                'descricao' => $registro['descricao'],
+                'quantidade' => $quantidade,
+                'produzido' => $produzido,
+                'saldo' => $saldo,
+                'ordem_producao' => $registro['ordem_producao'],
+                'peso_liquido' => $pesoLiquido,
+                'peso_estimado' => $pesoEstimado,
+                'observacao' => $registro['observacao'],
+            ];
+
+            $relatorio['itens'][] = $item;
+            $relatorio['totais']['quantidade'] += $quantidade;
+            $relatorio['totais']['produzido'] += $produzido;
+            $relatorio['totais']['saldo'] += $saldo;
+            $relatorio['totais']['peso_estimado'] += $pesoEstimado;
+        }
+
+        return $relatorio;
+    }
+
     private function agruparProgramacao(array $registros, string $dataInicio, string $dataFim): array
     {
         $relatorio = [
