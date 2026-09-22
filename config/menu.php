@@ -39,17 +39,17 @@ $MENU = [
             [
                 "titulo" => "Vendedores",
                 "icone" => "bi-people",
-                "url" => "index.php?page=cadastro_vendedores",
+                "url" => "index.php?page=vendedores",
             ],
             [
                 "titulo" => "Aço",
                 "icone" => "bi-layers",
-                "url" => "index.php?page=cadastro_aco",
+                "url" => "index.php?page=acos",
             ],
             [
                 "titulo" => "Equipamentos",
                 "icone" => "bi-tools",
-                "url" => "index.php?page=cadastro_equipamentos",
+                "url" => "index.php?page=equipamentos",
             ]
         ]
     ],
