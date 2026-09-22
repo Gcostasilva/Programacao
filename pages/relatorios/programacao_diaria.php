@@ -130,7 +130,6 @@ try {
                         <div>PRODUÇÃO</div><div>LIXO</div><div>PASTA/ELETRÔNICO</div><div>DATA</div><div>1 ANO</div>
                     </section>
                 </div>
-                <footer class="rp09-page-footer"><span>SENADOR CANEDO, <?= rdData($data) ?></span><span>1/1</span></footer>
             </article>
         <?php endforeach; ?>
     <?php endif; ?>
