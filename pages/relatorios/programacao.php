@@ -136,7 +136,6 @@ try {
 
                     <div class="rp04-total-equipamento">
                         <span>TOTAL PROGRAMADO — <?= htmlspecialchars($equipamento['nome']) ?></span>
-                        <span><?= rsNumero($totalEquipamentoQuantidade) ?> PEÇAS</span>
                         <span><?= rsNumero($totalEquipamentoPeso) ?> KG</span>
                     </div>
                 </section>
@@ -172,7 +171,6 @@ try {
 
         <div class="rp04-total-semana">
             <span>TOTAL DA SEMANA</span>
-            <span><?= rsNumero($totalSemanaQuantidade) ?> PEÇAS</span>
             <span><?= rsNumero($totalSemanaPeso) ?> KG</span>
         </div>
     <?php endif; ?>
