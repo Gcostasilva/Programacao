@@ -1,514 +1,66 @@
 <?php
-
 require_once __DIR__ . '/../../services/RelatorioProgramacaoService.php';
 require_once __DIR__ . '/../../models/RecursoModel.php';
 
 $semana = $_GET['semana'] ?? date('o-\\WW');
-$recursoId = isset($_GET['recurso_id']) && $_GET['recurso_id'] !== ''
-    ? filter_var($_GET['recurso_id'], FILTER_VALIDATE_INT)
-    : null;
+$recursoId = isset($_GET['recurso_id']) && $_GET['recurso_id'] !== '' ? filter_var($_GET['recurso_id'], FILTER_VALIDATE_INT) : null;
+$recursos = (new RecursoModel())->listarSemanal();
+$relatorio = null; $erro = null; $inicio = null; $fim = null;
 
-$recursoModel = new RecursoModel();
-$recursos = $recursoModel->listarSemanal();
-
-$relatorio = null;
-$erro = null;
-$inicio = null;
-$fim = null;
-
-/**
- * Converte uma semana ISO (YYYY-Www) no intervalo de segunda a sexta.
- */
-function periodoDaSemana(string $semana): array
-{
-    if (!preg_match('/^(\\d{4})-W(\\d{2})$/', $semana, $matches)) {
-        throw new InvalidArgumentException('Informe uma semana válida.');
-    }
-
-    $ano = (int) $matches[1];
-    $numeroSemana = (int) $matches[2];
-
-    if ($numeroSemana < 1 || $numeroSemana > 53) {
-        throw new InvalidArgumentException('Número de semana inválido.');
-    }
-
-    $segunda = new DateTime();
-    $segunda->setISODate($ano, $numeroSemana, 1);
-
-    $sexta = clone $segunda;
-    $sexta->modify('+4 days');
-
+function periodoDaSemana(string $semana): array {
+    if (!preg_match('/^(\\d{4})-W(\\d{2})$/', $semana, $m)) throw new InvalidArgumentException('Informe uma semana válida.');
+    $n = (int) $m[2]; if ($n < 1 || $n > 53) throw new InvalidArgumentException('Número de semana inválido.');
+    $segunda = new DateTime(); $segunda->setISODate((int)$m[1], $n, 1); $sexta = clone $segunda; $sexta->modify('+4 days');
     return [$segunda->format('Y-m-d'), $sexta->format('Y-m-d')];
 }
+function rsData(string $data): string { return (new DateTime($data))->format('d/m/Y'); }
+function rsNumero(float $valor): string { return number_format($valor, 0, ',', '.'); }
+function rsDia(string $data): string { $map=['Sunday'=>'Domingo','Monday'=>'Segunda-feira','Tuesday'=>'Terça-feira','Wednesday'=>'Quarta-feira','Thursday'=>'Quinta-feira','Friday'=>'Sexta-feira','Saturday'=>'Sábado']; return $map[(new DateTime($data))->format('l')] ?? ''; }
 
-try {
-    [$inicio, $fim] = periodoDaSemana($semana);
-
-    $service = new RelatorioProgramacaoService();
-    $relatorio = $service->gerar($inicio, $fim, $recursoId);
-} catch (Throwable $e) {
-    $erro = $e->getMessage();
-}
-
-function formatarDataRelatorio(string $data): string
-{
-    return (new DateTime($data))->format('d/m/Y');
-}
-
-function formatarNumeroRelatorio(float $valor): string
-{
-    return number_format($valor, 0, ',', '.');
-}
-
-function nomeDiaRelatorio(string $data): string
-{
-    $dias = [
-        'Sunday' => 'Domingo',
-        'Monday' => 'Segunda-feira',
-        'Tuesday' => 'Terça-feira',
-        'Wednesday' => 'Quarta-feira',
-        'Thursday' => 'Quinta-feira',
-        'Friday' => 'Sexta-feira',
-        'Saturday' => 'Sábado',
-    ];
-
-    return $dias[(new DateTime($data))->format('l')] ?? '';
-}
+try { [$inicio,$fim]=periodoDaSemana($semana); $relatorio=(new RelatorioProgramacaoService())->gerar($inicio,$fim,$recursoId); } catch(Throwable $e){$erro=$e->getMessage();}
 ?>
 
-<div class="container-fluid py-3 report-page">
-    <div class="d-flex justify-content-between align-items-center mb-3 report-toolbar">
-        <div>
-            <h2 class="mb-1">Relatório de Programação</h2>
-            <div class="text-muted small">Programação planejada de produção</div>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="?page=relatorios" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Relatórios
-            </a>
-            <?php if ($relatorio): ?>
-                <button type="button" class="btn btn-primary" onclick="window.print()">
-                    <i class="bi bi-printer"></i> Imprimir
-                </button>
-            <?php endif; ?>
-        </div>
+<div class="container-fluid py-3 rp04-page">
+    <div class="d-flex justify-content-between align-items-center mb-3 rp04-toolbar">
+        <div><h2 class="mb-1">Relatório de Programação — Semanal</h2><div class="text-muted small">Modelo RP 04 — Programação de produção</div></div>
+        <div class="d-flex gap-2"><a href="?page=relatorios" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Relatórios</a><?php if($relatorio): ?><button type="button" class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button><?php endif; ?></div>
     </div>
 
-    <form method="get" class="card shadow-sm mb-3 report-filter report-toolbar">
-        <input type="hidden" name="page" value="relatorio_programacao">
-        <div class="card-body">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label">Semana</label>
-                    <input
-                        type="week"
-                        class="form-control"
-                        id="semana"
-                        name="semana"
-                        value="<?= htmlspecialchars($semana) ?>"
-                        required>
-                </div>
+    <form method="get" class="card shadow-sm mb-3 rp04-toolbar"><input type="hidden" name="page" value="relatorio_programacao"><div class="card-body"><div class="row g-3 align-items-end">
+        <div class="col-md-3"><label class="form-label">Semana</label><input type="week" class="form-control" name="semana" value="<?=htmlspecialchars($semana)?>" required></div>
+        <div class="col-md-5"><label class="form-label">Equipamento</label><select name="recurso_id" class="form-select"><option value="">Todos os equipamentos</option><?php foreach($recursos as $r): ?><option value="<?= (int)$r['id']?>" <?=$recursoId===(int)$r['id']?'selected':''?>><?=htmlspecialchars($r['descricao'])?></option><?php endforeach; ?></select></div>
+        <div class="col-md-4"><button class="btn btn-primary w-100"><i class="bi bi-search"></i> Gerar relatório</button></div>
+    </div></div></form>
 
-                <div class="col-md-5">
-                    <label class="form-label">Equipamento</label>
-                    <select name="recurso_id" class="form-select">
-                        <option value="">Todos os equipamentos</option>
-                        <?php foreach ($recursos as $recurso): ?>
-                            <option
-                                value="<?= (int) $recurso['id'] ?>"
-                                <?= $recursoId === (int) $recurso['id'] ? 'selected' : '' ?>>
-                                <?= htmlspecialchars($recurso['descricao']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+    <?php if($erro): ?><div class="alert alert-danger rp04-toolbar"><?=htmlspecialchars($erro)?></div>
+    <?php elseif($relatorio && empty($relatorio['equipamentos'])): ?><div class="alert alert-info rp04-toolbar">Não há programação para a semana e equipamento selecionados.</div>
+    <?php elseif($relatorio): foreach($relatorio['equipamentos'] as $equipamento): ?>
+        <article class="rp04-document">
+            <header class="rp04-header">
+                <div class="rp04-top"><div class="rp04-logo"><div class="rp04-logo-mark">P</div><div><strong>PERFINASA</strong><small>PERFILADOS DE AÇO</small></div></div><div class="rp04-system"><strong>Sistema de Gestão da Qualidade</strong><span>REGISTRO DE PRODUÇÃO</span></div><div class="rp04-code"><strong>Identificação: RP 04</strong><span>Revisão: 04</span></div></div>
+                <div class="rp04-title">PROGRAMAÇÃO DE PRODUÇÃO</div>
+                <div class="rp04-date"><span><strong>Data Prevista Inicial:</strong> <?=rsData($relatorio['periodo']['inicio'])?></span><span><strong>Data Prevista Final:</strong> <?=rsData($relatorio['periodo']['fim'])?></span><span><strong>Equipamento:</strong> <?=htmlspecialchars($equipamento['nome'])?></span></div>
+            </header>
 
-                <div class="col-md-4">
-                    <button class="btn btn-primary w-100">
-                        <i class="bi bi-search"></i> Gerar relatório
-                    </button>
-                </div>
-            </div>
-        </div>
-    </form>
-    <?php if ($erro): ?>
-        <div class="alert alert-danger report-toolbar">
-            <?= htmlspecialchars($erro) ?>
-        </div>
-    <?php elseif ($relatorio): ?>
+            <section class="rp04-meta"><div><strong>Objetivo:</strong> Registrar a programação de produção para o período semanal.</div><div><strong>Programação:</strong> Analista de PCP</div><div><strong>Análise:</strong> Supervisor de Produção</div><div><strong>Aprovação:</strong> Gerente Industrial</div><div><strong>Responsável:</strong> ENCARREGADO DE PRODUÇÃO</div></section>
 
-        <?php foreach ($relatorio['equipamentos'] as $equipamento): ?>
-            <div class="report-preview bg-white border shadow-sm">
-                <header class="report-header">
-                    <div class="report-header-top">
-                        <div class="report-brand">
-                            <div class="report-brand-name">PERFINASA</div>
-                            <div class="report-brand-subtitle">PERFILADOS DE AÇO</div>
-                        </div>
+            <section class="rp04-content">
+                <?php foreach($equipamento['dias'] as $dia): ?>
+                    <div class="rp04-day"><div class="rp04-day-title"><strong><?=htmlspecialchars(rsDia($dia['data']))?></strong><span><?=rsData($dia['data'])?></span><span>Total: <?=rsNumero((float)$dia['totais']['peso_estimado'])?> kg</span></div>
+                    <table class="rp04-table"><thead><tr><th>CÓD</th><th>DESCRIÇÃO</th><th>DEMANDA</th><th>QUANTIDADE DE PEÇAS</th><th>PESO ESTIMADO (KG)</th></tr></thead><tbody>
+                    <?php foreach($dia['itens'] as $item): ?><tr><td><?=htmlspecialchars((string)$item['produto_id'])?></td><td><?=htmlspecialchars($item['descricao'])?><?php if(!empty($item['observacao'])):?><small>Obs.: <?=htmlspecialchars($item['observacao'])?></small><?php endif;?></td><td><?=htmlspecialchars((string)($item['demanda']??''))?></td><td class="num"><?=rsNumero((float)$item['quantidade'])?></td><td class="num"><?=rsNumero((float)$item['peso_estimado'])?></td></tr><?php endforeach; ?>
+                    </tbody></table></div>
+                <?php endforeach; ?>
+            </section>
 
-                        <div class="report-document-title">
-                            <div class="fw-bold">SISTEMA DE GESTÃO DA QUALIDADE</div>
-                            <div>REGISTRO DE PRODUÇÃO</div>
-                        </div>
-
-                        <div class="report-document-code">
-                            <div><strong>Código:</strong> RP 04</div>
-                            <div><strong>Revisão:</strong> 04</div>
-                        </div>
-                    </div>
-
-                    <div class="report-title-row">
-                        <div>
-                            <div class="report-title">PROGRAMAÇÃO DE PRODUÇÃO</div>
-                            <div class="report-subtitle">
-                                Semana <?= htmlspecialchars($semana) ?>
-                                &nbsp;|&nbsp;
-                                <?= formatarDataRelatorio($relatorio['periodo']['inicio']) ?>
-                                a <?= formatarDataRelatorio($relatorio['periodo']['fim']) ?>
-                            </div>
-                        </div>
-
-
-                    </div>
-                </header>
-
-                <?php if (empty($relatorio['equipamentos'])): ?>
-                    <div class="alert alert-info m-3 mb-0">
-                        Não há programação para a semana e equipamento selecionados.
-                    </div>
-                <?php endif; ?>
-
-
-                <section class="report-equipment">
-                    <div class="report-equipment-header">
-                        <span><?= htmlspecialchars($equipamento['nome']) ?></span>
-                        <span class="report-equipment-total">
-                            Total programado:
-                            <?= formatarNumeroRelatorio((float) $equipamento['totais']['peso_estimado']) ?> kg
-                        </span>
-                    </div>
-
-                    <?php foreach ($equipamento['dias'] as $dia): ?>
-                        <div class="report-day">
-                            <div class="report-day-header">
-                                <span class="report-day-name"><?= nomeDiaRelatorio($dia['data']) ?></span>
-                                <span><?= formatarDataRelatorio($dia['data']) ?></span>
-                                <span class="report-day-total">Total programado:
-                                    <?= formatarNumeroRelatorio((float) $dia['totais']['peso_estimado']) ?> kg
-                                </span>
-                            </div>
-
-                            <table class="report-table">
-                                <thead>
-                                    <tr>
-                                        <th class="col-codigo">Código</th>
-                                        <th class="col-descricao">Descrição</th>
-                                        <th class="col-demanda">Demanda</th>
-                                        <th class="col-quantidade ">Qtd.</th>
-                                        <th class="col-peso">Peso estimado (kg)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($dia['itens'] as $item): ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars((string) $item['produto_id']) ?></td>
-                                            <td>
-                                                <div><?= htmlspecialchars($item['descricao']) ?></div>
-                                                <?php if (!empty($item['observacao'])): ?>
-                                                    <div class="report-observation">
-                                                        Obs.: <?= htmlspecialchars($item['observacao']) ?>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td><?= htmlspecialchars((string) ($item['demanda'] ?? '')) ?></td>
-                                            <td class="text-end">
-                                                <?= formatarNumeroRelatorio((float) $item['quantidade']) ?>
-                                            </td>
-                                            <td class="text-end">
-                                                <?= formatarNumeroRelatorio((float) $item['peso_estimado']) ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                    <?php endforeach; ?>
-                </section>
-
-                <footer class="report-footer">
-                    <div><strong>RP 04</strong> — Programação de Produção</div>
-                    <div>Revisão 04</div>
-                    <div>Documento controlado — uso interno</div>
-                </footer>
-            <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+            <section class="rp04-observacoes"><div><strong>Observações:</strong></div><div class="rp04-obs-area"><?php foreach($equipamento['dias'] as $dia): foreach($dia['itens'] as $item): if(!empty($item['observacao'])):?><div><strong><?=htmlspecialchars((string)$item['produto_id'])?>:</strong> <?=htmlspecialchars($item['observacao'])?></div><?php endif; endforeach; endforeach;?></div></section>
+            <section class="rp04-storage"><table><thead><tr><th>Armazenamento</th><th>Preservação</th><th>Recuperação</th><th>Retenção</th><th>Disposição</th></tr></thead><tbody><tr><td>Pasta Produção</td><td>Back up/TI</td><td>Por data</td><td>03 anos</td><td>Deletar</td></tr></tbody></table></section>
+        </article>
+        <div class="rp04-print-footer"><span>SENADOR CANEDO, <?=date('d/m/Y')?></span><span>1/1</span></div>
+    <?php endforeach; endif; ?>
 </div>
 
 <style>
-    .report-preview {
-        width: 100%;
-        max-width: 1120px;
-        margin: 0 auto;
-        color: #212529;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    .report-header {
-        border: 1px solid #343a40;
-        border-bottom: 0;
-    }
-
-    .report-header-top {
-        display: grid;
-        grid-template-columns: 1.1fr 2fr .9fr;
-        min-height: 62px;
-        border-bottom: 1px solid #343a40;
-    }
-
-    .report-brand,
-    .report-document-title,
-    .report-document-code {
-        padding: 7px 10px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-
-    .report-brand {
-        border-right: 1px solid #343a40;
-    }
-
-    .report-document-title {
-        text-align: center;
-        font-size: .72rem;
-        line-height: 1.35;
-    }
-
-    .report-document-code {
-        border-left: 1px solid #343a40;
-        font-size: .7rem;
-        line-height: 1.45;
-    }
-
-    .report-brand-name {
-        font-size: 1.35rem;
-        font-weight: 800;
-        letter-spacing: .04em;
-        line-height: 1;
-    }
-
-    .report-brand-subtitle {
-        font-size: .55rem;
-        letter-spacing: .12em;
-        margin-top: 3px;
-    }
-
-    .report-title-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        padding: 8px 10px;
-    }
-
-    .report-title {
-        font-size: .95rem;
-        font-weight: 800;
-        letter-spacing: .02em;
-    }
-
-    .report-subtitle {
-        font-size: .72rem;
-        color: #495057;
-        margin-top: 2px;
-    }
-
-    .report-equipment-highlight {
-        border: 1px solid #adb5bd;
-        padding: 5px 9px;
-        font-size: .72rem;
-        font-weight: 700;
-        white-space: nowrap;
-    }
-
-    .report-equipment {
-        margin: 0 10px 12px;
-        break-inside: avoid;
-    }
-
-    .report-equipment-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 5px 8px;
-        background: #696766;
-        color: #fff;
-        border: 1px solid #495057;
-        border-bottom: 0;
-        font-size: .78rem;
-        font-weight: 700;
-    }
-
-    .report-equipment-total {
-        font-weight: 600;
-        font-size: .7rem;
-    }
-
-    .report-day {
-        margin-bottom: 1px;
-        break-inside: avoid;
-    }
-
-    .report-day-header {
-        display: flex;
-        align-items: center;
-        gap: 7px;
-        padding: 3px 7px;
-        background: #f8f9fa;
-        border-left: 1px solid #6c757d;
-        border-right: 1px solid #6c757d;
-        border-top: 1px solid #6c757d;
-        font-size: .68rem;
-    }
-
-    .report-day-name {
-        font-weight: 700;
-    }
-
-    .report-day-total {
-        margin-left: auto;
-        color: #495057;
-        font-weight: 600;
-    }
-
-    .report-table {
-        width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
-    }
-
-    .report-table th,
-    .report-table td {
-        border: 1px solid #adb5bd;
-        padding: 3px 5px;
-        font-size: .68rem;
-        line-height: 1.2;
-        vertical-align: top;
-    }
-
-    .report-table th {
-        background: #f1f3f5;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: .61rem;
-        vertical-align: middle;
-    }
-
-    .report-table .col-codigo {
-        width: 11%;
-        text-align: center;
-    }
-
-    .report-table .col-descricao {
-        text-align: center;
-    }
-
-    .report-table .col-demanda {
-        width: 13%;
-        text-align: center;
-    }
-
-    .report-table .col-quantidade {
-        width: 9%;
-        text-align: center;
-        font-weight: bold;
-    }
-
-    .report-table .col-peso {
-        width: 13%;
-        text-align: center;
-        font-weight: bold;
-    }
-
-    .report-table tfoot td {
-        background: #f8f9fa;
-        font-weight: 700;
-    }
-
-    .report-observation {
-        color: #6c757d;
-        font-size: .6rem;
-        margin-top: 2px;
-    }
-
-    .report-footer {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        gap: 8px;
-        border: 1px solid #343a40;
-        border-top: 0;
-        padding: 6px 10px;
-        font-size: .62rem;
-        color: #495057;
-        text-align: center;
-    }
-
-    @media print {
-        @page {
-            size: A4 landscape;
-            margin: 9mm;
-        }
-
-        body {
-            background: #fff !important;
-        }
-
-        .report-toolbar,
-        .app-sidebar,
-        .app-header,
-        .app-footer,
-        .btn,
-        nav {
-            display: none !important;
-        }
-
-        .app-main,
-        .container-fluid,
-        .report-page {
-            padding: 0 !important;
-            margin: 0 !important;
-            width: 100% !important;
-            max-width: none !important;
-        }
-
-        .report-preview {
-            max-width: none;
-            border: 0 !important;
-            box-shadow: none !important;
-        }
-
-        .report-equipment,
-        .report-day {
-            break-inside: avoid;
-        }
-
-        .report-table thead {
-            display: table-header-group;
-        }
-
-        .report-table tfoot {
-            display: table-row-group;
-        }
-
-        .report-table tr {
-            break-inside: avoid;
-        }
-
-        .report-header,
-        .report-footer {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-    }
+.rp04-page{font-family:Arial,Helvetica,sans-serif;color:#111}.rp04-document{max-width:1120px;margin:0 auto;background:#fff;border:2px solid #111}.rp04-header{border-bottom:1px solid #111}.rp04-top{display:grid;grid-template-columns:1.05fr 2fr .95fr;min-height:55px;border-bottom:1px solid #111}.rp04-logo{display:flex;align-items:center;gap:7px;padding:4px 7px;border-right:1px solid #111}.rp04-logo-mark{width:38px;height:38px;display:flex;align-items:center;justify-content:center;background:#f15a24;color:#fff;font-weight:900;font-size:29px;border-right:10px solid #064b0b}.rp04-logo strong{display:block;font-size:1.35rem;line-height:1}.rp04-logo small{display:block;font-size:.48rem;letter-spacing:.09em;margin-top:2px}.rp04-system,.rp04-code{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.72rem;line-height:1.3}.rp04-system{border-right:1px solid #111}.rp04-system strong{font-size:.8rem}.rp04-title{text-align:center;font-weight:800;font-size:.88rem;padding:6px;border-bottom:1px solid #111}.rp04-date{display:grid;grid-template-columns:1fr 1fr 1fr;font-size:.68rem}.rp04-date span{padding:5px 7px}.rp04-date span+span{border-left:1px solid #111}.rp04-meta{border-bottom:1px solid #111;font-size:.68rem}.rp04-meta div{padding:3px 6px;border-top:1px solid #777;min-height:22px}.rp04-meta div:first-child{border-top:0}.rp04-content{padding:0}.rp04-day{break-inside:avoid}.rp04-day-title{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;background:#f1f3f5;border-top:1px solid #111;border-bottom:1px solid #111;padding:4px 6px;font-size:.7rem}.rp04-day-title span:nth-child(2){text-align:center}.rp04-day-title span:last-child{text-align:right}.rp04-table{width:100%;border-collapse:collapse;table-layout:fixed}.rp04-table th,.rp04-table td{border:1px solid #111;padding:3px 5px;font-size:.65rem;line-height:1.2}.rp04-table th{height:29px;font-size:.66rem}.rp04-table th:nth-child(1){width:15%}.rp04-table th:nth-child(2){width:37%}.rp04-table th:nth-child(3){width:15%}.rp04-table th:nth-child(4){width:17%}.rp04-table th:nth-child(5){width:16%}.rp04-table td:first-child,.rp04-table th:first-child{text-align:center}.rp04-table small{display:block;color:#555;font-size:.57rem;margin-top:2px}.num{text-align:right}.rp04-observacoes{border-top:1px solid #111}.rp04-observacoes>div:first-child{padding:3px 5px;border-bottom:1px solid #111;font-size:.68rem}.rp04-obs-area{min-height:45px;padding:5px;font-size:.64rem}.rp04-storage table{width:100%;border-collapse:collapse}.rp04-storage th,.rp04-storage td{border:1px solid #111;text-align:center;padding:5px 4px;font-size:.64rem}.rp04-storage th{font-size:.68rem}.rp04-print-footer{max-width:1120px;margin:25px auto 80px;display:flex;justify-content:space-between;font:12px Arial,sans-serif}.rp04-toolbar .btn{white-space:nowrap}
+@media print{ @page{size:A4 landscape;margin:8mm}body{background:#fff!important}.rp04-toolbar,.app-sidebar,.app-header,.app-footer,nav,.btn{display:none!important}.app-main,.container-fluid,.rp04-page{margin:0!important;padding:0!important;width:100%!important;max-width:none!important}.rp04-document{max-width:none;margin:0;border:2px solid #111;box-shadow:none}.rp04-document:not(:first-of-type){break-before:page}.rp04-day,.rp04-table tr{break-inside:avoid}.rp04-print-footer{max-width:none;margin:15px 0 0;font-size:10px}.rp04-header,.rp04-storage{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style>
