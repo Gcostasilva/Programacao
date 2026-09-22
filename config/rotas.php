@@ -13,6 +13,11 @@ Router::add('relatorio_programacao_diaria', 'pages/relatorios/programacao_diaria
 Router::add('relatorio_programacao_dados', 'controllers/RelatorioProgramacao_Controller.php', 'Dados do Relatório de Programação');
 Router::add('dashboard', 'pages/dashboard/index.php', 'Dashboard');
 
+// cadastros -------------------------------------
+Router::add('vendedores', 'controllers/CadastroVendedoresController.php', 'Cadastro de Vendedores');
+Router::add('acos', 'controllers/CadastroAcosController.php', 'Cadastro de Aço');
+Router::add('equipamentos', 'controllers/CadastroMaquinasController.php', 'Cadastro de Equipamentos');
+
 // diaria -------------------------------------
 Router::add('prog_diaria', 'controllers/ProgDiária_Controller.php', 'Programação Diária');
 Router::add('prog_diaria_salvar', 'pages/programacao/diaria/salvar.php', 'Nova Programação');
