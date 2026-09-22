@@ -183,7 +183,7 @@ class tabelasModel extends BaseModel
     public function tabelaPedidos()
     {
         try {
-            $sql = "SELECT * FROM pedidos_industria";
+            $sql = "SELECT * FROM pedidos_industria order by id desc limit 100";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();

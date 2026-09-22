@@ -11,7 +11,6 @@
                         <td>Pedido</td>
                         <td>Tipo</td>
                         <td>Entrada</td>
-                        <td>Usu Entrada</td>
                         <td>Previsão</td>
                         <td>Saída</td>
                         <td>Usu Saída</td>

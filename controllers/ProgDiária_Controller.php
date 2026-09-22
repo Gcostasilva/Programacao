@@ -5,6 +5,7 @@ require_once __DIR__ . '/../models/RecursoModel.php';
 require_once __DIR__ . '/../models/VendedorModel.php';
 require_once __DIR__ .'/../models/tabelasModel.php';
 require_once __DIR__ .'/../models/ProgramacaoModel.php';
+require_once __DIR__ .'/../models/CadastroAcoModel.php';
 
 $recursoModel = new RecursoModel();
 $vendedorModel = new VendedorModel();

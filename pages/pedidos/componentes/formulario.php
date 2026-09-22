@@ -37,11 +37,11 @@
                     </div>
 
                 </div>
-                <div style="grid-column: 2/2;flex-direction: column;display: flex;margin-right: 50px;">
-                    <button class="btn btn-primary mt-2" type="submit"><i class="bi bi-save"></i> Salvar </button>
-                    <button class="btn btn-primary mt-2" type="reset"><i class="bi bi-x-circle"></i> Desistir </button>
-                    <button class="btn btn-primary mt-2" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída </button>
-                    <button class="btn btn-primary mt-2" type="reset"><i class="bi bi-x-circle"></i> </button>
+                <div class="col-md-5" style="grid-column: 2/2;flex-direction: row;display: flex;margin-right: 50px;">
+                    <button class="btn btn-primary me-2" type="submit"><i class="bi bi-save"></i> Salvar </button>
+                    <button class="btn btn-primary me-2" type="reset"><i class="bi bi-x-circle"></i> Desistir </button>
+                    <button class="btn btn-primary me-2" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída </button>
+                    <button class="btn btn-primary me-2" type="reset"><i class="bi bi-x-circle"></i> </button>
                 </div>
 
             </form>
