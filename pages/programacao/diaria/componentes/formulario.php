@@ -45,12 +45,13 @@
                         </div>
                         <div class="col-md-2">
                             <label class="form-label">Aço</label>
-                            <select class="form-select" name="aco" placeholder="Selecione..." required>
+                            <select class="form-select" name="aco" id="tipoAco" required>
                                 <option value="" disabled selected>Selecione...</option>
-                                <option>AZ-150</option>
-                                <option>AZ-120</option>
-                                <option>ZAR-280</option>
-                                <option>Pré-Pintada</option>
+                                <?php foreach (($dados['tipos_aco'] ?? []) as $aco): ?>
+                                    <option value="<?= htmlspecialchars($aco['tipo'], ENT_QUOTES, 'UTF-8') ?>">
+                                        <?= htmlspecialchars($aco['tipo'], ENT_QUOTES, 'UTF-8') ?>
+                                    </option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
                         <div class="col-md-3">
