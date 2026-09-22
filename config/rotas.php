@@ -47,3 +47,9 @@ Router::add('temas', 'pages/temas.php', 'Selecione seu tema');
 
 // pedidos -------------------------------------------
 Router::add('pedidos_salvar', 'pages/pedidos/salvar.php', 'Pedidos na industria');
+
+// Cadastros ------------------------------------------
+
+Router::add('cadastro_aco', 'pages/cadastros/aco/index.php', 'Cadastro de Tipo de Aço');
+Router::add('cadastro_vendedores', 'pages/cadastros/vendedor/index.php', 'Cadastro de Vendedores');
+Router::add('cadastro_equipamentos', 'pages/cadastros/equipamento/index.php', 'Cadastro de equipamentos');
