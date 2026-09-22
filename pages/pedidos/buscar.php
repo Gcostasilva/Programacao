@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../models/tabelasModel.php';
+require_once __DIR__ . '/../../models/PedidosInteracaoModel.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -11,11 +11,9 @@ if ($pedido === '') {
 }
 
 try {
-    $model = new tabelasModel();
-    echo json_encode($model->tabelaPedidos_filtrado($pedido), JSON_UNESCAPED_UNICODE);
+    $model = new PedidosInteracaoModel();
+    echo json_encode($model->buscarEntradas($pedido), JSON_UNESCAPED_UNICODE);
 } catch (Throwable $e) {
     http_response_code(500);
-    echo json_encode([
-        'erro' => 'Não foi possível consultar as entradas do pedido.'
-    ], JSON_UNESCAPED_UNICODE);
+    echo json_encode(['erro' => 'Não foi possível consultar as entradas do pedido.'], JSON_UNESCAPED_UNICODE);
 }
