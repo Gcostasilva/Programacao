@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $model->salvar($id, $descricao, $ativo, $tipo, $capacidade);
-            header('Location: index.php?page=cadastro_equipamentos');
+            header('Location: index.php?page=cadastro_equipamentos&status=salvo');
             exit;
         }
 
@@ -40,21 +40,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($referencias > 0) {
                 $mensagem = "Não é possível excluir: o equipamento possui {$referencias} registro(s) de programação vinculado(s). Desative-o em vez de excluir.";
                 
-                // Gera o alerta JavaScript e redireciona
-                echo "<script>
-                    alert('" . addslashes($mensagem) . "');
-                    window.location.href = 'index.php?page=cadastro_vendedores';
-                </script>";
+                header('Location: index.php?page=cadastro_equipamentos&status=erro&msg=' . urlencode($mensagem));
                 exit;
             }
 
             $model->excluir($id);
-            header('Location: index.php?page=cadastro_equipamentos');
+            header('Location: index.php?page=cadastro_equipamentos&status=excluido');
             exit;
         }
     } catch (Throwable $e) {
         $mensagem = urlencode($e->getMessage());
-        header("Location: index.php?page=equipamentos&status=erro&msg={$mensagem}");
+        header("Location: index.php?page=cadastro_equipamentos&status=erro&msg={$mensagem}");
         exit;
     }
 }
