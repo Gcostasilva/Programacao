@@ -25,7 +25,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!botao) return;
 
     botao.addEventListener('click', function () {
-        window.print();
+        const quinzena = document.getElementById('quinzena')?.value || '';
+
+        if (!quinzena) {
+            alert('Selecione o mês e a quinzena antes de imprimir.');
+            return;
+        }
+
+        const params = new URLSearchParams({
+            page: 'relatorio_programacao_quinzenal',
+            quinzena: quinzena,
+            origem: 'quinzenal'
+        });
+
+        window.open('index.php?' + params.toString(), '_blank');
     });
 });
 </script>
