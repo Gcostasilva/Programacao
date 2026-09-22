@@ -40,7 +40,7 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                         <th>Observação</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="tabelaQuinzenal" data-quinzena="<?= htmlspecialchars($quinzena) ?>">
                     <?php if (!$tabela): ?>
                         <tr>
                             <td colspan="8" class="text-center text-muted py-4">Nenhuma programação cadastrada para esta quinzena.</td>
@@ -53,9 +53,9 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                         $saldo = max(0, $quantidade - $produzido);
                         $descricao = trim((string)($item['descricao'] ?? ''));
                         ?>
-                        <tr>
+                        <tr data-id="<?= (int)$item['id'] ?>" data-ordem="<?= (int)($item['ordem'] ?? 0) ?>">
                             <td class="text-center text-nowrap">
-                                <i class="bi bi-arrows-move"></i>
+                                <i class="bi bi-arrows-move cursor-move me-1" title="Arrastar para reordenar"></i>
                                 <button type="button" class="btn btn-sm btn-outline-primary btn-editar-quinzena" data-item='<?= htmlspecialchars(json_encode($item, JSON_UNESCAPED_UNICODE), ENT_QUOTES) ?>' title="Editar">
                                     <i class="bi bi-pencil"></i>
                                 </button>
@@ -66,15 +66,10 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                             <td class="text-nowrap fw-semibold"><?= htmlspecialchars($item['produto_id']) ?></td>
                             <td><?= htmlspecialchars($descricao !== '' ? $descricao : 'Produto não localizado') ?></td>
                             <td class="text-end text-nowrap"><?= number_format($quantidade, 3, ',', '.') ?></td>
-                            <td class="text-end text-nowrap">
-                                <span class="badge <?= $produzido > 0 ? 'bg-success' : 'bg-secondary' ?>">
-                                    <?= number_format($produzido, 3, ',', '.') ?>
-                                </span>
-                            </td>
+                            <td class="text-end text-nowrap"><span class="badge <?= $produzido > 0 ? 'bg-success' : 'bg-secondary' ?>"><?= number_format($produzido, 3, ',', '.') ?></span></td>
                             <td class="text-end text-nowrap fw-semibold"><?= number_format($saldo, 3, ',', '.') ?></td>
                             <td class="text-nowrap"><?= htmlspecialchars($item['ordem_producao'] ?? '') ?></td>
                             <td><?= htmlspecialchars($item['obs'] ?? '') ?></td>
-
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -108,6 +103,13 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
         </form>
     </div>
 </div>
+
+<style>
+    #tabelaQuinzenal tr { cursor: default; }
+    #tabelaQuinzenal tr.sortable-ghost { opacity: .35; }
+    #tabelaQuinzenal .cursor-move { cursor: grab; }
+    #tabelaQuinzenal .cursor-move:active { cursor: grabbing; }
+</style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
