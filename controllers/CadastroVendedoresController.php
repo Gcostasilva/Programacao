@@ -49,4 +49,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $registros = $model->listar();
-include __DIR__ . '/../pages/cadastros/vendedores/index.php';
+include __DIR__ . '/../pages/cadastros/vendedor/index.php';
