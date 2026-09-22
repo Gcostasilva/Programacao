@@ -1,1 +1,34 @@
-<div class="card shadow-sm"><div class="card-body"><div class="table-responsive"><table id="tabelaVendedores" class="table table-hover table-striped align-middle w-100"><thead><tr><th>ID</th><th>Nome</th><th>Ativo</th><th class="text-end">Ações</th></tr><tr class="filters"><th><input class="form-control form-control-sm" placeholder="Filtrar"></th><th><input class="form-control form-control-sm" placeholder="Filtrar nome"></th><th><select class="form-select form-select-sm"><option value="">Todos</option><option value="Sim">Sim</option><option value="Não">Não</option></select></th><th></th></tr></thead><tbody><?php foreach($registros as $r): ?><tr><td><?= htmlspecialchars($r['id']) ?></td><td><?= htmlspecialchars($r['nome']) ?></td><td data-order="<?= (int)$r['ativo'] ?>"><?= (int)$r['ativo']===1?'<span class="badge text-bg-success">Sim</span>':'<span class="badge text-bg-secondary">Não</span>' ?></td><td class="text-end text-nowrap"><button type="button" class="btn btn-sm btn-outline-primary" onclick='editarVendedor(<?= json_encode($r,JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>)' title="Editar"><i class="bi bi-pencil"></i></button> <form method="post" class="d-inline" onsubmit="return confirmarExclusaoVendedor();"><input type="hidden" name="acao" value="excluir"><input type="hidden" name="id" value="<?= htmlspecialchars($r['id']) ?>"><button class="btn btn-sm btn-outline-danger" title="Excluir"><i class="bi bi-trash"></i></button></form></td></tr><?php endforeach; ?></tbody></table></div></div></div>
+<div class="card shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="tabelaVendedores" class="table table-hover table-striped align-middle w-100">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Ativo</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                    <tr class="filters">
+                        <th><input class="form-control form-control-sm" placeholder="Filtrar"></th>
+                        <th><input class="form-control form-control-sm" placeholder="Filtrar nome"></th>
+                        <th><select class="form-select form-select-sm">
+                                <option value="">Todos</option>
+                                <option value="Sim">Sim</option>
+                                <option value="Não">Não</option>
+                            </select></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody><?php foreach ($registros as $r): ?><tr>
+                            <td><?= htmlspecialchars($r['id']) ?></td>
+                            <td><?= htmlspecialchars($r['nome']) ?></td>
+                            <td data-order="<?= (int)$r['ativo'] ?>"><?= (int)$r['ativo'] === 1 ? '<span class="badge text-bg-success">Sim</span>' : '<span class="badge text-bg-secondary">Não</span>' ?></td>
+                            <td class="text-end text-nowrap"><button type="button" class="btn btn-sm btn-outline-primary" onclick='editarVendedor(<?= json_encode($r, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT) ?>)' title="Editar"><i class="bi bi-pencil"></i></button>
+                                <form method="post" class="d-inline" onsubmit="return confirmarExclusaoVendedor();"><input type="hidden" name="acao" value="excluir"><input type="hidden" name="id" value="<?= htmlspecialchars($r['id']) ?>"><button class="btn btn-sm btn-outline-danger" title="Excluir"><i class="bi bi-trash"></i></button></form>
+                            </td>
+                        </tr><?php endforeach; ?></tbody>
+            </table>
+        </div>
+    </div>
+</div>

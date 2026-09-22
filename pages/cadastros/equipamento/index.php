@@ -1,8 +1,62 @@
 <?php
-$status=$_GET['status']??'';$mensagem=$_GET['msg']??'';$e=static fn($v)=>htmlspecialchars((string)$v,ENT_QUOTES,'UTF-8');
-?><div class="container-fluid py-3"><div class="d-flex justify-content-between align-items-center mb-3"><div><h2 class="mb-1"><i class="bi bi-tools me-2"></i>Equipamentos</h2><div class="text-body-secondary">Cadastro das máquinas/equipamentos disponíveis para a programação.</div></div><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEquipamento" onclick="novoEquipamento()"><i class="bi bi-plus-lg me-1"></i>Novo equipamento</button></div><?php if($status==='salvo'): ?><div class="alert alert-success alert-dismissible fade show">Registro salvo com sucesso.<button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?><?php if($status==='excluido'): ?><div class="alert alert-success alert-dismissible fade show">Registro excluído com sucesso.<button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?><?php if($status==='erro'): ?><div class="alert alert-danger alert-dismissible fade show"><?=$e($mensagem)?><button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?><?php include __DIR__.'/componentes/tabela.php'; ?></div><?php include __DIR__.'/componentes/formulario.php'; ?><script>
-function novoEquipamento(){document.getElementById('equipamento_id').value='';document.getElementById('equipamento_descricao').value='';document.getElementById('equipamento_ativo').value='1';document.getElementById('equipamento_tipo').value='';document.getElementById('equipamento_capacidade').value='0';document.getElementById('tituloModalEquipamento').textContent='Novo equipamento';}
-function editarEquipamento(r){document.getElementById('equipamento_id').value=r.id;document.getElementById('equipamento_descricao').value=r.descricao;document.getElementById('equipamento_ativo').value=r.ativo;document.getElementById('equipamento_tipo').value=r.tipo??'';document.getElementById('equipamento_capacidade').value=r.capacidade;document.getElementById('tituloModalEquipamento').textContent='Editar equipamento';bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEquipamento')).show();}
-function confirmarExclusaoEquipamento(){return confirm('Excluir este equipamento? A exclusão só será permitida se não houver programação vinculada.');}
-document.addEventListener('DOMContentLoaded',()=>{const t=new DataTable('#tabelaEquipamentos',{paging:false,scrollY:'60vh',scrollCollapse:true,order:[[1,'asc']],columnDefs:[{targets:5,orderable:false,searchable:false}],language:{emptyTable:'Nenhum registro cadastrado.',zeroRecords:'Nenhum registro encontrado.'}});document.querySelectorAll('#tabelaEquipamentos thead tr.filters th').forEach((th,i)=>{const el=th.querySelector('input,select');if(!el)return;el.addEventListener('click',e=>e.stopPropagation());el.addEventListener('keyup',()=>t.column(i).search(el.value).draw());el.addEventListener('change',()=>t.column(i).search(el.value).draw());});});
+$status = $_GET['status'] ?? '';
+$mensagem = $_GET['msg'] ?? '';
+$e = static fn($v) => htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8');
+?><div class="container-fluid py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="mb-1"><i class="bi bi-tools me-2"></i>Equipamentos</h2>
+            <div class="text-body-secondary">Cadastro das máquinas/equipamentos disponíveis para a programação.</div>
+        </div><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalEquipamento" onclick="novoEquipamento()"><i class="bi bi-plus-lg me-1"></i>Novo equipamento</button>
+    </div><?php if ($status === 'salvo'): ?><div class="alert alert-success alert-dismissible fade show">Registro salvo com sucesso.<button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?><?php if ($status === 'excluido'): ?><div class="alert alert-success alert-dismissible fade show">Registro excluído com sucesso.<button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?><?php if ($status === 'erro'): ?><div class="alert alert-danger alert-dismissible fade show"><?= $e($mensagem) ?><button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?><?php include __DIR__ . '/componentes/tabela.php'; ?>
+</div><?php include __DIR__ . '/componentes/formulario.php'; ?>
+<script>
+    function novoEquipamento() {
+        document.getElementById('equipamento_id').value = '';
+        document.getElementById('equipamento_descricao').value = '';
+        document.getElementById('equipamento_ativo').value = '1';
+        document.getElementById('equipamento_tipo').value = '';
+        document.getElementById('equipamento_capacidade').value = '0';
+        document.getElementById('tituloModalEquipamento').textContent = 'Novo equipamento';
+    }
+
+    function editarEquipamento(r) {
+        document.getElementById('equipamento_id').value = r.id;
+        document.getElementById('equipamento_descricao').value = r.descricao;
+        document.getElementById('equipamento_ativo').value = r.ativo;
+        document.getElementById('equipamento_tipo').value = r.tipo ?? '';
+        document.getElementById('equipamento_capacidade').value = r.capacidade;
+        document.getElementById('tituloModalEquipamento').textContent = 'Editar equipamento';
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('modalEquipamento')).show();
+    }
+
+    function confirmarExclusaoEquipamento() {
+        return confirm('Excluir este equipamento? A exclusão só será permitida se não houver programação vinculada.');
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const t = new DataTable('#tabelaEquipamentos', {
+            paging: false,
+            scrollY: '60vh',
+            scrollCollapse: true,
+            order: [
+                [1, 'asc']
+            ],
+            columnDefs: [{
+                targets: 5,
+                orderable: false,
+                searchable: false
+            }],
+            language: {
+                emptyTable: 'Nenhum registro cadastrado.',
+                zeroRecords: 'Nenhum registro encontrado.'
+            }
+        });
+        document.querySelectorAll('#tabelaEquipamentos thead tr.filters th').forEach((th, i) => {
+            const el = th.querySelector('input,select');
+            if (!el) return;
+            el.addEventListener('click', e => e.stopPropagation());
+            el.addEventListener('keyup', () => t.column(i).search(el.value).draw());
+            el.addEventListener('change', () => t.column(i).search(el.value).draw());
+        });
+    });
 </script>

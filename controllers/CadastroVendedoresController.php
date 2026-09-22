@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $model->salvar($id, $nome, $ativo);
-            header('Location: index.php?page=vendedores&status=salvo');
+            header('Location: index.php?page=cadastro_vendedores');
             exit;
         }
 
@@ -34,15 +34,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $referencias = $model->contarReferencias($id);
             if ($referencias > 0) {
-                throw new RuntimeException("Não é possível excluir: o vendedor possui {$referencias} registro(s) de programação vinculado(s). Desative-o em vez de excluir.");
+                // Definimos a mensagem que queremos exibir
+                $mensagem = "Não é possível excluir: o vendedor possui {$referencias} registro(s) de programação vinculado(s). Desative-o em vez de excluir.";
+
+                // Gera o alerta JavaScript e redireciona
+                echo "<script>
+                    alert('" . addslashes($mensagem) . "');
+                    window.location.href = 'index.php?page=cadastro_vendedores';
+                </script>";
+                exit;
             }
 
             $model->excluir($id);
-            header('Location: index.php?page=vendedores&status=excluido');
+            header('Location: index.php?page=cadastro_vendedores');
             exit;
         }
     } catch (Throwable $e) {
         $mensagem = urlencode($e->getMessage());
+
         header("Location: index.php?page=vendedores&status=erro&msg={$mensagem}");
         exit;
     }

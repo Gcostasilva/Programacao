@@ -53,4 +53,4 @@ Router::add('pedidos_salvar', 'pages/pedidos/salvar.php', 'Pedidos na industria'
 
 Router::add('cadastro_aco', 'controllers/CadastroAcosController.php', 'Cadastro de Tipo de Aço');
 Router::add('cadastro_vendedores', 'controllers/CadastroVendedoresController.php', 'Cadastro de Vendedores');
-Router::add('cadastro_equipamentos', 'controllers/CadastroMaquinasController.php', 'Cadastro de equipamentos');
+Router::add('cadastro_equipamentos', 'controllers/CadastroMaquinasController.php', 'Cadastro de equipamentos'); 

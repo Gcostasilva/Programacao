@@ -69,6 +69,7 @@ class CadastroMaquinaModel extends BaseModel
     public function excluir(int $id): void
     {
         $stmt = $this->pdo->prepare("DELETE FROM maquinas WHERE id = :id");
-        $stmt->execute();
+        $stmt->execute([':id' => $id]);
+        
     }
 }

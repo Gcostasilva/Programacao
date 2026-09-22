@@ -10,7 +10,7 @@ class ProdutoModel extends BaseModel
         $sql = "SELECT codigo, descricao, peso_liquido
                 FROM produtos
                 WHERE (descricao LIKE '%DESB*%' OR descricao LIKE '%PROCESSO%')
-                  AND ativo = 1
+
                 ORDER BY grupo, descricao, codigo";
 
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -22,7 +22,7 @@ class ProdutoModel extends BaseModel
         $sql = "SELECT codigo, descricao, peso_liquido
                 FROM produtos
                 WHERE (codigo LIKE '04%' OR codigo LIKE '05%')
-                  AND ativo = 1
+       
                 ORDER BY grupo, descricao, codigo";
 
         return $this->pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
@@ -38,7 +38,7 @@ class ProdutoModel extends BaseModel
     public function listarCadastro(): array
     {
         return $this->pdo->query(
-            "SELECT id, codigo, descricao, grupo, especial, peso_liquido, espessura, ativo
+            "SELECT id, codigo, descricao, grupo, especial, peso_liquido, espessura
              FROM produtos
              ORDER BY codigo"
         )->fetchAll(PDO::FETCH_ASSOC);
