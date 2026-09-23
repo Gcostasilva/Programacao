@@ -31,6 +31,26 @@ class EstornoModel extends BaseModel
         )->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function listarPorPedido(string $pedido): array
+    {
+        $sql = "SELECT
+                    e.id,
+                    e.pedido,
+                    e.atendimento,
+                    COALESCE(v.nome, 'Vendedor não informado') AS vendedor,
+                    e.total_parcial,
+                    e.motivo,
+                    e.data_estorno
+                FROM estornos e
+                LEFT JOIN vendedores v ON v.id = e.vendedor_id
+                WHERE e.pedido = :pedido
+                ORDER BY e.data_estorno DESC, e.id DESC";
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':pedido' => $pedido]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function listarRelatorio(array $filtros = []): array
     {
         $where = [];
