@@ -45,5 +45,18 @@
             </div>
         </div>
 
+        <div class="col-md-6 col-xl-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="fs-2 text-danger"><i class="bi bi-arrow-counterclockwise"></i></div>
+                        <div><h5 class="card-title mb-1">Estornos</h5><div class="text-muted small">Registro de estornos dos pedidos.</div></div>
+                    </div>
+                    <p class="card-text text-muted flex-grow-1">Consulte estornos por pedido, vendedor, tipo e período, com opção de impressão.</p>
+                    <a href="?page=relatorio_estornos" class="btn btn-danger"><i class="bi bi-file-earmark-text"></i> Abrir relatório</a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
