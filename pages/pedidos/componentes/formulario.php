@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../../../models/CadastroVendedorModel.php';
+$vendedoresEstorno = (new CadastroVendedorModel())->listar();
+?>
 <div class="container-fluid hidden-print">
     <div class="card card-primary card-outline" id="cardFormSemanal">
         <div class="card-header" style="cursor: pointer;">
@@ -81,6 +85,7 @@
                         <div class="col-6"><input class="btn-check" type="radio" name="estorno_total_parcial" id="estornoTotal" value="total" autocomplete="off"><label class="btn btn-outline-primary w-100" for="estornoTotal"><i class="bi bi-check2-circle me-1"></i>Estorno total</label></div>
                     </div>
                     <div class="mb-3"><label for="estornoAtendimento" class="form-label">Atendimento</label><input type="text" class="form-control" id="estornoAtendimento" maxlength="6" required autocomplete="off"></div>
+                    <div class="mb-3"><label for="estornoVendedor" class="form-label">Vendedor</label><select class="form-select" id="estornoVendedor" required><option value="">Selecione o vendedor...</option><?php foreach ($vendedoresEstorno as $v): ?><?php if ((int)$v['ativo'] === 1): ?><option value="<?= (int)$v['id'] ?>"><?= htmlspecialchars($v['nome'], ENT_QUOTES, 'UTF-8') ?></option><?php endif; ?><?php endforeach; ?></select></div>
                     <div><label for="estornoMotivo" class="form-label">Motivo</label><textarea class="form-control" id="estornoMotivo" maxlength="100" rows="3" required placeholder="Informe o motivo do estorno"></textarea>
                         <div class="form-text text-end"><span id="estornoMotivoContador">0</span>/100</div>
                     </div>
@@ -262,6 +267,7 @@
             formEstorno = document.getElementById('formEstornoPedido'),
             pedidoEstornoExibicao = document.getElementById('estornoPedidoExibicao'),
             atendimentoEstorno = document.getElementById('estornoAtendimento'),
+            vendedorEstorno = document.getElementById('estornoVendedor'),
             motivoEstorno = document.getElementById('estornoMotivo'),
             contadorMotivo = document.getElementById('estornoMotivoContador'),
             erroEstorno = document.getElementById('estornoErro'),
@@ -286,6 +292,7 @@
             const tipo = document.querySelector('input[name="estorno_total_parcial"]:checked');
             const pedido = campoPedido.value.trim(),
                 atendimento = atendimentoEstorno.value.trim(),
+                vendedorId = vendedorEstorno.value,
                 motivo = motivoEstorno.value.trim();
             if (!tipo) {
                 erroEstorno.textContent = 'Selecione estorno parcial ou total.';
@@ -303,6 +310,12 @@
                 atendimentoEstorno.focus();
                 return
             }
+            if (!vendedorId) {
+                erroEstorno.textContent = 'Selecione o vendedor.';
+                erroEstorno.classList.remove('d-none');
+                vendedorEstorno.focus();
+                return
+            }
             if (!motivo) {
                 erroEstorno.textContent = 'Informe o motivo.';
                 erroEstorno.classList.remove('d-none');
@@ -314,6 +327,7 @@
                 const fd = new FormData();
                 fd.append('pedido', pedido);
                 fd.append('atendimento', atendimento);
+                fd.append('vendedor_id', vendedorId);
                 fd.append('total_parcial', tipo.value);
                 fd.append('motivo', motivo);
                 const resp = await fetch('index.php?page=pedidos_estorno', {
