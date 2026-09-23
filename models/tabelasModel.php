@@ -183,7 +183,90 @@ class tabelasModel extends BaseModel
     public function tabelaPedidos()
     {
         try {
-            $sql = "SELECT * FROM pedidos_industria order by id desc limit 100";
+            $sql = "SELECT 
+    pi.*,
+
+    CASE pi.tipo
+        WHEN 'P' THEN 'Padrão'
+        WHEN 'E' THEN 'Encomenda'
+        WHEN 'T' THEN 'Telha'
+        ELSE pi.tipo
+    END AS tipo_nome,
+
+    CASE
+        /* Pedido já saiu: não há prazo */
+        WHEN pi.saida IS NOT NULL THEN NULL
+
+        /* Padrão: pode mostrar horas */
+        WHEN pi.tipo = 'P' THEN
+            CASE
+                WHEN TIMESTAMPDIFF(
+                    HOUR,
+                    NOW(),
+                    DATE_ADD(pi.previsao, INTERVAL 1 DAY)
+                ) > 0
+                THEN
+                    CASE
+                        WHEN TIMESTAMPDIFF(
+                            HOUR,
+                            NOW(),
+                            DATE_ADD(pi.previsao, INTERVAL 1 DAY)
+                        ) >= 24
+                        THEN CONCAT(
+                            FLOOR(
+                                TIMESTAMPDIFF(
+                                    HOUR,
+                                    NOW(),
+                                    DATE_ADD(pi.previsao, INTERVAL 1 DAY)
+                                ) / 24
+                            ),
+                            ' dias'
+                        )
+                        ELSE CONCAT(
+                            TIMESTAMPDIFF(
+                                HOUR,
+                                NOW(),
+                                DATE_ADD(pi.previsao, INTERVAL 1 DAY)
+                            ),
+                            ' horas'
+                        )
+                    END
+
+                ELSE
+                    CONCAT(
+                        ABS(
+                            TIMESTAMPDIFF(
+                                HOUR,
+                                DATE_ADD(pi.previsao, INTERVAL 1 DAY),
+                                NOW()
+                            )
+                        ),
+                        ' horas vencido'
+                    )
+            END
+
+        /* Encomenda e Telha: somente dias */
+        ELSE
+            CASE
+                WHEN DATEDIFF(pi.previsao, CURDATE()) > 0
+                THEN CONCAT(
+                    DATEDIFF(pi.previsao, CURDATE()),
+                    ' dias'
+                )
+
+                WHEN DATEDIFF(pi.previsao, CURDATE()) = 0
+                THEN 'Hoje'
+
+                ELSE CONCAT(
+                    ABS(DATEDIFF(pi.previsao, CURDATE())),
+                    ' dias vencido'
+                )
+            END
+    END AS prazo
+
+FROM pedidos_industria pi
+ORDER BY pi.id DESC
+LIMIT 100;";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
