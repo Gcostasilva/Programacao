@@ -8,7 +8,9 @@ class PedidosInteracaoModel extends BaseModel
     {
         $sql = "SELECT p.*,
                     (SELECT COUNT(*) FROM pedidos_industria_comentarios c
-                     WHERE c.pedido_industria_id = p.id) AS total_comentarios
+                     WHERE c.pedido_industria_id = p.id) AS total_comentarios,
+                    (SELECT COUNT(*) FROM estornos e
+                     WHERE e.pedido = p.pedido) AS total_estornos
                 FROM pedidos_industria p
                 WHERE p.pedido = :pedido
                 ORDER BY p.tipo, p.entrada";
