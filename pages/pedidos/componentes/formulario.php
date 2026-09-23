@@ -23,7 +23,7 @@
                                         <i class="bi bi-exclamation"></i>
                                     </button>
                                 </div>
-                                <div id="pedidoConsultaStatus" class="form-text"></div>
+                                 <div id="pedidoConsultaStatus" class="form-text"></div> 
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label">Tipo</label>
@@ -100,9 +100,13 @@
 </div>
 
 <style>
-    #tabelaPedidosIndustria tbody tr.pedido-sem-saida td {
+    #tabelaPedidosIndustria tbody tr.pedido-em-atraso td {
         color: var(--bs-danger) !important;
         background-color: rgba(var(--bs-danger-rgb), .06);
+    }
+    #tabelaPedidosIndustria tbody tr.pedido-sem-saida td {
+        color: var(--bs-warning) !important;
+        background-color: rgba(var(--bs-warning-rgb), .06);
     }
 
     #tabelaPedidosIndustria tbody tr.pedido-com-saida td {
@@ -110,7 +114,7 @@
         background-color: rgba(var(--bs-success-rgb), .06);
     }
 
-    #tabelaPedidosIndustria tbody tr.pedido-sem-saida .btn-comentario-pedido,
+    #tabelaPedidosIndustria tbody tr.pedido-em-atraso .btn-comentario-pedido,
     #tabelaPedidosIndustria tbody tr.pedido-com-saida .btn-comentario-pedido {
         color: inherit;
     }
@@ -120,7 +124,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const campoPedido = document.getElementById('pedido');
         const tabela = document.getElementById('tabelaDados');
-        const status = document.getElementById('pedidoConsultaStatus');
+        //const status = document.getElementById('pedidoConsultaStatus');
         const modalEl = document.getElementById('modalComentarioPedido');
         const modal = new bootstrap.Modal(modalEl);
         const listaComentarios = document.getElementById('listaComentariosPedido');
@@ -145,12 +149,28 @@
 
         function possuiSaida(registro) {
             const saida = String(registro.saida ?? '').trim();
-            return saida !== '' && saida !== '0000-00-00' && saida !== '0000-00-00 00:00:00';
+            return saida !== '' && saida !== '00-00-00' && saida !== '00-00-00 00:00';
+        }
+
+        function formataTimeStamp(dataOrig) {
+            console.log('Value received:', dataOrig);
+            const [data, hora] = dataOrig.split(' ');
+            const [ano, mes, dia] = data.split('-');
+            const [horas, minutos] = hora.split(':');
+            const dataFormatada = `${dia}-${mes}-${ano.slice(-2)} ${horas}:${minutos}`;
+            return dataFormatada;
+        }
+
+        function formataData(dataOrig) {
+            const [data] = dataOrig.split('/');
+            const [ano, mes, dia] = data.split('-');
+            const dataFormatada = `${dia}-${mes}-${ano.slice(-2)}`;
+            return dataFormatada;
         }
 
         function formatarSaida(registro) {
             if (!possuiSaida(registro)) return 'Sem saída';
-            const saida = String(registro.saida ?? '');
+            const saida = String(formataTimeStamp(registro.saida) ?? '');
             const usuario = String(registro.user_saida ?? '').trim();
             return usuario ? `${saida} - ${usuario}` : saida;
         }
@@ -169,6 +189,32 @@
                 const temSaida = possuiSaida(registro);
 
                 tr.className = temSaida ? 'pedido-com-saida' : 'pedido-sem-saida';
+
+                const hoje = new Date();
+                const dia = String(hoje.getDate()).padStart(2, '0');
+                const mes = String(hoje.getMonth() + 1).padStart(2, '0'); // O mês começa em 0
+                const ano = hoje.getFullYear();
+
+                const dataAtual = `${dia}-${mes}-${ano}`;
+
+                if (tr.className === 'pedido-sem-saida') {
+                    // Função auxiliar para converter "DD-MM-AA" ou "DD-MM-AAAA" em um objeto Date válido
+                    const paraData = (strData) => {
+                        const [dia, mes, ano] = strData.split('-');
+                        // Se o ano tiver 2 dígitos (ex: "24"), assume o século XXI ("2024")
+                        const anoCompleto = ano.length === 2 ? '20' + ano : ano;
+                        return new Date(anoCompleto, mes - 1, dia);
+                    };
+
+                    const dataPrevisao = paraData(formataData(registro.previsao));
+                    const dataHoje = paraData(dataAtual);
+
+                    if (dataPrevisao < dataHoje) {
+                        tr.className = 'pedido-em-atraso'; // Se a previsão for anterior a hoje, está em atraso
+                    } else {
+                        tr.className = 'pedido-sem-saida';
+                    }
+                }
                 tr.innerHTML = `
                     <td class="text-center">
                         <button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido"
@@ -180,8 +226,8 @@
                         </button>
                     </td>
                     <td>${escapeHtml(formatarTipo(registro.tipo))}</td>
-                    <td>${escapeHtml((registro.entrada ?? '') + (registro.user_entrada ? ' - ' + registro.user_entrada : ''))}</td>
-                    <td>${escapeHtml(registro.previsao)}</td>
+                    <td>${escapeHtml((formataTimeStamp(registro.entrada) ?? '') + (registro.user_entrada ? ' - ' + registro.user_entrada : ''))}</td>
+                    <td>${escapeHtml(formataData(registro.previsao))}</td>
                     <td>${escapeHtml(formatarSaida(registro))}</td>`;
                 tabela.appendChild(tr);
             });

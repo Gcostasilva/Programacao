@@ -13,7 +13,6 @@
                         <td>Entrada</td>
                         <td>Previsão</td>
                         <td>Saída</td>
-                        <td>Usu Saída</td>
                         <td>Prazo</td>
                     </tr>
                 </thead>
@@ -23,12 +22,10 @@
                         <tr>
                             <td><?=  $p['pedido'] ?></td>
                             <td><?=  $p['tipo'] ?></td>
-                            <td><?=  $p['entrada'] ?></td>
-                            <td><?=  $p['user_entrada'] ?></td>
-                            <td><?=  $p['previsao'] ?></td>
-                            <td><?=  $p['saida'] ?></td>
-                            <td><?=  $p['user_saida'] ?></td>
-                            <td><?=  $p['previsao'] ?></td>
+                            <td><?= !empty($p['entrada']) ? date('d-m-Y H:i', strtotime($p['entrada'])) . ($p['user_entrada'] ? '-' . strtoupper($p['user_entrada']) : '') : '-' ?></td>
+                            <td><?=  (!empty($p['previsao']) && $p['previsao'] !== '0000-00-00 00:00:00') ? date('d-m-Y', strtotime($p['previsao'])) :'' ?></td>
+                            <td><?= (!empty($p['saida']) && $p['saida'] !== '0000-00-00 00:00:00') ? date('d-m-Y H:i', strtotime($p['saida'])) . ($p['user_saida'] ? '-' . strtoupper($p['user_saida']) : '') : '' ?></td>
+                            <td><?=  $p['previsao']  ?></td>
                         </tr>
                     <?php endforeach; ?>
                     <!-- FIM_LINHAS -->
