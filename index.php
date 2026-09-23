@@ -25,7 +25,8 @@ $rotasAjax = [
 
     'salvar_pedido',
     'pedidos_buscar',
-    'pedidos_comentario'
+    'pedidos_comentario',
+    'pedidos_estorno'
     // vá adicionando aqui outras rotas "buscar" que você criar
     // ex: 'prog_semanal_buscar', 'corte_dobra_buscar'...
 ];
