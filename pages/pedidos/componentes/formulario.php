@@ -112,6 +112,20 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
         color: var(--bs-success) !important;
         background-color: rgba(var(--bs-success-rgb), .06)
     }
+
+    #pedidoConsultaStatus .alert {
+        margin-top: .5rem;
+        margin-bottom: 0;
+        padding: .55rem .75rem;
+        font-size: .875rem;
+        display: flex;
+        align-items: center;
+        gap: .5rem;
+    }
+
+    #pedidoConsultaStatus .alert i {
+        font-size: 1rem;
+    }
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -167,7 +181,23 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
             return u ? s + ' - ' + u : s
         }
 
+        function atualizarIndicadorEstorno(registros) {
+            const status = document.getElementById('pedidoConsultaStatus');
+            const total = registros.length ? Number(registros[0].total_estornos || 0) : 0;
+
+            if (total > 0) {
+                status.innerHTML = '<div class="alert alert-danger border-danger-subtle shadow-sm" role="alert">' +
+                    '<i class="bi bi-arrow-counterclockwise"></i>' +
+                    '<span><strong>Atenção:</strong> este pedido possui <strong>' + total +
+                    ' estorno' + (total === 1 ? '' : 's') + '</strong> registrado' + (total === 1 ? '' : 's') + '.</span>' +
+                    '</div>';
+            } else {
+                status.innerHTML = '';
+            }
+        }
+
         function renderizarEntradas(registros) {
+            atualizarIndicadorEstorno(registros);
             tabela.innerHTML = '';
             if (!registros.length) {
                 tabela.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">Nenhuma entrada encontrada para este pedido.</td></tr>';
@@ -193,7 +223,11 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
         }
         async function consultarPedido() {
             const pedido = campoPedido.value.trim();
-            if (!pedido) return;
+            if (!pedido) {
+                document.getElementById('pedidoConsultaStatus').innerHTML = '';
+                tabela.innerHTML = '<tr id="pedidoSemDados"><td colspan="5" class="text-center text-muted py-3">Digite um pedido e pressione Tab para consultar as entradas.</td></tr>';
+                return
+            }
             try {
                 const resp = await fetch('index.php?page=pedidos_buscar&pedido=' + encodeURIComponent(pedido), {
                     cache: 'no-store'
@@ -203,6 +237,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 renderizarEntradas(Array.isArray(dados) ? dados : [])
             } catch (e) {
                 console.error(e);
+                document.getElementById('pedidoConsultaStatus').innerHTML = '';
                 tabela.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-3">Erro ao consultar o pedido.</td></tr>'
             }
         }
