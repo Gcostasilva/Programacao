@@ -15,7 +15,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                         <div class="row g-3 align-items-end">
                             <div class="col-md-4"><label class="form-label">Pedido</label>
                                 <div class="input-group"><input class="form-control" id="pedido" name="pedido" required autocomplete="off"><button class="btn btn-primary bt-especial" type="button" id="btn_estorno" title="Estorno"><i class="bi bi-arrow-counterclockwise"></i></button></div>
-                                <div id="pedidoConsultaStatus" class="form-text"></div>
+                                
                             </div>
                             <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select" name="tipo_pedido" required>
                                     <option value="" disabled selected>Selecione...</option>
@@ -27,6 +27,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                         </div>
                         <div class="row mt-3">
                             <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button><button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button><button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída</button><button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i></button></div>
+                            <div id="pedidoConsultaStatus" class="form-text"></div>
                         </div>
                     </form>
                 </div>
@@ -85,7 +86,9 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                         <div class="col-6"><input class="btn-check" type="radio" name="estorno_total_parcial" id="estornoTotal" value="total" autocomplete="off"><label class="btn btn-outline-primary w-100" for="estornoTotal"><i class="bi bi-check2-circle me-1"></i>Estorno total</label></div>
                     </div>
                     <div class="mb-3"><label for="estornoAtendimento" class="form-label">Atendimento</label><input type="text" class="form-control" id="estornoAtendimento" maxlength="6" required autocomplete="off"></div>
-                    <div class="mb-3"><label for="estornoVendedor" class="form-label">Vendedor</label><select class="form-select" id="estornoVendedor" required><option value="">Selecione o vendedor...</option><?php foreach ($vendedoresEstorno as $v): ?><?php if ((int)$v['ativo'] === 1): ?><option value="<?= (int)$v['id'] ?>"><?= htmlspecialchars($v['nome'], ENT_QUOTES, 'UTF-8') ?></option><?php endif; ?><?php endforeach; ?></select></div>
+                    <div class="mb-3"><label for="estornoVendedor" class="form-label">Vendedor</label><select class="form-select" id="estornoVendedor" required>
+                            <option value="">Selecione o vendedor...</option><?php foreach ($vendedoresEstorno as $v): ?><?php if ((int)$v['ativo'] === 1): ?><option value="<?= (int)$v['id'] ?>"><?= htmlspecialchars($v['nome'], ENT_QUOTES, 'UTF-8') ?></option><?php endif; ?><?php endforeach; ?>
+                        </select></div>
                     <div><label for="estornoMotivo" class="form-label">Motivo</label><textarea class="form-control" id="estornoMotivo" maxlength="100" rows="3" required placeholder="Informe o motivo do estorno"></textarea>
                         <div class="form-text text-end"><span id="estornoMotivoContador">0</span>/100</div>
                     </div>
