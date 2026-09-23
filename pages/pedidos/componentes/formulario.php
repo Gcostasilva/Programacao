@@ -71,6 +71,29 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
     </div>
 </div>
 
+<div class="modal fade" id="modalVisualizarEstornos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-clock-history me-2"></i>Estornos do pedido</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="text-muted small">Histórico do pedido <strong id="visualizarEstornosPedido">-</strong></div>
+                    <span class="badge text-bg-danger" id="visualizarEstornosQuantidade">0 estornos</span>
+                </div>
+                <div id="listaEstornosPedido">
+                    <div class="text-muted text-center py-4">Carregando estornos...</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="modalEstornoPedido" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -191,8 +214,9 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
             if (total > 0) {
                 status.innerHTML = '<div class="alert alert-danger border-danger-subtle shadow-sm" role="alert">' +
                     '<i class="bi bi-arrow-counterclockwise"></i>' +
-                    '<span><strong>Atenção:</strong> este pedido possui <strong>' + total +
+                    '<span class="flex-grow-1"><strong>Atenção:</strong> este pedido possui <strong>' + total +
                     ' estorno' + (total === 1 ? '' : 's') + '</strong> registrado' + (total === 1 ? '' : 's') + '.</span>' +
+                    '<button type="button" class="btn btn-sm btn-outline-danger" id="btnVisualizarEstornos"><i class="bi bi-eye me-1"></i>Visualizar</button>' +
                     '</div>';
             } else {
                 status.innerHTML = '';
@@ -244,8 +268,68 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 tabela.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-3">Erro ao consultar o pedido.</td></tr>'
             }
         }
+        const modalVisualizarEstornosEl = document.getElementById('modalVisualizarEstornos'),
+            modalVisualizarEstornos = new bootstrap.Modal(modalVisualizarEstornosEl),
+            listaEstornosPedido = document.getElementById('listaEstornosPedido'),
+            visualizarEstornosPedido = document.getElementById('visualizarEstornosPedido'),
+            visualizarEstornosQuantidade = document.getElementById('visualizarEstornosQuantidade');
+
+        function formatarDataEstorno(data) {
+            if (!data) return '-';
+            const partes = String(data).split(' ');
+            const d = (partes[0] || '').split('-');
+            if (d.length !== 3) return data;
+            return d[2] + '/' + d[1] + '/' + d[0] + (partes[1] ? ' ' + partes[1].slice(0, 5) : '');
+        }
+
+        async function visualizarEstornos(pedido) {
+            visualizarEstornosPedido.textContent = pedido;
+            visualizarEstornosQuantidade.textContent = 'Carregando...';
+            listaEstornosPedido.innerHTML = '<div class="text-muted text-center py-4"><span class="spinner-border spinner-border-sm me-2"></span>Carregando estornos...</div>';
+            modalVisualizarEstornos.show();
+
+            try {
+                const resp = await fetch('index.php?page=pedidos_estornos&pedido=' + encodeURIComponent(pedido), {
+                    cache: 'no-store'
+                });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+                const estornos = await resp.json();
+
+                visualizarEstornosQuantidade.textContent = estornos.length + (estornos.length === 1 ? ' estorno' : ' estornos');
+
+                if (!estornos.length) {
+                    listaEstornosPedido.innerHTML = '<div class="alert alert-light border text-center mb-0">Nenhum estorno registrado para este pedido.</div>';
+                    return;
+                }
+
+                listaEstornosPedido.innerHTML = '<div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0">' +
+                    '<thead><tr><th>Data/Hora</th><th>Atendimento</th><th>Vendedor</th><th>Tipo</th><th>Motivo</th></tr></thead>' +
+                    '<tbody>' + estornos.map(e => {
+                        const tipo = String(e.total_parcial || '').toLowerCase();
+                        return '<tr>' +
+                            '<td class="text-nowrap">' + escapeHtml(formatarDataEstorno(e.data_estorno)) + '</td>' +
+                            '<td>' + escapeHtml(e.atendimento || '-') + '</td>' +
+                            '<td>' + escapeHtml(e.vendedor || 'Vendedor não informado') + '</td>' +
+                            '<td><span class="badge ' + (tipo === 'total' ? 'text-bg-danger' : 'text-bg-warning') + '">' + (tipo === 'total' ? 'Total' : 'Parcial') + '</span></td>' +
+                            '<td>' + escapeHtml(e.motivo || '-') + '</td>' +
+                        '</tr>';
+                    }).join('') + '</tbody></table></div>';
+            } catch (e) {
+                console.error(e);
+                visualizarEstornosQuantidade.textContent = 'Erro';
+                listaEstornosPedido.innerHTML = '<div class="alert alert-danger mb-0">Não foi possível carregar os estornos deste pedido.</div>';
+            }
+        }
+
         campoPedido.addEventListener('keydown', e => {
             if (e.key === 'Tab') consultarPedido()
+        });
+
+        document.getElementById('pedidoConsultaStatus').addEventListener('click', e => {
+            const btn = e.target.closest('#btnVisualizarEstornos');
+            if (!btn) return;
+            const pedido = campoPedido.value.trim();
+            if (pedido) visualizarEstornos(pedido);
         });
         tabela.addEventListener('click', async e => {
             const b = e.target.closest('.btn-comentario-pedido');
@@ -376,6 +460,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 if (!resp.ok || !resultado.sucesso) throw new Error(resultado.erro || 'Não foi possível registrar o estorno.');
                 modalEstorno.hide();
                 formEstorno.reset();
+                await consultarPedido();
                 alert('Estorno registrado com sucesso.')
             } catch (err) {
                 erroEstorno.textContent = err.message;
