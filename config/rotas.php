@@ -10,6 +10,7 @@ Router::add('relatorios', 'pages/relatorios/index.php', 'Relatórios');
 Router::add('relatorio_programacao', 'pages/relatorios/programacao.php', 'Relatório de Programação');
 Router::add('relatorio_programacao_quinzenal', 'pages/relatorios/programacao_quinzenal.php', 'Relatório de Programação Quinzenal');
 Router::add('relatorio_programacao_diaria', 'pages/relatorios/programacao_diaria.php', 'Relatório de Programação Diária');
+Router::add('relatorio_estornos', 'pages/relatorios/estornos.php', 'Relatório de Estornos');
 Router::add('relatorio_programacao_dados', 'controllers/RelatorioProgramacao_Controller.php', 'Dados do Relatório de Programação');
 Router::add('dashboard', 'pages/dashboard/index.php', 'Dashboard');
 
