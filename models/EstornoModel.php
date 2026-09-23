@@ -35,6 +35,7 @@ class EstornoModel extends BaseModel
     {
         $where = [];
         $params = [];
+        $limit = [];
 
         if (($filtros['pedido'] ?? '') !== '') {
             $where[] = 'e.pedido = :pedido';
@@ -56,6 +57,9 @@ class EstornoModel extends BaseModel
             $where[] = 'DATE(e.data_estorno) <= :data_fim';
             $params[':data_fim'] = $filtros['data_fim'];
         }
+        if (empty($filtros['data_fim']) && empty($filtros['data_inicio'])){
+            $limit[] = 'limit 100';
+        }
 
         $sql = "SELECT
                     e.id,
@@ -73,7 +77,11 @@ class EstornoModel extends BaseModel
             $sql .= ' WHERE ' . implode(' AND ', $where);
         }
 
-        $sql .= ' ORDER BY e.data_estorno DESC, e.id DESC';
+        $sql .= ' ORDER BY e.data_estorno DESC, e.id DESC ';
+
+        if ($limit) {
+            $sql .= implode(' ', $limit);
+        }
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($params);
