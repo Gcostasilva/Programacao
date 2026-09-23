@@ -19,7 +19,7 @@
                                 <label class="form-label">Pedido</label>
                                 <div class="input-group">
                                     <input class="form-control" id="pedido" name="pedido" required autocomplete="off">
-                                    <button class="btn btn-primary bt-especial" type="button" id="btn_informacao" title="Informações">
+                                    <button class="btn btn-primary bt-especial" type="button" id="btn_estorno" title="Informações">
                                         <i class="bi bi-exclamation"></i>
                                     </button>
                                 </div>
