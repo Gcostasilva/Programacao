@@ -17,7 +17,9 @@ $total = count($registros);
 ?>
 <div class="container-fluid py-3">
     <div class="er-report-header">
-        <div><h1>RELATÓRIO DE ESTORNOS</h1><small>Registro de estornos dos pedidos</small></div>
+        <div>
+            <h1>RELATÓRIO DE ESTORNOS</h1><small>Registro de estornos dos pedidos</small>
+        </div>
         <div class="er-report-meta"><strong>PERFINASA</strong><br>Senador Canedo - GO<br>Emitido em <?= date('d/m/Y H:i') ?></div>
     </div>
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4 er-toolbar">
@@ -26,9 +28,13 @@ $total = count($registros);
             <div class="text-muted">Consulta dos estornos registrados nos pedidos.</div>
         </div>
         <div class="d-flex gap-2">
+            <a href="?page=relatorios" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Relatórios</a>
+        
             <a class="btn btn-success" href="?page=relatorio_estornos_excel&amp;pedido=<?= urlencode($filtros['pedido']) ?>&amp;vendedor_id=<?= (int)$filtros['vendedor_id'] ?>&amp;tipo=<?= urlencode($filtros['tipo']) ?>&amp;data_inicio=<?= urlencode($filtros['data_inicio']) ?>&amp;data_fim=<?= urlencode($filtros['data_fim']) ?>"><i class="bi bi-file-earmark-excel me-1"></i>Excel</a>
-            <button type="button" class="btn btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer me-1"></i>Imprimir</button>
+            <button type="button" class="btn btn-primary" onclick="window.print()"><i class="bi bi-printer me-1"></i>Imprimir</button>
         </div>
+
     </div>
 
     <div class="card shadow-sm mb-3 er-toolbar">
@@ -92,24 +98,26 @@ $total = count($registros);
                         </tr>
                     </thead>
                     <tbody>
-                    <?php if (!$registros): ?>
-                        <tr><td colspan="6" class="text-center text-muted py-4">Nenhum estorno encontrado.</td></tr>
-                    <?php else: ?>
-                        <?php foreach ($registros as $r): ?>
+                        <?php if (!$registros): ?>
                             <tr>
-                                <td><?= $r['data_estorno'] ? date('d/m/Y H:i', strtotime($r['data_estorno'])) : '-' ?></td>
-                                <td><strong><?= htmlspecialchars($r['pedido']) ?></strong></td>
-                                <td><?= htmlspecialchars($r['atendimento']) ?></td>
-                                <td><?= htmlspecialchars($r['vendedor']) ?></td>
-                                <td>
-                                    <span class="badge <?= $r['total_parcial'] === 'total' ? 'text-bg-danger' : 'text-bg-warning' ?>">
-                                        <?= $r['total_parcial'] === 'total' ? 'Total' : 'Parcial' ?>
-                                    </span>
-                                </td>
-                                <td><?= nl2br(htmlspecialchars($r['motivo'])) ?></td>
+                                <td colspan="6" class="text-center text-muted py-4">Nenhum estorno encontrado.</td>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
+                        <?php else: ?>
+                            <?php foreach ($registros as $r): ?>
+                                <tr>
+                                    <td><?= $r['data_estorno'] ? date('d/m/Y H:i', strtotime($r['data_estorno'])) : '-' ?></td>
+                                    <td><strong><?= htmlspecialchars($r['pedido']) ?></strong></td>
+                                    <td><?= htmlspecialchars($r['atendimento']) ?></td>
+                                    <td><?= htmlspecialchars($r['vendedor']) ?></td>
+                                    <td>
+                                        <span class="badge <?= $r['total_parcial'] === 'total' ? 'text-bg-danger' : 'text-bg-warning' ?>">
+                                            <?= $r['total_parcial'] === 'total' ? 'Total' : 'Parcial' ?>
+                                        </span>
+                                    </td>
+                                    <td><?= nl2br(htmlspecialchars($r['motivo'])) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -117,28 +125,118 @@ $total = count($registros);
     </div>
 </div>
 <style>
-.er-document { max-width: 1400px; margin: 0 auto; }
-.er-report-header { display: none; }
+    .er-document {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
 
-@media print {
-    @page { size: A4 landscape; margin: 10mm; }
-    html, body { background: #fff !important; }
-    body { color: #111 !important; }
-    .main-sidebar, .app-sidebar, .app-header, .app-footer, nav,
-    .er-toolbar, .btn, .sidebar, header:not(.er-report-header) { display: none !important; }
-    .app-main, .app-content, .container-fluid { margin: 0 !important; padding: 0 !important; width: 100% !important; max-width: none !important; }
-    .er-document { max-width: none !important; margin: 0 !important; border: 0 !important; box-shadow: none !important; }
-    .er-report-header { display: flex !important; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #111; padding-bottom: 10px; margin-bottom: 14px; }
-    .er-report-header h1 { margin: 0; font-size: 20px; }
-    .er-report-header small { display: block; margin-top: 4px; color: #555; }
-    .er-report-meta { text-align: right; font-size: 11px; }
-    .table-responsive { overflow: visible !important; }
-    table { width: 100% !important; border-collapse: collapse !important; font-size: 10px !important; }
-    th, td { border: 1px solid #999 !important; padding: 5px 6px !important; }
-    thead { display: table-header-group; }
-    tr { break-inside: avoid; }
-    .badge { border: 0 !important; color: #111 !important; background: transparent !important; padding: 0 !important; font-weight: 700; }
-    .card-header { border-bottom: 1px solid #111 !important; background: #eee !important; }
-}
+    .er-report-header {
+        display: none;
+    }
+
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 10mm;
+        }
+
+        html,
+        body {
+            background: #fff !important;
+        }
+
+        body {
+            color: #111 !important;
+        }
+
+        .main-sidebar,
+        .app-sidebar,
+        .app-header,
+        .app-footer,
+        nav,
+        .er-toolbar,
+        .btn,
+        .sidebar,
+        header:not(.er-report-header) {
+            display: none !important;
+        }
+
+        .app-main,
+        .app-content,
+        .container-fluid {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+        }
+
+        .er-document {
+            max-width: none !important;
+            margin: 0 !important;
+            border: 0 !important;
+            box-shadow: none !important;
+        }
+
+        .er-report-header {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid #111;
+            padding-bottom: 10px;
+            margin-bottom: 14px;
+        }
+
+        .er-report-header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .er-report-header small {
+            display: block;
+            margin-top: 4px;
+            color: #555;
+        }
+
+        .er-report-meta {
+            text-align: right;
+            font-size: 11px;
+        }
+
+        .table-responsive {
+            overflow: visible !important;
+        }
+
+        table {
+            width: 100% !important;
+            border-collapse: collapse !important;
+            font-size: 10px !important;
+        }
+
+        th,
+        td {
+            border: 1px solid #999 !important;
+            padding: 5px 6px !important;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tr {
+            break-inside: avoid;
+        }
+
+        .badge {
+            border: 0 !important;
+            color: #111 !important;
+            background: transparent !important;
+            padding: 0 !important;
+            font-weight: 700;
+        }
+
+        .card-header {
+            border-bottom: 1px solid #111 !important;
+            background: #eee !important;
+        }
+    }
 </style>
-
