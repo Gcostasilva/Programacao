@@ -11,6 +11,7 @@ Router::add('relatorio_programacao', 'pages/relatorios/programacao.php', 'Relat�
 Router::add('relatorio_programacao_quinzenal', 'pages/relatorios/programacao_quinzenal.php', 'Relatório de Programação Quinzenal');
 Router::add('relatorio_programacao_diaria', 'pages/relatorios/programacao_diaria.php', 'Relatório de Programação Diária');
 Router::add('relatorio_estornos', 'pages/relatorios/estornos.php', 'Relatório de Estornos');
+Router::add('relatorio_estornos_excel', 'pages/relatorios/estornos_excel.php', 'Exportar Estornos para Excel');
 Router::add('relatorio_programacao_dados', 'controllers/RelatorioProgramacao_Controller.php', 'Dados do Relatório de Programação');
 Router::add('dashboard', 'pages/dashboard/index.php', 'Dashboard');
 
