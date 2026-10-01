@@ -5,32 +5,12 @@ $router = new Router();
 
 // Rotas que devolvem apenas JSON (endpoints chamados via fetch/AJAX)
 $rotasAjax = [
-    'prog_diaria_buscar',
-    'prog_diaria_baixar',
-    'prog_diaria_baixa_salvar',
-    'prog_diaria_excluir',
-    'prog_diaria_editar',
-    'prog_diaria_reordenar',
-    'prog_diaria_filtrar',
-    'prog_diaria_dados',
-
-    'prog_semanal_buscar',
-    'prog_semanal_buscarCodigo',
-    'prog_semanal_reordenar',
-    'prog_semanal_excluir',
-    'prog_semanal_editar',
-    'prog_semanal_filtrar',
-
-    'prog_quinzenal_reordenar',
-
-    'salvar_pedido',
-    'pedidos_buscar',
-    'pedidos_comentario',
-    'pedidos_estorno',
-    'pedidos_estornos',
+    'prog_diaria_buscar', 'prog_diaria_baixar', 'prog_diaria_baixa_salvar', 'prog_diaria_excluir',
+    'prog_diaria_editar', 'prog_diaria_reordenar', 'prog_diaria_filtrar', 'prog_diaria_dados',
+    'prog_semanal_buscar', 'prog_semanal_buscarCodigo', 'prog_semanal_reordenar', 'prog_semanal_excluir',
+    'prog_semanal_editar', 'prog_semanal_filtrar', 'prog_quinzenal_reordenar',
+    'salvar_pedido', 'pedidos_buscar', 'pedidos_comentario', 'pedidos_estorno', 'pedidos_estornos',
     'relatorio_estornos_excel'
-    // vá adicionando aqui outras rotas "buscar" que você criar
-    // ex: 'prog_semanal_buscar', 'corte_dobra_buscar'...
 ];
 
 $paginaAtual = $_GET['page'] ?? 'dashboard';
@@ -43,9 +23,7 @@ if (in_array($paginaAtual, $rotasAjax)) {
 
 <!DOCTYPE html>
 <html language="pt-br" data-lte-primary="...">
-    
 <?php include 'includes/head.php'; ?>
-
 <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse fixed-header">
     <div class="app-wrapper">
         <?php include 'includes/sidebar.php'; ?>
@@ -59,5 +37,4 @@ if (in_array($paginaAtual, $rotasAjax)) {
     <?php include 'includes/scripts.php'; ?>
     <?php ob_end_flush(); ?>
 </body>
-
 </html>
