@@ -31,26 +31,11 @@ $MENU = [
         "icone" => "bi-gear",
         "url" => "#",
         "submenu" => [
-            [
-                "titulo" => "Importação",
-                "icone" => "bi-upload",
-                "url" => "index.php?page=importacao",
-            ],
-            [
-                "titulo" => "Vendedores",
-                "icone" => "bi-people",
-                "url" => "index.php?page=cadastro_vendedores",
-            ],
-            [
-                "titulo" => "Aço",
-                "icone" => "bi-layers",
-                "url" => "index.php?page=cadastro_aco",
-            ],
-            [
-                "titulo" => "Equipamentos",
-                "icone" => "bi-tools",
-                "url" => "index.php?page=cadastro_equipamentos",
-            ]
+            ["titulo" => "Importação", "icone" => "bi-upload", "url" => "index.php?page=importacao"],
+            ["titulo" => "Vendedores", "icone" => "bi-people", "url" => "index.php?page=cadastro_vendedores"],
+            ["titulo" => "Aço", "icone" => "bi-layers", "url" => "index.php?page=cadastro_aco"],
+            ["titulo" => "Equipamentos", "icone" => "bi-tools", "url" => "index.php?page=cadastro_equipamentos"],
+            ["titulo" => "Motivos de Estorno", "icone" => "bi-arrow-counterclockwise", "url" => "index.php?page=cadastro_motivos_estorno"]
         ]
     ],
     [
