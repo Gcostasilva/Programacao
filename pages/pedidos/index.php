@@ -20,12 +20,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     const campoMotivo = document.getElementById('estornoMotivo');
     if (!campoMotivo) return;
 
+    campoMotivo.classList.add('d-none');
+    campoMotivo.removeAttribute('required');
+
     const select = document.createElement('select');
-    select.id = 'estornoMotivo';
+    select.id = 'estornoMotivoSelect';
     select.className = 'form-select';
     select.required = true;
     select.innerHTML = '<option value="">Selecione o motivo...</option>';
-    campoMotivo.replaceWith(select);
+    campoMotivo.parentNode.insertBefore(select, campoMotivo);
+
+    select.addEventListener('change', function () {
+        // O formulário existente envia o campo #estornoMotivo; mantemos esse
+        // campo sincronizado para preservar toda a lógica atual do modal.
+        campoMotivo.value = select.value;
+    });
 
     try {
         const resp = await fetch('index.php?page=pedidos_motivos_estorno', { cache: 'no-store' });
