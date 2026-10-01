@@ -54,6 +54,7 @@ Router::add('pedidos_buscar', 'pages/pedidos/buscar.php', 'Consultar entradas do
 Router::add('pedidos_comentario', 'pages/pedidos/comentario.php', 'Comentários do pedido');
 Router::add('pedidos_estorno', 'pages/pedidos/estorno.php', 'Registrar estorno do pedido');
 Router::add('pedidos_estornos', 'pages/pedidos/estornos.php', 'Consultar estornos do pedido');
+Router::add('pedidos_motivos_estorno', 'pages/pedidos/motivos_estorno.php', 'Consultar motivos de estorno');
 
 // Cadastros ------------------------------------------
 Router::add('cadastro_aco', 'controllers/CadastroAcosController.php', 'Cadastro de Tipo de Aço');
