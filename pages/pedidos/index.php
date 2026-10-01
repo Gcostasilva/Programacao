@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     campoMotivo.classList.add('d-none');
     campoMotivo.removeAttribute('required');
+    const contador = document.getElementById('estornoMotivoContador');
+    if (contador?.parentElement) contador.parentElement.classList.add('d-none');
 
     const select = document.createElement('select');
     select.id = 'estornoMotivoSelect';
