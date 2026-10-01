@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+$motivoInformado = trim($_POST['motivo'] ?? '');
 $dados = [
     'pedido' => trim($_POST['pedido'] ?? ''),
     'atendimento' => trim($_POST['atendimento'] ?? ''),
@@ -16,6 +17,12 @@ $dados = [
     'total_parcial' => strtolower(trim($_POST['total_parcial'] ?? '')),
     'motivo_id' => (int) ($_POST['motivo_id'] ?? 0)
 ];
+
+// Compatibilidade com o formulário atual: o campo original #estornoMotivo
+// continua sendo enviado como "motivo", agora contendo o ID do cadastro.
+if ($dados['motivo_id'] <= 0 && ctype_digit($motivoInformado)) {
+    $dados['motivo_id'] = (int) $motivoInformado;
+}
 
 if ($dados['pedido'] === '' || strlen($dados['pedido']) > 6) {
     http_response_code(422); echo json_encode(['sucesso' => false, 'erro' => 'Informe um pedido válido.'], JSON_UNESCAPED_UNICODE); exit;
