@@ -344,7 +344,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
 
                 if (registro) {
                     const previsao = String(registro.previsao).trim().split(' ')[0];
-                    if (/^\\d{4}-\\d{2}-\\d{2}$/.test(previsao)) {
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(previsao)) {
                         campoPrevisao.value = previsao;
                     }
                 }
