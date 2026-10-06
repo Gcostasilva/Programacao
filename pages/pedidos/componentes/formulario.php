@@ -6,7 +6,9 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
     <div class="card card-primary card-outline" id="cardFormSemanal">
         <div class="card-header" style="cursor: pointer;">
             <h3 class="card-title">Pedidos na Industria</h3>
-            <div class="card-tools"><button type="button" class="btn btn-tool" id="btnToggleFormSemanal" title="Expandir/Retrair"><i class="bi bi-chevron-down" id="iconeToggleFormSemanal"></i></button></div>
+            <div class="card-tools"><button type="button" class="btn btn-tool" id="btnToggleFormSemanal"
+                    title="Expandir/Retrair"><i class="bi bi-chevron-down" id="iconeToggleFormSemanal"></i></button>
+            </div>
         </div>
         <div class="card-body">
             <div class="row g-4 align-items-start">
@@ -14,19 +16,32 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                     <form action="index.php?page=pedidos_salvar" method="POST" id="formPedido">
                         <div class="row g-3 align-items-end">
                             <div class="col-md-4"><label class="form-label">Pedido</label>
-                                <div class="input-group"><input class="form-control" id="pedido" name="pedido" required autocomplete="off"><button class="btn btn-primary bt-especial" type="button" id="btn_estorno" title="Estorno"><i class="bi bi-arrow-counterclockwise"></i></button></div>
-                                
+                                <div class="input-group"><input class="form-control" id="pedido" name="pedido" required
+                                        autocomplete="off">
+                                    <button class="btn btn-primary bt-especial" type="button" id="btn_estorno"
+                                        title="Estorno">
+                                        <i class="bi bi-arrow-counterclockwise"></i>
+                                    </button>
+                                </div>
+
                             </div>
-                            <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select" name="tipo_pedido" required>
+                            <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select"
+                                    name="tipo_pedido" required>
                                     <option value="" disabled selected>Selecione...</option>
                                     <option value="E">Encomenda</option>
                                     <option value="P">Padrão</option>
                                     <option value="T">Telha</option>
                                 </select></div>
-                            <div class="col-md-4"><label class="form-label">Previsão</label><input type="date" class="form-control" id="data" name="data" required></div>
+                            <div class="col-md-4"><label class="form-label">Previsão</label><input type="date"
+                                    class="form-control" id="data" name="data" required></div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button><button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button><button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Eliminar Saída</button><button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i></button></div>
+                            <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit"><i
+                                        class="bi bi-save"></i> Salvar</button><button class="btn btn-primary"
+                                    type="reset"><i class="bi bi-x-circle"></i> Desistir</button><button
+                                    class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Eliminar
+                                    Saída</button><button class="btn btn-primary" type="reset"><i
+                                        class="bi bi-x-circle"></i></button></div>
                             <div id="pedidoConsultaStatus" class="form-text"></div>
                         </div>
                     </form>
@@ -45,7 +60,8 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                             </thead>
                             <tbody id="tabelaDados">
                                 <tr id="pedidoSemDados">
-                                    <td colspan="5" class="text-center text-muted py-3">Digite um pedido e pressione Tab para consultar as entradas.</td>
+                                    <td colspan="5" class="text-center text-muted py-3">Digite um pedido e pressione Tab
+                                        para consultar as entradas.</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -60,13 +76,18 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-chat-left-text me-2"></i>Comentário do pedido</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                <h5 class="modal-title"><i class="bi bi-chat-left-text me-2"></i>Comentário do pedido</h5><button
+                    type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
             <div class="modal-body">
                 <div class="small text-muted mb-2" id="comentarioPedidoInfo"></div>
-                <div id="listaComentariosPedido" class="mb-3"></div><label for="textoComentarioPedido" class="form-label">Novo comentário</label><textarea class="form-control" id="textoComentarioPedido" rows="4" maxlength="2000" placeholder="Digite o comentário..."></textarea>
+                <div id="listaComentariosPedido" class="mb-3"></div><label for="textoComentarioPedido"
+                    class="form-label">Novo comentário</label><textarea class="form-control" id="textoComentarioPedido"
+                    rows="4" maxlength="2000" placeholder="Digite o comentário..."></textarea>
             </div>
-            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="btnSalvarComentarioPedido"><i class="bi bi-save me-1"></i> Salvar comentário</button></div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary"
+                    data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary"
+                    id="btnSalvarComentarioPedido"><i class="bi bi-save me-1"></i> Salvar comentário</button></div>
         </div>
     </div>
 </div>
@@ -80,7 +101,8 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
             </div>
             <div class="modal-body">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="text-muted small">Histórico do pedido <strong id="visualizarEstornosPedido">-</strong></div>
+                    <div class="text-muted small">Histórico do pedido <strong id="visualizarEstornosPedido">-</strong>
+                    </div>
                     <span class="badge text-bg-danger" id="visualizarEstornosQuantidade">0 estornos</span>
                 </div>
                 <div id="listaEstornosPedido">
@@ -99,25 +121,64 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
         <div class="modal-content">
             <form id="formEstornoPedido">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-arrow-counterclockwise me-2"></i>Estorno do pedido</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <h5 class="modal-title"><i class="bi bi-arrow-counterclockwise me-2"></i>Estorno do pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-warning py-2"><i class="bi bi-exclamation-triangle me-1"></i>Pedido: <strong id="estornoPedidoExibicao">-</strong></div>
+                    <div class="alert alert-warning py-2"><i class="bi bi-exclamation-triangle me-1"></i>Pedido: <strong
+                            id="estornoPedidoExibicao">-</strong></div>
                     <label class="form-label">Tipo de estorno</label>
                     <div class="row g-2 mb-3">
-                        <div class="col-6"><input class="btn-check" type="radio" name="estorno_total_parcial" id="estornoParcial" value="parcial" autocomplete="off"><label class="btn btn-outline-primary w-100" for="estornoParcial"><i class="bi bi-dash-circle me-1"></i>Estorno parcial</label></div>
-                        <div class="col-6"><input class="btn-check" type="radio" name="estorno_total_parcial" id="estornoTotal" value="total" autocomplete="off"><label class="btn btn-outline-primary w-100" for="estornoTotal"><i class="bi bi-check2-circle me-1"></i>Estorno total</label></div>
+                        <div class="col-6"><input class="btn-check" type="radio" name="estorno_total_parcial"
+                                id="estornoParcial" value="parcial" autocomplete="off"><label
+                                class="btn btn-outline-primary w-100" for="estornoParcial"><i
+                                    class="bi bi-dash-circle me-1"></i>Estorno parcial</label></div>
+                        <div class="col-6"><input class="btn-check" type="radio" name="estorno_total_parcial"
+                                id="estornoTotal" value="total" autocomplete="off"><label
+                                class="btn btn-outline-primary w-100" for="estornoTotal"><i
+                                    class="bi bi-check2-circle me-1"></i>Estorno total</label></div>
                     </div>
-                    <div class="mb-3"><label for="estornoAtendimento" class="form-label">Atendimento</label><input type="text" class="form-control" id="estornoAtendimento" maxlength="6" required autocomplete="off"></div>
-                    <div class="mb-3"><label for="estornoVendedor" class="form-label">Vendedor</label><select class="form-select" id="estornoVendedor" required>
-                            <option value="">Selecione o vendedor...</option><?php foreach ($vendedoresEstorno as $v): ?><?php if ((int)$v['ativo'] === 1): ?><option value="<?= (int)$v['id'] ?>"><?= htmlspecialchars($v['nome'], ENT_QUOTES, 'UTF-8') ?></option><?php endif; ?><?php endforeach; ?>
-                        </select></div>
-                    <div><label for="estornoMotivo" class="form-label">Motivo</label><textarea class="form-control" id="estornoMotivo" maxlength="100" rows="3" required placeholder="Informe o motivo do estorno"></textarea>
-                        <div class="form-text text-end"><span id="estornoMotivoContador">0</span>/100</div>
+                    <div class="mb-3"><label for="estornoAtendimento" class="form-label">Atendimento</label><input
+                            type="text" class="form-control" id="estornoAtendimento" maxlength="6" required
+                            autocomplete="off"></div>
+                    <div class="mb-4">
+                        <label for="estornoVendedor" class="form-label">Vendedor</label>
+                        <div class="input-group">
+                            <select class="form-select" id="estornoVendedor" required>
+                                <option value="">Selecione o vendedor...</option>
+                                <?php foreach ($vendedoresEstorno as $v): ?>     <?php if ((int) $v['ativo'] === 1): ?>
+                                        <option value="<?= (int) $v['id'] ?>">
+                                            <?= htmlspecialchars($v['nome'], ENT_QUOTES, 'UTF-8') ?>
+                                        </option>
+                                    <?php endif; ?><?php endforeach; ?>
+                                </select>
+                                    <button class="btn btn-primary">
+                                        <a href="?page=cadastro_vendedores" >
+                                            <i class="bi bi-plus"></i>
+                                        </a>
+                                    </button>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div><label for="estornoMotivo" class="form-label">Motivo</label>
+                            <div class="input-group">
+                                <textarea class="form-control" id="estornoMotivo" maxlength="100" rows="3" required
+                                    placeholder="Informe o motivo do estorno"></textarea>
+                                <div class="form-text text-end"><span id="estornoMotivoContador"></span></div>
+                                <button class="btn btn-primary">
+                                    <a href="?page=cadastro_motivos_estorno">
+                                        <i class="bi bi-plus-circle"></i>
+                                    </a>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                     <div id="estornoErro" class="alert alert-danger mt-3 mb-0 d-none"></div>
                 </div>
-                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger" id="btnConfirmarEstorno"><i class="bi bi-check-lg me-1"></i>Confirmar estorno</button></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-danger"
+                        id="btnConfirmarEstorno"><i class="bi bi-check-lg me-1"></i>Confirmar estorno</button>
+                </div>
             </form>
         </div>
     </div>
@@ -154,7 +215,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
     }
 </style>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const campoPedido = document.getElementById('pedido'),
             tabela = document.getElementById('tabelaDados');
         const modalEl = document.getElementById('modalComentarioPedido'),
@@ -191,7 +252,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
             const a = p[0].split('-');
             if (a.length !== 3) return d;
             const h = (p[1] || '00:00').split(':');
-            return `${a[2]}-${a[1]}-${a[0].slice(-2)} ${h[0]}:${h[1]||'00'}`
+            return `${a[2]}-${a[1]}-${a[0].slice(-2)} ${h[0]}:${h[1] || '00'}`
         }
 
         function formataData(d) {
@@ -244,7 +305,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                         if (prev < hoje) tr.className = 'pedido-em-atraso'
                     }
                 }
-                tr.innerHTML = `<td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido" data-id="${escapeHtml(r.id)}" data-pedido="${escapeHtml(r.pedido)}" title="Adicionar comentário"><i class="bi bi-chat-left-text"></i>${comentarios?`<span class="badge text-bg-primary ms-1">${comentarios}</span>`:''}</button></td><td>${escapeHtml(formatarTipo(r.tipo))}</td><td>${escapeHtml(formataTimeStamp(r.entrada)+(r.user_entrada?' - '+r.user_entrada:''))}</td><td>${escapeHtml(formataData(r.previsao))}</td><td>${escapeHtml(formatarSaida(r))}</td>`;
+                tr.innerHTML = `<td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido" data-id="${escapeHtml(r.id)}" data-pedido="${escapeHtml(r.pedido)}" title="Adicionar comentário"><i class="bi bi-chat-left-text"></i>${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}</button></td><td>${escapeHtml(formatarTipo(r.tipo))}</td><td>${escapeHtml(formataTimeStamp(r.entrada) + (r.user_entrada ? ' - ' + r.user_entrada : ''))}</td><td>${escapeHtml(formataData(r.previsao))}</td><td>${escapeHtml(formatarSaida(r))}</td>`;
                 tabela.appendChild(tr)
             })
         }
@@ -312,7 +373,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                             '<td>' + escapeHtml(e.vendedor || 'Vendedor não informado') + '</td>' +
                             '<td><span class="badge ' + (tipo === 'total' ? 'text-bg-danger' : 'text-bg-warning') + '">' + (tipo === 'total' ? 'Total' : 'Parcial') + '</span></td>' +
                             '<td>' + escapeHtml(e.motivo || '-') + '</td>' +
-                        '</tr>';
+                            '</tr>';
                     }).join('') + '</tbody></table></div>';
             } catch (e) {
                 console.error(e);
@@ -349,7 +410,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                     listaComentarios.innerHTML = '<div class="alert alert-light border small mb-0">Nenhum comentário cadastrado para esta entrada.</div>';
                     return
                 }
-                listaComentarios.innerHTML = cs.map(c => `<div class="border rounded p-2 mb-2"><div class="small text-muted mb-1">${escapeHtml(c.usuario||'Usuário')} • ${escapeHtml(c.criado_em)}</div><div>${escapeHtml(c.comentario).replace(/\n/g,'<br>')}</div></div>`).join('')
+                listaComentarios.innerHTML = cs.map(c => `<div class="border rounded p-2 mb-2"><div class="small text-muted mb-1">${escapeHtml(c.usuario || 'Usuário')} • ${escapeHtml(c.criado_em)}</div><div>${escapeHtml(c.comentario).replace(/\n/g, '<br>')}</div></div>`).join('')
             } catch (e) {
                 console.error(e);
                 listaComentarios.innerHTML = '<div class="text-danger small">Não foi possível carregar os comentários.</div>'
@@ -367,9 +428,9 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 fd.append('pedido_id', pedidoIdComentario);
                 fd.append('comentario', comentario);
                 const resp = await fetch('index.php?page=pedidos_comentario', {
-                        method: 'POST',
-                        body: fd
-                    }),
+                    method: 'POST',
+                    body: fd
+                }),
                     resultado = await resp.json();
                 if (!resp.ok || !resultado.sucesso) throw new Error(resultado.erro || 'Falha ao salvar');
                 textoComentario.value = '';
@@ -394,7 +455,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
             contadorMotivo = document.getElementById('estornoMotivoContador'),
             erroEstorno = document.getElementById('estornoErro'),
             btnConfirmarEstorno = document.getElementById('btnConfirmarEstorno');
-        btnEstorno.addEventListener('click', function() {
+        btnEstorno.addEventListener('click', function () {
             const pedido = campoPedido.value.trim();
             if (!pedido) {
                 campoPedido.focus();
@@ -408,7 +469,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
             modalEstorno.show()
         });
         motivoEstorno.addEventListener('input', () => contadorMotivo.textContent = motivoEstorno.value.length);
-        formEstorno.addEventListener('submit', async function(e) {
+        formEstorno.addEventListener('submit', async function (e) {
             e.preventDefault();
             erroEstorno.classList.add('d-none');
             const tipo = document.querySelector('input[name="estorno_total_parcial"]:checked');
@@ -453,9 +514,9 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 fd.append('total_parcial', tipo.value);
                 fd.append('motivo', motivo);
                 const resp = await fetch('index.php?page=pedidos_estorno', {
-                        method: 'POST',
-                        body: fd
-                    }),
+                    method: 'POST',
+                    body: fd
+                }),
                     resultado = await resp.json();
                 if (!resp.ok || !resultado.sucesso) throw new Error(resultado.erro || 'Não foi possível registrar o estorno.');
                 modalEstorno.hide();
