@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/BaseModel.php';
+require_once __DIR__ . '/../config/usuario.php';
 
 class PedidosInteracaoModel extends BaseModel
 {
@@ -26,7 +27,7 @@ class PedidosInteracaoModel extends BaseModel
             return false;
         }
 
-        $usuario = getenv('USERNAME') ?: ($_SERVER['REMOTE_USER'] ?? null);
+        $usuario = usuarioAtual();
         $sql = "INSERT INTO pedidos_industria_comentarios
                     (pedido_industria_id, comentario, usuario)
                 VALUES (:pedido_id, :comentario, :usuario)";
