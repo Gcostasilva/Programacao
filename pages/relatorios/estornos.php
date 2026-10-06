@@ -95,6 +95,7 @@ $total = count($registros);
                             <th>Vendedor</th>
                             <th>Tipo</th>
                             <th>Motivo</th>
+                            <th>Usuário</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -115,6 +116,7 @@ $total = count($registros);
                                         </span>
                                     </td>
                                     <td><?= nl2br(htmlspecialchars($r['motivo'])) ?></td>
+                                    <td><?= htmlspecialchars($r['usuario_estorno'] ?? 'Não identificado') ?></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php endif; ?>
