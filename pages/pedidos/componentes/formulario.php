@@ -26,7 +26,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
 
                             </div>
                             <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select"
-                                    name="tipo_pedido" required>
+                                    id="tipoPedido" name="tipo_pedido" required>
                                     <option value="" disabled selected>Selecione...</option>
                                     <option value="E">Encomenda</option>
                                     <option value="P">Padrão</option>
@@ -321,6 +321,40 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 tabela.innerHTML = '<tr><td colspan="5" class="text-center text-danger py-3">Erro ao consultar o pedido.</td></tr>'
             }
         }
+        const campoTipoPedido = document.getElementById('tipoPedido');
+        const campoPrevisao = document.getElementById('data');
+
+        async function preencherPrevisaoPorTipo() {
+            const pedido = campoPedido.value.trim();
+            const tipo = campoTipoPedido.value;
+
+            if (!pedido || !tipo) return;
+
+            try {
+                const resp = await fetch('index.php?page=pedidos_buscar&pedido=' + encodeURIComponent(pedido), {
+                    cache: 'no-store'
+                });
+                if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+                const dados = await resp.json();
+                const registro = (Array.isArray(dados) ? dados : []).find(r =>
+                    String(r.tipo ?? '').trim().toUpperCase() === String(tipo).trim().toUpperCase()
+                    && String(r.previsao ?? '').trim() !== ''
+                );
+
+                if (registro) {
+                    const previsao = String(registro.previsao).trim().split(' ')[0];
+                    if (/^\\d{4}-\\d{2}-\\d{2}$/.test(previsao)) {
+                        campoPrevisao.value = previsao;
+                    }
+                }
+            } catch (e) {
+                console.error('Não foi possível consultar a previsão do pedido:', e);
+            }
+        }
+
+        campoTipoPedido.addEventListener('change', preencherPrevisaoPorTipo);
+
         const modalVisualizarEstornosEl = document.getElementById('modalVisualizarEstornos'),
             modalVisualizarEstornos = new bootstrap.Modal(modalVisualizarEstornosEl),
             listaEstornosPedido = document.getElementById('listaEstornosPedido'),
