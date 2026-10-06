@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/BaseModel.php';
+require_once __DIR__ . '/../config/usuario.php';
 
 class EstornoModel extends BaseModel
 {
@@ -9,9 +10,9 @@ class EstornoModel extends BaseModel
         date_default_timezone_set('America/Sao_Paulo');
 
         $sql = "INSERT INTO estornos
-                    (pedido, atendimento, vendedor_id, total_parcial, motivo, data_estorno)
+                    (pedido, atendimento, vendedor_id, total_parcial, motivo, data_estorno, usuario_estorno)
                 VALUES
-                    (:pedido, :atendimento, :vendedor_id, :total_parcial, :motivo, :data_estorno)";
+                    (:pedido, :atendimento, :vendedor_id, :total_parcial, :motivo, :data_estorno, :usuario_estorno)";
 
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
@@ -20,7 +21,8 @@ class EstornoModel extends BaseModel
             ':vendedor_id' => $dados['vendedor_id'],
             ':total_parcial' => $dados['total_parcial'],
             ':motivo' => $dados['motivo'],
-            ':data_estorno' => date('Y-m-d H:i:s')
+            ':data_estorno' => date('Y-m-d H:i:s'),
+            ':usuario_estorno' => usuarioAtual()
         ]);
     }
 
@@ -53,7 +55,7 @@ class EstornoModel extends BaseModel
     {
         $sql = "SELECT e.id, e.pedido, e.atendimento,
                        COALESCE(v.nome, 'Vendedor não informado') AS vendedor,
-                       e.total_parcial, e.motivo, e.data_estorno
+                       e.total_parcial, e.motivo, e.data_estorno, e.usuario_estorno
                 FROM estornos e
                 LEFT JOIN vendedores v ON v.id = e.vendedor_id
                 WHERE e.pedido = :pedido
@@ -79,7 +81,7 @@ class EstornoModel extends BaseModel
 
         $sql = "SELECT e.id, e.pedido, e.atendimento, e.vendedor_id,
                        COALESCE(v.nome, 'Vendedor não informado') AS vendedor,
-                       e.total_parcial, e.motivo, e.data_estorno
+                       e.total_parcial, e.motivo, e.data_estorno, e.usuario_estorno
                 FROM estornos e LEFT JOIN vendedores v ON v.id = e.vendedor_id";
         if ($where) $sql .= ' WHERE ' . implode(' AND ', $where);
         $sql .= ' ORDER BY e.data_estorno DESC, e.id DESC ' . implode(' ', $limit);
