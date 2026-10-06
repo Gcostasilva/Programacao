@@ -347,6 +347,8 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                     if (/^\d{4}-\d{2}-\d{2}$/.test(previsao)) {
                         campoPrevisao.value = previsao;
                     }
+                }else{
+                    campoPrevisao.value = '';
                 }
             } catch (e) {
                 console.error('Não foi possível consultar a previsão do pedido:', e);
