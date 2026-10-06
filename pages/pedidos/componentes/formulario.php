@@ -152,11 +152,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                                         </option>
                                     <?php endif; ?><?php endforeach; ?>
                                 </select>
-                                    <button class="btn btn-primary">
-                                        <a href="?page=cadastro_vendedores" >
-                                            <i class="bi bi-plus"></i>
-                                        </a>
-                                    </button>
+                                    <input class="btn btn-primary" type="button" value="+" onclick="window.location.href='?page=cadastro_vendedores'">
                         </div>
                     </div>
                     <div class="mb-4">
@@ -165,11 +161,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                                 <textarea class="form-control" id="estornoMotivo" maxlength="100" rows="3" required
                                     placeholder="Informe o motivo do estorno"></textarea>
                                 <div class="form-text text-end"><span id="estornoMotivoContador"></span></div>
-                                <button class="btn btn-primary">
-                                    <a href="?page=cadastro_motivos_estorno">
-                                        <i class="bi bi-plus-circle"></i>
-                                    </a>
-                                </button>
+                                <input class="btn btn-primary" type="button" value="+" onclick="window.location.href='?page=cadastro_motivos_estorno'">
                             </div>
                         </div>
                     </div>
