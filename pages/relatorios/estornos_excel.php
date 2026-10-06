@@ -25,7 +25,7 @@ $out = fopen('php://output', 'w');
 fputcsv($out, ['RELATÓRIO DE ESTORNOS'], ';');
 fputcsv($out, ['Gerado em', date('d/m/Y H:i:s')], ';');
 fputcsv($out, [], ';');
-fputcsv($out, ['Data/Hora', 'Pedido', 'Atendimento', 'Vendedor', 'Tipo', 'Motivo'], ';');
+fputcsv($out, ['Data/Hora', 'Pedido', 'Atendimento', 'Vendedor', 'Tipo', 'Motivo', 'Usuário'], ';');
 
 foreach ($registros as $r) {
     fputcsv($out, [
@@ -34,7 +34,8 @@ foreach ($registros as $r) {
         $r['atendimento'],
         $r['vendedor'],
         $r['total_parcial'] === 'total' ? 'Total' : 'Parcial',
-        $r['motivo']
+        $r['motivo'],
+        $r['usuario_estorno'] ?? 'Não identificado'
     ], ';');
 }
 

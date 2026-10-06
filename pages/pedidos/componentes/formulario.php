@@ -392,7 +392,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 }
 
                 listaEstornosPedido.innerHTML = '<div class="table-responsive"><table class="table table-sm table-hover align-middle mb-0">' +
-                    '<thead><tr><th>Data/Hora</th><th>Atendimento</th><th>Vendedor</th><th>Tipo</th><th>Motivo</th></tr></thead>' +
+                    '<thead><tr><th>Data/Hora</th><th>Atendimento</th><th>Vendedor</th><th>Tipo</th><th>Motivo</th><th>Usuário</th></tr></thead>' +
                     '<tbody>' + estornos.map(e => {
                         const tipo = String(e.total_parcial || '').toLowerCase();
                         return '<tr>' +
@@ -401,6 +401,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                             '<td>' + escapeHtml(e.vendedor || 'Vendedor não informado') + '</td>' +
                             '<td><span class="badge ' + (tipo === 'total' ? 'text-bg-danger' : 'text-bg-warning') + '">' + (tipo === 'total' ? 'Total' : 'Parcial') + '</span></td>' +
                             '<td>' + escapeHtml(e.motivo || '-') + '</td>' +
+                            '<td>' + escapeHtml(e.usuario_estorno || 'Não identificado') + '</td>' +
                             '</tr>';
                     }).join('') + '</tbody></table></div>';
             } catch (e) {

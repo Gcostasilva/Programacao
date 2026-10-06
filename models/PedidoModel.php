@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/BaseModel.php';
+require_once __DIR__ . '/../config/usuario.php';
 
 class PedidoModel extends BaseModel
 {
@@ -12,7 +13,7 @@ class PedidoModel extends BaseModel
             $tipo = $dados['tipo'];
             $data_hora = date('Y/m/d H:i:s');
             $data = $dados['data'];
-            $user = getenv('USERNAME'); // alterar está buscando o usuariop do servidor
+            $user = usuarioAtual();
             
 
             // Busca o registro diretamente
