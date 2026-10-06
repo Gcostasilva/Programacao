@@ -101,7 +101,7 @@ $total = count($registros);
                     <tbody>
                         <?php if (!$registros): ?>
                             <tr>
-                                <td colspan="6" class="text-center text-muted py-4">Nenhum estorno encontrado.</td>
+                                <td colspan="7" class="text-center text-muted py-4">Nenhum estorno encontrado.</td>
                             </tr>
                         <?php else: ?>
                             <?php foreach ($registros as $r): ?>
