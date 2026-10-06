@@ -33,7 +33,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                                     <option value="T">Telha</option>
                                 </select></div>
                             <div class="col-md-4"><label class="form-label">Previsão</label><input type="date"
-                                    class="form-control" id="data" name="data" required></div>
+                                    class="form-control" id="data" name="data"></div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit"><i
@@ -347,7 +347,18 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                     if (/^\d{4}-\d{2}-\d{2}$/.test(previsao)) {
                         campoPrevisao.value = previsao;
                     }
-                }else{
+                }else if(tipo === 'P'){
+                    // adiciona 2 dias da data atual
+                    dataAtualFormatada = () => {
+                        const hoje = new Date();
+                        hoje.setDate(hoje.getDate() + 2);
+                        const ano = hoje.getFullYear();
+                        const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+                        const dia = String(hoje.getDate()).padStart(2, '0');
+                        return `${ano}-${mes}-${dia}`;
+                    };
+                    campoPrevisao.value = dataAtualFormatada();
+                }else {
                     campoPrevisao.value = '';
                 }
             } catch (e) {
