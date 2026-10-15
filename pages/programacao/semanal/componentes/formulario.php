@@ -17,6 +17,8 @@
                     <div class="col-md-3"><label class="form-label">Código</label>
                         <div class="input-group">
                             <input type="text" class="form-control" name="codigo_s" id="codigo" autocomplete="off" required>
+                            <input type="hidden" id="peso_liquido" value="">
+                            <input type="hidden" id="espessura_prod" value="">
                             <button class="btn btn-primary" type="button" id="btn_buscaCodigo" title="Selecionar código de produto"><i class="bi bi-search"></i></button>
                             <button class="btn btn-primary" type="button" id="btn_buscaDemanda" title="Selecionar demanda"><i class="bi bi-boxes"></i></button>
                         </div>
