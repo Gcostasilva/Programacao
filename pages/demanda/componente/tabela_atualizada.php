@@ -94,10 +94,10 @@ $modoSelecao = $modoDemanda === 'selecao';
                         <td><?= htmlspecialchars($d['equipamento'] ?? '') ?></td>
                         <td><?= htmlspecialchars($d['codigo']) ?></td>
                         <td><?= htmlspecialchars($d['descricao'] ?? '') ?></td>
-                        <td><?= htmlspecialchars($d['armazem']) ?></td>
+                        <td ><?= htmlspecialchars($d['armazem']) ?></td>
                         <td><?= htmlspecialchars($d['estoque']) ?></td>
                         <td><?= htmlspecialchars($d['pedido']) ?></td>
-                        <td><?= htmlspecialchars($d['saldo']) ?></td>
+                        <td <?php if ($d['saldo'] < 0): ?>class="bg-danger"<?php endif; ?>><?= htmlspecialchars($d['saldo']) ?></td>
                         <td><?= htmlspecialchars($d['previsao'] ?? '') ?></td>
                         <td><?= htmlspecialchars($d['dias_estoque']) ?></td>
                         <td><?= htmlspecialchars($d['necessidade']) ?></td>

@@ -101,7 +101,7 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
             </thead>
             <tbody>
                 <?php foreach ($demanda as $d): ?>
-                    <tr>
+                    <tr  <?php if ($d['saldo'] < 0): ?>class="table-danger"<?php elseif ($d['previsao'] > $d['estoque']): ?>class="table-warning"<?php endif; ?>>
                         <td><?= htmlspecialchars($d['equipamento'] ?? '') ?></td>
                         <td><?= htmlspecialchars($d['codigo']) ?></td>
                         <td><?= htmlspecialchars($d['descricao'] ?? '') ?></td>
