@@ -285,19 +285,61 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
     }
 
     function obterInput(coluna) {
-        const inputs = document.querySelectorAll('.filtro-coluna[data-coluna="' + coluna + '"]');
-        for (const input of inputs) if (input.dataset.tabela === idTabela) return input;
-        return null;
+        const inputs = Array.from(document.querySelectorAll('.filtro-coluna[data-coluna="' + coluna + '"]'))
+            .filter(input => input.dataset.tabela === idTabela);
+
+        // O DataTables pode duplicar o cabeçalho ao criar a área de rolagem.
+        // Prioriza o campo visível no cabeçalho rolável, em vez de ler um clone oculto.
+        return inputs.find(input => input.closest('.dt-scroll-head, .dataTables_scrollHead'))
+            || inputs.find(input => input.getClientRects().length > 0)
+            || inputs[0]
+            || null;
     }
 
     function inicializarDemanda() {
         const tabela = document.getElementById(idTabela);
-        if (!tabela || typeof DataTable === 'undefined' || tabela.dataset.dataTableInicializada === '1') return;
+        if (!tabela) return;
+
+        // A seleção não deve depender de a inicialização do DataTables ter sucesso.
+        if (tabela.dataset.demandaSelecaoLigada !== '1') {
+            document.addEventListener('click', function (event) {
+                const botao = event.target.closest('.btn-selecionar-demanda');
+                if (!botao) return;
+
+                const tabelaBotao = botao.closest('table');
+                if (!tabelaBotao || tabelaBotao.id !== idTabela) return;
+
+                const campo = document.querySelector(window.demandaCampoDestino || '#codigo');
+                if (!campo) {
+                    console.warn('Campo de destino da demanda não encontrado:', window.demandaCampoDestino || '#codigo');
+                    return;
+                }
+
+                campo.value = botao.dataset.codigo || '';
+                campo.dispatchEvent(new Event('input', { bubbles: true }));
+                campo.dispatchEvent(new Event('change', { bubbles: true }));
+                campo.dispatchEvent(new Event('blur', { bubbles: true }));
+
+                const modal = tabelaBotao.closest('.modal');
+                if (modal && window.bootstrap) {
+                    const instancia = bootstrap.Modal.getInstance(modal);
+                    if (instancia) instancia.hide();
+                }
+            });
+            tabela.dataset.demandaSelecaoLigada = '1';
+        }
+
+        if (tabela.dataset.dataTableInicializada === '1') return;
+        if (typeof DataTable === 'undefined') {
+            console.error('DataTables não foi carregado; a tabela de demanda não pode inicializar.');
+            return;
+        }
 
         const dt = new DataTable(tabela, {
             paging: false,
             scrollY: '60vh',
             scrollCollapse: true,
+            orderCellsTop: true,
             language: {
                 search: 'Pesquisar:',
                 zeroRecords: 'Nenhum registro encontrado',
@@ -364,29 +406,6 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
             if (event.target.closest('.filtro-coluna')) event.stopPropagation();
         }, true);
 
-        document.addEventListener('click', function (event) {
-            const botao = event.target.closest('.btn-selecionar-demanda');
-            if (!botao) return;
-
-            const tabelaBotao = botao.closest('table');
-            if (!tabelaBotao || tabelaBotao.id !== idTabela) return;
-
-            const codigo = botao.dataset.codigo;
-            const destino = window.demandaCampoDestino || '#codigo';
-            const campo = document.querySelector(destino);
-            if (!campo) return;
-
-            campo.value = codigo;
-            campo.dispatchEvent(new Event('input', { bubbles: true }));
-            campo.dispatchEvent(new Event('change', { bubbles: true }));
-            campo.dispatchEvent(new Event('blur', { bubbles: true }));
-
-            const modal = tabelaBotao.closest('.modal');
-            if (modal && window.bootstrap) {
-                const instancia = bootstrap.Modal.getInstance(modal);
-                if (instancia) instancia.hide();
-            }
-        });
     }
 
     if (document.readyState === 'loading') {
