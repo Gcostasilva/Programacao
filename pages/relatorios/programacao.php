@@ -111,24 +111,22 @@ try {
                         </thead>
                         <tbody>
                             <?php foreach ($equipamento['dias'] as $dia): ?><tr class="rp04-day-row">
-                                    <td colspan="5"><strong><?= htmlspecialchars(rsDia($dia['data'])) ?> - <?= rsData($dia['data']) ?></strong><span>Total do dia: <?= rsNumero((float)$dia['totais']['quantidade']) ?> peças / <?= rsNumero((float)$dia['totais']['peso_estimado']) ?> kg</span></td>
+                                    <td colspan="5"style="text-align: left;" ><strong><?= htmlspecialchars(rsDia($dia['data'])) ?> - <?= rsData($dia['data']) ?></strong><span>Total: <?= rsNumero((float)$dia['totais']['peso_estimado']) ?> kg</span></td>
                                 </tr><?php foreach ($dia['itens'] as $item): ?><tr class="rp04-item-row">
                                         <td><?= htmlspecialchars((string)$item['produto_id']) ?></td>
                                         <td><?= htmlspecialchars($item['descricao']) ?><?php if (!empty($item['observacao'])): ?><small>Obs.: <?= htmlspecialchars($item['observacao']) ?></small><?php endif; ?></td>
                                         <td><?= htmlspecialchars((string)($item['demanda'] ?? '')) ?></td>
-                                        <td class="num"><?= rsNumero((float)$item['quantidade']) ?></td>
-                                        <td class="num"><?= rsNumero((float)$item['peso_estimado']) ?></td>
+                                        <td class="num"style="text-align: center;"><?= rsNumero((float)$item['quantidade']) ?></td>
+                                        <td class="num"style="text-align: center;"><?= rsNumero((float)$item['peso_estimado']) ?></td>
                                     </tr><?php endforeach; ?><?php endforeach; ?>
                         </tbody>
                     </table>
                 </section>
                 <footer class="rp04-footer">
-                    <div class="rp04-total-equipamento"><span>TOTAL PROGRAMADO — <?= htmlspecialchars($equipamento['nome']) ?></span><span><?= rsNumero($totalEquipamentoQuantidade) ?> PEÇAS</span><span><?= rsNumero($totalEquipamentoPeso) ?> KG</span></div>
+                    <div class="rp04-total-equipamento"><span>Total Programado — <?= htmlspecialchars($equipamento['nome']) ?> - <?= rsNumero($totalEquipamentoPeso) ?> KG</span></div>
                     <section class="rp04-observacoes">
                         <div><strong>Observações:</strong></div>
-                        <div class="rp04-obs-area"><?php foreach ($equipamento['dias'] as $dia): foreach ($dia['itens'] as $item): if (!empty($item['observacao'])): ?><div><strong><?= htmlspecialchars((string)$item['produto_id']) ?>:</strong> <?= htmlspecialchars($item['observacao']) ?></div><?php endif;
-                                                                                                                                                                                                                                                                                                endforeach;
-                                                                                                                                                                                                                                                                                            endforeach; ?></div>
+                        <div class="rp04-obs-area"></div>
                     </section>
                     <section class="rp04-storage">
                         <table>
@@ -488,7 +486,9 @@ try {
             margin: 8px 0 0;
             font-size: 10px
         }
-
+        .rp04-total-equipamento,{
+            text-align: right;
+        }
         .rp04-header,
         .rp04-responsaveis,
         .rp04-day-row,
@@ -498,5 +498,7 @@ try {
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact
         }
+
+
     }
 </style>

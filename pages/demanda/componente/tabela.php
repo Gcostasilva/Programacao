@@ -4,28 +4,65 @@ require_once 'c:\\xampp\\htdocs\\Programacao\\config\\banco.php';
 
 $sql = "
 SELECT
-    dm.codigo AS codigo,
-    prd.descricao AS descricao,
-    dm.armazem AS armazem,
-    dm.estoque AS estoque,
+    case
+        when left(dm.codigo, 4) = '0301' or left(dm.codigo, 4) = '0305' then 'Desbobinadeira 31'
+        when left(dm.codigo, 4) = '0302' or left(dm.codigo, 4) = '0303' or left(dm.codigo, 4) = '0304' then 'Desbobinadeira LCT'
+        when left(dm.codigo, 2) = '04' then 'Serralheria'
+        when left(dm.codigo, 2) = '05' then 'Perfiladeira-08'
+        when left(dm.codigo, 2) = '06' then 'Bobininha'
+        else ''
+    END AS equipamento,
+    dm.codigo,
+    prd.descricao,
+    dm.armazem,
+    dm.estoque,
     dm.pendencia AS pedido,
     (dm.estoque - dm.pendencia) AS saldo,
     pr.quantidade AS previsao,
+
     CASE
         WHEN pr.quantidade IS NULL OR pr.quantidade = 0 THEN 0
-        ELSE ROUND(((dm.estoque - dm.pendencia) / pr.quantidade) * 30, 0)
+        ELSE ROUND(
+            ((dm.estoque - dm.pendencia) / pr.quantidade) * 30,
+            0
+        )
     END AS dias_estoque,
-    GREATEST(IFNULL(pr.quantidade,0) -(dm.estoque - dm.pendencia),0) AS necessidade,
-    IFNULL(pg.op_aberta,0) AS op_aberta
+
+    GREATEST(
+        IFNULL(pr.quantidade, 0) - (dm.estoque - dm.pendencia),
+        0
+    ) AS necessidade,
+
+    (IFNULL(pg.op_semanal, 0)
+        + IFNULL(pg2.op_quinzenal, 0)) AS op_aberta
+
 FROM demanda dm
-LEFT JOIN produtos prd ON dm.codigo = prd.codigo
-LEFT JOIN tb_previsao pr ON dm.codigo = pr.codigo AND dm.armazem = pr.armazem
+
+LEFT JOIN produtos prd
+    ON dm.codigo = prd.codigo
+
+LEFT JOIN tb_previsao pr
+    ON dm.codigo = pr.codigo
+    AND dm.armazem = pr.armazem
+
 LEFT JOIN (
-    SELECT produto_id, SUM(qtd - peca_realizada) AS op_aberta
+    SELECT
+        produto_id,
+        SUM(qtd) AS op_semanal
     FROM programacao
-    WHERE peca_realizada = 0
+    WHERE produto_id IS NOT NULL
+      AND COALESCE(peca_realizada, 0) = 0
     GROUP BY produto_id
 ) pg ON dm.codigo = pg.produto_id
+
+LEFT JOIN (
+    SELECT
+        produto_id,
+        SUM(quantidade) AS op_quinzenal
+    FROM programacao_quinzenal
+    WHERE COALESCE(peca_realizada, 0) = 0
+    GROUP BY produto_id
+) pg2 ON dm.codigo = pg2.produto_id;
 ";
 
 $stmt = $pdo->prepare($sql);
@@ -35,7 +72,7 @@ $demanda = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $modoDemanda = $modoDemanda ?? 'pagina';
 $idTabelaDemanda = $idTabelaDemanda ?? 'tb_demanda';
 $modoSelecao = $modoDemanda === 'selecao';
-$colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
+$colunasNumericas = [4, 5,  6, 7, 8, 9,10];
 ?>
 
 <div class="container-fluid">
@@ -49,6 +86,7 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
         <table id="<?= htmlspecialchars($idTabelaDemanda) ?>" class="table table-hover table-striped align-middle" style="font-size: 0.8em; width:100%">
             <thead>
                 <tr>
+                    <th>Equipamento</th>
                     <th>Código</th>
                     <th>Descrição</th>
                     <th>Amz</th>
@@ -78,6 +116,7 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
             <tbody>
                 <?php foreach ($demanda as $d): ?>
                     <tr>
+                        <td><?= htmlspecialchars($d['equipamento'] ?? '') ?></td>
                         <td><?= htmlspecialchars($d['codigo']) ?></td>
                         <td><?= htmlspecialchars($d['descricao'] ?? '') ?></td>
                         <td><?= htmlspecialchars($d['armazem']) ?></td>
@@ -259,7 +298,6 @@ $colunasNumericas = [3, 4, 5, 6, 7, 8, 9];
             paging: false,
             scrollY: '60vh',
             scrollCollapse: true,
-            orderCellsTop: true,
             language: {
                 search: 'Pesquisar:',
                 zeroRecords: 'Nenhum registro encontrado',
