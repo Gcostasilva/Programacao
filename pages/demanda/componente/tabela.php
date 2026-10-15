@@ -3,66 +3,52 @@
 require_once 'c:\\xampp\\htdocs\\Programacao\\config\\banco.php';
 
 $sql = "
-SELECT
-    case
-        when left(dm.codigo, 4) = '0301' or left(dm.codigo, 4) = '0305' then 'Desbobinadeira 31'
-        when left(dm.codigo, 4) = '0302' or left(dm.codigo, 4) = '0303' or left(dm.codigo, 4) = '0304' then 'Desbobinadeira LCT'
-        when left(dm.codigo, 2) = '04' then 'Serralheria'
-        when left(dm.codigo, 2) = '05' then 'Perfiladeira-08'
-        when left(dm.codigo, 2) = '06' then 'Bobininha'
-        else ''
-    END AS equipamento,
-    dm.codigo,
-    prd.descricao,
-    dm.armazem,
-    dm.estoque,
-    dm.pendencia AS pedido,
-    (dm.estoque - dm.pendencia) AS saldo,
-    pr.quantidade AS previsao,
+WITH dados_equipamento AS (
+    SELECT 
+        CASE 
+        when left(dm.codigo, 4) = '0301' or left(dm.codigo, 4) = '0305' then '3-Desbobinadeira 01'
+        when left(dm.codigo, 4) = '0302' or left(dm.codigo, 4) = '0303' or left(dm.codigo, 4) = '0304' then '3-Desbobinadeira LCT'
+        when left(dm.codigo, 2) = '04' then '4-Serralheria'
+        when left(dm.codigo, 2) = '05' then '5-Perfiladeira-08'
+        when left(dm.codigo, 2) = '06' then '6-Bobininha'
+            ELSE '' 
+        END AS equipamento, 
+        dm.codigo, 
+        prd.descricao, 
+        prd.especial, 
+        dm.armazem, 
+        dm.estoque, 
+        dm.pendencia AS pedido, 
+        (dm.estoque - dm.pendencia) AS saldo, 
+        pr.quantidade AS previsao, 
+        CASE 
+            WHEN pr.quantidade IS NULL OR pr.quantidade = 0 THEN 0 
+            ELSE ROUND(((dm.estoque - dm.pendencia) / pr.quantidade) * 30, 0) 
+        END AS dias_estoque, 
+        GREATEST(IFNULL(pr.quantidade, 0) - (dm.estoque - dm.pendencia), 0) AS necessidade, 
+        (IFNULL(pg.op_semanal, 0) + IFNULL(pg2.op_quinzenal, 0)) AS op_aberta 
+    FROM demanda dm 
+    LEFT JOIN produtos prd ON dm.codigo = prd.codigo 
+    LEFT JOIN tb_previsao pr ON dm.codigo = pr.codigo AND dm.armazem = pr.armazem 
+    LEFT JOIN ( 
+        SELECT produto_id, SUM(qtd) AS op_semanal 
+        FROM programacao 
+        WHERE produto_id IS NOT NULL AND COALESCE(peca_realizada, 0) = 0 
+        GROUP BY produto_id 
+    ) pg ON dm.codigo = pg.produto_id 
+    LEFT JOIN ( 
+        SELECT produto_id, SUM(quantidade) AS op_quinzenal 
+        FROM programacao_quinzenal 
+        WHERE COALESCE(peca_realizada, 0) = 0 
+        GROUP BY produto_id 
+    ) pg2 ON dm.codigo = pg2.produto_id 
+    WHERE prd.especial = 0
+)
+SELECT * 
+FROM dados_equipamento 
+WHERE equipamento <> ''; -- Excludes items that don't match any equipment group
 
-    CASE
-        WHEN pr.quantidade IS NULL OR pr.quantidade = 0 THEN 0
-        ELSE ROUND(
-            ((dm.estoque - dm.pendencia) / pr.quantidade) * 30,
-            0
-        )
-    END AS dias_estoque,
 
-    GREATEST(
-        IFNULL(pr.quantidade, 0) - (dm.estoque - dm.pendencia),
-        0
-    ) AS necessidade,
-
-    (IFNULL(pg.op_semanal, 0)
-        + IFNULL(pg2.op_quinzenal, 0)) AS op_aberta
-
-FROM demanda dm
-
-LEFT JOIN produtos prd
-    ON dm.codigo = prd.codigo
-
-LEFT JOIN tb_previsao pr
-    ON dm.codigo = pr.codigo
-    AND dm.armazem = pr.armazem
-
-LEFT JOIN (
-    SELECT
-        produto_id,
-        SUM(qtd) AS op_semanal
-    FROM programacao
-    WHERE produto_id IS NOT NULL
-      AND COALESCE(peca_realizada, 0) = 0
-    GROUP BY produto_id
-) pg ON dm.codigo = pg.produto_id
-
-LEFT JOIN (
-    SELECT
-        produto_id,
-        SUM(quantidade) AS op_quinzenal
-    FROM programacao_quinzenal
-    WHERE COALESCE(peca_realizada, 0) = 0
-    GROUP BY produto_id
-) pg2 ON dm.codigo = pg2.produto_id;
 ";
 
 $stmt = $pdo->prepare($sql);

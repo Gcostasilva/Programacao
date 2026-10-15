@@ -5,15 +5,16 @@ $sql = "
 
 SELECT
     case
-        when left(dm.codigo, 4) = '0301' or left(dm.codigo, 4) = '0305' then 'Desbobinadeira 31'
-        when left(dm.codigo, 4) = '0302' or left(dm.codigo, 4) = '0303' or left(dm.codigo, 4) = '0304' then 'Desbobinadeira LCT'
-        when left(dm.codigo, 2) = '04' then 'Serralheria'
-        when left(dm.codigo, 2) = '05' then 'Perfiladeira-08'
-        when left(dm.codigo, 2) = '06' then 'Bobininha'
+        when left(dm.codigo, 4) = '0301' or left(dm.codigo, 4) = '0305' then '3-Desbobinadeira 01'
+        when left(dm.codigo, 4) = '0302' or left(dm.codigo, 4) = '0303' or left(dm.codigo, 4) = '0304' then '3-Desbobinadeira LCT'
+        when left(dm.codigo, 2) = '04' then '4-Serralheria'
+        when left(dm.codigo, 2) = '05' then '5-Perfiladeira-08'
+        when left(dm.codigo, 2) = '06' then '6-Bobininha'
         else ''
     END AS equipamento,
     dm.codigo,
     prd.descricao,
+    prd.especial,
     dm.armazem,
     dm.estoque,
     dm.pendencia AS pedido,
@@ -62,7 +63,9 @@ LEFT JOIN (
     FROM programacao_quinzenal
     WHERE COALESCE(peca_realizada, 0) = 0
     GROUP BY produto_id
-) pg2 ON dm.codigo = pg2.produto_id;
+) pg2 ON dm.codigo = pg2.produto_id
+ 
+where equipamento is not null;
 
 ";
 
