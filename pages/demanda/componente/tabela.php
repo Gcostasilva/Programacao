@@ -100,7 +100,7 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
                     <?php if ($modoSelecao): ?><th>Selecionar</th><?php endif; ?>
                 </tr>
                 <tr class="filtros-demanda">
-                    <?php for ($i = 0; $i < 10; $i++): ?>
+                    <?php for ($i = 0; $i < 11; $i++): ?>
                         <th>
                             <input type="text"
                                    class="form-control form-control-sm filtro-coluna <?= in_array($i, $colunasNumericas, true) ? 'filtro-numerico' : '' ?>"
