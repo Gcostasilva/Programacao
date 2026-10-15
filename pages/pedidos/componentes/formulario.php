@@ -297,7 +297,9 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                         if (prev < hoje) tr.className = 'pedido-em-atraso'
                     }
                 }
-                tr.innerHTML = `<td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido" data-id="${escapeHtml(r.id)}" data-pedido="${escapeHtml(r.pedido)}" title="Adicionar comentário"><i class="bi bi-chat-left-text"></i>${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}</button></td><td>${escapeHtml(formatarTipo(r.tipo))}</td><td>${escapeHtml(formataTimeStamp(r.entrada) + (r.user_entrada ? ' - ' + r.user_entrada : ''))}</td><td>${escapeHtml(formataData(r.previsao))}</td><td>${escapeHtml(formatarSaida(r))}</td>`;
+                const podeCancelarSaida = Number(r.pode_cancelar_saida) === 1;
+                const podeExcluirEntrada = Number(r.pode_excluir_entrada) === 1;
+                tr.innerHTML = `<td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido" data-id="${escapeHtml(r.id)}" data-pedido="${escapeHtml(r.pedido)}" title="Adicionar comentário"><i class="bi bi-chat-left-text"></i>${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}</button></td><td>${escapeHtml(formatarTipo(r.tipo))}</td><td class="text-nowrap">${escapeHtml(formataTimeStamp(r.entrada) + (r.user_entrada ? ' - ' + r.user_entrada : ''))} <button type="button" class="btn btn-sm btn-outline-danger ms-1 btn-excluir-entrada" data-id="${escapeHtml(r.id)}" title="${podeExcluirEntrada ? 'Excluir esta entrada' : (temSaida ? 'Não é possível excluir: o registro possui saída' : 'Não é possível excluir: existe uma entrada posterior')} "${podeExcluirEntrada ? '' : ' disabled'}><i class="bi bi-trash3"></i></button></td><td>${escapeHtml(formataData(r.previsao))}</td><td class="text-nowrap">${escapeHtml(formatarSaida(r))} <button type="button" class="btn btn-sm btn-outline-warning ms-1 btn-cancelar-saida" data-id="${escapeHtml(r.id)}" title="${podeCancelarSaida ? 'Cancelar saída' : (temSaida ? 'Não é possível cancelar: existe uma entrada posterior' : 'Não há saída para cancelar')} "${podeCancelarSaida ? '' : ' disabled'}><i class="bi bi-arrow-counterclockwise"></i></button></td>`;
                 tabela.appendChild(tr)
             })
         }
@@ -433,6 +435,39 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
             if (pedido) visualizarEstornos(pedido);
         });
         tabela.addEventListener('click', async e => {
+            const btnCancelar = e.target.closest('.btn-cancelar-saida');
+            const btnExcluir = e.target.closest('.btn-excluir-entrada');
+            const btnAcao = btnCancelar || btnExcluir;
+            if (btnAcao) {
+                if (btnAcao.disabled) return;
+                const cancelar = Boolean(btnCancelar);
+                const mensagem = cancelar
+                    ? 'Confirma cancelar a saída deste pedido? A data de saída e o usuário da saída serão apagados.'
+                    : 'Confirma excluir completamente esta entrada? Os comentários vinculados a ela também serão excluídos.';
+                if (!window.confirm(mensagem)) return;
+
+                btnAcao.disabled = true;
+                try {
+                    const fd = new FormData();
+                    fd.append('id', btnAcao.dataset.id);
+                    fd.append('acao', cancelar ? 'cancelar_saida' : 'excluir_entrada');
+                    const resp = await fetch('index.php?page=pedidos_registro_acao', {
+                        method: 'POST',
+                        body: fd,
+                        cache: 'no-store'
+                    });
+                    const resultado = await resp.json();
+                    if (!resp.ok || !resultado.sucesso) {
+                        throw new Error(resultado.erro || 'Não foi possível concluir a ação.');
+                    }
+                    await consultarPedido();
+                } catch (err) {
+                    alert(err.message || 'Não foi possível concluir a ação.');
+                    await consultarPedido();
+                }
+                return;
+            }
+
             const b = e.target.closest('.btn-comentario-pedido');
             if (!b) return;
             pedidoIdComentario = b.dataset.id;
