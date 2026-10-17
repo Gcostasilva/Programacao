@@ -36,13 +36,12 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                                     class="form-control" id="data" name="data"></div>
                         </div>
                         <div class="row mt-3">
-                            <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit"><i
-                                        class="bi bi-save"></i> Salvar</button><button class="btn btn-primary"
-                                    type="reset"><i class="bi bi-x-circle"></i> Desistir</button><button
-                                    class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Eliminar
-                                    Saída</button><button class="btn btn-primary" type="reset"><i
-                                        class="bi bi-x-circle"></i></button></div>
-                            <div id="pedidoConsultaStatus" class="form-text"></div>
+                            <div class="col-12 d-flex flex-wrap gap-2">
+                                        <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button>
+                                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button>
+                                        
+                                        <div id="pedidoConsultaStatus" class="form-text"></div>
+                                    </div>
                         </div>
                     </form>
                 </div>
