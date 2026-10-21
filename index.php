@@ -11,7 +11,7 @@ $rotasAjax = [
     'prog_semanal_buscar', 'prog_semanal_buscarCodigo', 'prog_semanal_reordenar', 'prog_semanal_excluir',
     'prog_semanal_editar', 'prog_semanal_filtrar', 'prog_quinzenal_reordenar',
     'salvar_pedido', 'pedidos_buscar', 'pedidos_registro_acao', 'pedidos_comentario', 'pedidos_estorno', 'pedidos_estornos',
-    'relatorio_estornos_excel', 'pedidos_motivos_estorno', 'pedidos_motivos_estorno_salvar', 'pedidos_motivos_estorno_buscar', 'pedidos_motivos_estorno_excluir'
+    'relatorio_estornos_excel', 'pedidos_motivos_estorno', 'pedidos_motivos_estorno_salvar', 'pedidos_motivos_estorno_buscar', 'pedidos_motivos_estorno_excluir', 'usuarios_acao'
 ];
 
 $paginaAtual = $_GET['page'] ?? 'dashboard';
