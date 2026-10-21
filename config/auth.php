@@ -115,12 +115,16 @@ function authProtegerRota(string $pagina): void
         'prog_semanal_novo','prog_semanal_editar','prog_semanal_excluir','prog_semanal_reordenar',
         'prog_quinzenal_salvar','prog_quinzenal_editar','prog_quinzenal_excluir','prog_quinzenal_reordenar',
         'pedidos_salvar','salvar_pedido','pedidos_registro_acao','pedidos_comentario','pedidos_estorno',
-        'pedidos_motivos_estorno_salvar','pedidos_motivos_estorno_excluir',
-        'cadastro_aco','cadastro_vendedores','cadastro_equipamentos','cadastro_motivos_estorno',
-        'importacao'
+        'pedidos_motivos_estorno_salvar','pedidos_motivos_estorno_excluir'
     ];
 
     if (in_array($pagina, $mutacoes, true)) {
+        authExigirPerfil(['admin', 'analista_pcp']);
+    }
+
+    // Essas telas exibem formulários em GET e executam alterações em POST.
+    $telasComCrud = ['cadastro_aco','cadastro_vendedores','cadastro_equipamentos','cadastro_motivos_estorno','importacao'];
+    if (in_array($pagina, $telasComCrud, true) && strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         authExigirPerfil(['admin', 'analista_pcp']);
     }
 
