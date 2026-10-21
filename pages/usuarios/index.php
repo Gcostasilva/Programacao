@@ -4,6 +4,8 @@ authExigirPerfil(['admin']);
 $pdo = authPdo();
 $usuarios = $pdo->query("SELECT u.id,u.nome,u.usuario,u.perfil,u.status,u.criado_em,u.aprovado_em,u.ultimo_login,a.nome AS aprovador FROM usuarios_acesso u LEFT JOIN usuarios_acesso a ON a.id = u.aprovado_por ORDER BY FIELD(u.status,'pendente','ativo','bloqueado','rejeitado'), u.criado_em DESC")->fetchAll(PDO::FETCH_ASSOC);
 $csrf = authCsrfToken();
+$senhaReset = $_SESSION['senha_temporaria_reset'] ?? null;
+unset($_SESSION['senha_temporaria_reset']);
 ?>
 <div class="container-fluid py-3">
   <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
@@ -11,6 +13,13 @@ $csrf = authCsrfToken();
     <span class="badge text-bg-primary"><?= count($usuarios) ?> conta(s)</span>
   </div>
   <div class="alert alert-info"><strong>Perfis:</strong> Administrador gerencia usuários; Analista PCP pode alterar registros; Visitante tem acesso somente para consulta. Contas pendentes não conseguem entrar.</div>
+  <?php if (is_array($senhaReset) && !empty($senhaReset['senha'])): ?>
+  <div class="alert alert-warning" role="alert">
+    <div class="fw-semibold mb-1">Senha temporária gerada para <?= htmlspecialchars((string)($senhaReset['usuario'] ?? 'usuário'), ENT_QUOTES, 'UTF-8') ?></div>
+    <p class="mb-2">Copie e repasse por um canal seguro. Esta senha será exibida somente agora.</p>
+    <div class="d-flex flex-wrap align-items-center gap-2"><code id="senhaTemporariaReset" class="fs-5 user-select-all"><?= htmlspecialchars((string)$senhaReset['senha'], ENT_QUOTES, 'UTF-8') ?></code><button type="button" class="btn btn-sm btn-outline-dark" onclick="navigator.clipboard.writeText(document.getElementById('senhaTemporariaReset').textContent)">Copiar senha</button></div>
+  </div>
+  <?php endif; ?>
   <div class="card border-0 shadow-sm"><div class="table-responsive"><table class="table table-hover align-middle mb-0">
   <thead class="table-light"><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th>Solicitado em</th><th>Último acesso</th><th class="text-end">Ações</th></tr></thead><tbody>
   <?php foreach ($usuarios as $u): ?>
@@ -27,6 +36,7 @@ $csrf = authCsrfToken();
   <?php if ($u['status'] === 'ativo'): ?><form method="post" action="index.php?page=usuarios_acao"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="id" value="<?= (int)$u['id'] ?>"><input type="hidden" name="acao" value="bloquear"><button class="btn btn-sm btn-outline-secondary">Bloquear</button></form><?php endif; ?>
   <?php if ($u['status'] === 'pendente'): ?><form method="post" action="index.php?page=usuarios_acao" onsubmit="return confirm('Rejeitar esta solicitação de acesso?')"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="id" value="<?= (int)$u['id'] ?>"><input type="hidden" name="acao" value="rejeitar"><button class="btn btn-sm btn-outline-danger">Rejeitar</button></form><?php endif; ?>
   <?php endif; ?>
+  <form method="post" action="index.php?page=usuarios_acao" onsubmit="return confirm('Gerar uma nova senha temporária para este usuário? A senha atual deixará de funcionar imediatamente.')"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="id" value="<?= (int)$u['id'] ?>"><input type="hidden" name="acao" value="redefinir_senha"><button class="btn btn-sm btn-outline-warning">Redefinir senha</button></form>
   <?php if ((int)$u['id'] !== (int)(authUsuario()['id'] ?? 0)): ?><form method="post" action="index.php?page=usuarios_acao" onsubmit="return confirm('Excluir definitivamente esta conta?')"><input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf, ENT_QUOTES, 'UTF-8') ?>"><input type="hidden" name="id" value="<?= (int)$u['id'] ?>"><input type="hidden" name="acao" value="excluir"><button class="btn btn-sm btn-outline-danger">Excluir</button></form><?php endif; ?>
   </div></td></tr>
   <?php endforeach; ?>
