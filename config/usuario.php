@@ -1,31 +1,21 @@
 <?php
+require_once __DIR__ . '/auth.php';
 
 /**
- * Retorna o usuário Windows autenticado no acesso web.
- *
- * Não usa getenv('USERNAME'), pois esse valor representa o usuário
- * do processo Apache/PHP quando o servidor roda como serviço.
+ * Identificação única da conta autenticada no sistema.
+ * Usa o login cadastrado em usuarios_acesso, nunca a conta do processo Apache
+ * nem variáveis de ambiente do Windows.
  */
 function usuarioAtual(): string
 {
-    $usuario = $_SERVER['REMOTE_USER']
-        ?? $_SERVER['AUTH_USER']
-        ?? $_SERVER['REDIRECT_REMOTE_USER']
-        ?? '';
-
-    $usuario = trim((string) $usuario);
+    authExigirLogin();
+    $usuario = trim((string) (authUsuario()['usuario'] ?? ''));
 
     if ($usuario === '') {
-        return 'USUARIO_NAO_IDENTIFICADO';
+        throw new RuntimeException('Não foi possível identificar o usuário autenticado.');
     }
 
-    if (str_contains($usuario, '\\')) {
-        $usuario = substr($usuario, strrpos($usuario, '\\') + 1);
-    }
-
-    if (str_contains($usuario, '@')) {
-        $usuario = substr($usuario, 0, strpos($usuario, '@'));
-    }
-
-    return strtoupper(trim($usuario));
+    // O login é a identificação única da conta; os campos de auditoria legados
+    // de pedidos_industria comportam até 60 caracteres.
+    return substr($usuario, 0, 60);
 }
