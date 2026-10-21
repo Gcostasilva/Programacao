@@ -49,3 +49,11 @@ $MENU = [
         "url" => "index.php?page=temas"
     ],
 ];
+
+if (function_exists('authTemPerfil') && authTemPerfil(['admin'])) {
+    $MENU[] = [
+        "titulo" => "Usuários",
+        "icone" => "bi bi-shield-lock",
+        "url" => "index.php?page=usuarios"
+    ];
+}
