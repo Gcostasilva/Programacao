@@ -1,6 +1,7 @@
 <?php
 ob_start();
 require 'config/router.php';
+require_once 'config/auth.php';
 $router = new Router();
 
 // Rotas que devolvem apenas JSON (endpoints chamados via fetch/AJAX)
@@ -14,13 +15,20 @@ $rotasAjax = [
 ];
 
 $paginaAtual = $_GET['page'] ?? 'dashboard';
+authProtegerRota((string) $paginaAtual);
 
-if (in_array($paginaAtual, $rotasAjax)) {
+// Telas públicas de autenticação são independentes do layout principal.
+$paginasPublicas = ['login', 'logout', 'solicitar_acesso', 'usuarios_setup'];
+if (in_array($paginaAtual, $paginasPublicas, true)) {
+    $router->carregar();
+    exit;
+}
+
+if (in_array($paginaAtual, $rotasAjax, true)) {
     $router->carregar();
     exit;
 }
 ?>
-
 <!DOCTYPE html>
 <html language="pt-br" data-lte-primary="...">
 <?php include 'includes/head.php'; ?>
