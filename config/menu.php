@@ -52,4 +52,10 @@ $MENU = [
 
 
 
-if (function_exists('authTemPerfil') && authTemPerfil(['admin'])) {$MENU[] = ["titulo" => "Usuários","icone" => "bi bi-shield-lock","url" => "index.php?page=usuarios"];}
+if (function_exists('authTemPerfil') && authTemPerfil(['admin'])) {
+    $MENU[5]['submenu'][] = [
+        "titulo" => "Manutenção de Usuários",
+        "icone" => "bi-shield-lock",
+        "url" => "index.php?page=usuarios"
+    ];
+}
