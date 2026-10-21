@@ -36,13 +36,13 @@ $MENU = [
             ["titulo" => "Aço", "icone" => "bi-layers", "url" => "index.php?page=cadastro_aco"],
             ["titulo" => "Equipamentos", "icone" => "bi-tools", "url" => "index.php?page=cadastro_equipamentos"],
             ["titulo" => "Motivos de Estorno", "icone" => "bi-arrow-counterclockwise", "url" => "index.php?page=cadastro_motivos_estorno"]
-        ]
-    ],
-    [
-        "titulo" => "Relatórios",
+            ]
+            ],
+            [
+                "titulo" => "Relatórios",
         "icone" => "bi-file-earmark-bar-graph",
         "url" => "index.php?page=relatorios"
-    ],
+        ],
     [
         "titulo" => "Temas",
         "icone" => "bi-file-earmark-bar-graph",
@@ -50,10 +50,6 @@ $MENU = [
     ],
 ];
 
-if (function_exists('authTemPerfil') && authTemPerfil(['admin'])) {
-    $MENU[] = [
-        "titulo" => "Usuários",
-        "icone" => "bi bi-shield-lock",
-        "url" => "index.php?page=usuarios"
-    ];
-}
+
+
+if (function_exists('authTemPerfil') && authTemPerfil(['admin'])) {$MENU[] = ["titulo" => "Usuários","icone" => "bi bi-shield-lock","url" => "index.php?page=usuarios"];}
