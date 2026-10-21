@@ -209,6 +209,11 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
     document.addEventListener('DOMContentLoaded', function () {
         const campoPedido = document.getElementById('pedido'),
             tabela = document.getElementById('tabelaDados');
+
+        // Mantém o cursor no campo Pedido ao entrar na tela e após o redirecionamento do salvamento.
+        if (campoPedido) {
+            window.setTimeout(() => campoPedido.focus({ preventScroll: true }), 0);
+        }
         const modalEl = document.getElementById('modalComentarioPedido'),
             modal = new bootstrap.Modal(modalEl),
             listaComentarios = document.getElementById('listaComentariosPedido'),
