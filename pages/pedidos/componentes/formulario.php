@@ -17,7 +17,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                         <div class="row g-3 align-items-end">
                             <div class="col-md-4"><label class="form-label">Pedido</label>
                                 <div class="input-group"><input class="form-control" id="pedido" name="pedido" required
-                                        autocomplete="off">
+                                        autocomplete="off" autofocus>
                                     <button class="btn btn-primary bt-especial" type="button" id="btn_estorno"
                                         title="Estorno">
                                         <i class="bi bi-arrow-counterclockwise"></i>
