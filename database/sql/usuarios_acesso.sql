@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS usuarios_acesso (
     nome VARCHAR(120) NOT NULL,
     usuario VARCHAR(60) NOT NULL,
     senha_hash VARCHAR(255) NOT NULL,
+    trocar_senha TINYINT(1) NOT NULL DEFAULT 0,
     perfil ENUM('admin','analista_pcp','visitante') NOT NULL DEFAULT 'visitante',
     status ENUM('pendente','ativo','rejeitado','bloqueado') NOT NULL DEFAULT 'pendente',
     criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
