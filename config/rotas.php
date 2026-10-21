@@ -70,3 +70,4 @@ Router::add('logout', 'pages/usuarios/logout.php', 'Sair');
 Router::add('solicitar_acesso', 'pages/usuarios/solicitar_acesso.php', 'Solicitar acesso');
 Router::add('usuarios_setup', 'pages/usuarios/setup.php', 'Configuração inicial');
 Router::add('usuarios', 'pages/usuarios/index.php', 'Gerenciar usuários');
+Router::add('usuarios_acao', 'pages/usuarios/acao.php', 'Ação administrativa de usuários');
