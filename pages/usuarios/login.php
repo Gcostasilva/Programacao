@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $usuario = authNormalizarUsuario((string) ($_POST['usuario'] ?? ''));
         $senha = (string) ($_POST['senha'] ?? '');
-        $stmt = authPdo()->prepare('SELECT id,nome,usuario,senha_hash,perfil,status FROM usuarios_acesso WHERE usuario = :usuario LIMIT 1');
+        $stmt = authPdo()->prepare('SELECT id,nome,usuario,senha_hash,perfil,status,trocar_senha FROM usuarios_acesso WHERE usuario = :usuario LIMIT 1');
         $stmt->execute([':usuario' => $usuario]);
         $conta = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -23,11 +23,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'id' => (int) $conta['id'],
                 'nome' => $conta['nome'],
                 'usuario' => $conta['usuario'],
-                'perfil' => $conta['perfil']
+                'perfil' => $conta['perfil'],
+                'trocar_senha' => (int)$conta['trocar_senha']
             ];
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             authPdo()->prepare('UPDATE usuarios_acesso SET ultimo_login = NOW() WHERE id = :id')->execute([':id' => $conta['id']]);
-            header('Location: index.php');
+            header('Location: index.php?page=' . ((int)$conta['trocar_senha'] === 1 ? 'trocar_senha' : 'dashboard'));
             exit;
         }
         $erro = 'Usuário ou senha inválidos, ou conta ainda não aprovada.';
