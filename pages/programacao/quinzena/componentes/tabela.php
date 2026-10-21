@@ -4,6 +4,7 @@ $anoMes = $partesQuinzena[0] . '-' . $partesQuinzena[1];
 $numeroQuinzena = (int)($partesQuinzena[2] ?? 1);
 $anterior = $numeroQuinzena === 2 ? $anoMes . '-1' : date('Y-m', strtotime($anoMes . '-01 -1 month')) . '-2';
 $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMes . '-01 +1 month')) . '-1';
+$atual = date('Y-m') . '-' . (date('d') <= 15 ? '1' : '2');
 ?>
 
 <div class="card mb-4">
@@ -53,7 +54,19 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                         $saldo = max(0, $quantidade - $produzido);
                         $descricao = trim((string)($item['descricao'] ?? ''));
                         ?>
-                        <tr data-id="<?= (int)$item['id'] ?>" data-ordem="<?= (int)($item['ordem'] ?? 0) ?>">
+                            <?php
+                                if ($produzido > 0){
+                                    $cor = "table-success";
+                                }else{
+                                    if ($atual === $item['quinzena']){
+                                       $cor = "table-warning";
+                                    }else {
+                                        $cor = "table-danger";
+                                    }
+                                }
+                            ?>
+                        <!-- $produzido ? "table-success" : "table-danger"  -->
+                        <tr data-id="<?= (int)$item['id'] ?>" data-ordem="<?= (int)($item['ordem'] ?? 0) ?>" class="<?= $cor ?>" >
                             <td class="text-center text-nowrap">
                                 <span class="handle-ordenacao" style="cursor: grab;">
                                     <i class="bi bi-arrows-move cursor-move me-1"></i>
@@ -72,6 +85,7 @@ $proxima = $numeroQuinzena === 1 ? $anoMes . '-2' : date('Y-m', strtotime($anoMe
                             <td class="text-end text-nowrap fw-semibold"><?= number_format($saldo, 3, ',', '.') ?></td>
                             <td class="text-nowrap"><?= htmlspecialchars($item['ordem_producao'] ?? '') ?></td>
                             <td><?= htmlspecialchars($item['obs'] ?? '') ?></td>
+                            <td><?= $atual ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

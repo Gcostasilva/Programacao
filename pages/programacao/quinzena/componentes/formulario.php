@@ -46,7 +46,7 @@ $quinzenaAtual = $dados['quinzena'] ?? (date('Y-m') . '-' . (date('d') <= 15 ? '
                 </div>
                 <div class="col-md-2">
                     <label class="form-label">Ordem de Produção</label>
-                    <input class="form-control" name="ordem_producao">
+                    <input class="form-control" name="ordem_producao" required>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">Observação</label>
