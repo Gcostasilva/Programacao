@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($nome === '' || mb_strlen($nome) > 120 || !preg_match('/^[a-z0-9._-]{3,60}$/', $usuario)) {
             $erro = 'Informe nome e usuário válido (3 a 60 caracteres: letras, números, ponto, hífen ou sublinhado).';
-        } elseif (strlen($senha) < 1) {
+        } elseif (strlen($senha) < 12) {
             $erro = 'A senha do primeiro administrador deve ter pelo menos 12 caracteres.';
         } elseif ($senha !== $confirmacao) {
             $erro = 'As senhas não coincidem.';
@@ -58,6 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <form method="post"><input type="hidden" name="_csrf" value="<?= htmlspecialchars(authCsrfToken(), ENT_QUOTES, 'UTF-8') ?>">
 <div class="mb-3"><label class="form-label">Nome completo</label><input class="form-control" name="nome" required maxlength="120"></div>
 <div class="mb-3"><label class="form-label">Usuário</label><input class="form-control" name="usuario" required minlength="3" maxlength="60" pattern="[a-zA-Z0-9._-]+"></div>
-<div class="mb-3"><label class="form-label">Senha (mínimo 12 caracteres)</label><input class="form-control" type="password" name="senha" required minlength="1" autocomplete="new-password"></div>
+<div class="mb-3"><label class="form-label">Senha (mínimo 12 caracteres)</label><input class="form-control" type="password" name="senha" required minlength="12" autocomplete="new-password"></div>
 <div class="mb-3"><label class="form-label">Confirme a senha</label><input class="form-control" type="password" name="confirmacao" required minlength="1" autocomplete="new-password"></div>
 <button class="btn btn-primary w-100">Criar administrador</button></form></div></div></main></body></html>
