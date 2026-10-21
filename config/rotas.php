@@ -66,6 +66,7 @@ Router::add('cadastro_motivos_estorno', 'controllers/CadastroMotivosEstornoContr
  
 // Autenticação e controle de acesso
 Router::add('login', 'pages/usuarios/login.php', 'Entrar');
+Router::add('trocar_senha', 'pages/usuarios/trocar_senha.php', 'Trocar senha');
 Router::add('logout', 'pages/usuarios/logout.php', 'Sair');
 Router::add('solicitar_acesso', 'pages/usuarios/solicitar_acesso.php', 'Solicitar acesso');
 Router::add('usuarios_setup', 'pages/usuarios/setup.php', 'Configuração inicial');
