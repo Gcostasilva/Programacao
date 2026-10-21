@@ -52,6 +52,10 @@ $MENU = [
 
 
 
+if (function_exists('authTemPerfil') && !authTemPerfil(['admin', 'analista_pcp'])) {
+    unset($MENU[5]);
+}
+
 if (function_exists('authTemPerfil') && authTemPerfil(['admin'])) {
     $MENU[5]['submenu'][] = [
         "titulo" => "Manutenção de Usuários",
