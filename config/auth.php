@@ -47,7 +47,7 @@ function authExigirLogin(): void
 
     // Revalida status e perfil no banco em cada requisição protegida para que
     // bloqueios e alterações de perfil tenham efeito imediato.
-    $stmt = authPdo()->prepare("SELECT id,nome,usuario,perfil,status FROM usuarios_acesso WHERE id = :id LIMIT 1");
+    $stmt = authPdo()->prepare("SELECT id,nome,usuario,perfil,status,trocar_senha FROM usuarios_acesso WHERE id = :id LIMIT 1");
     $stmt->execute([':id' => (int)($sessao['id'] ?? 0)]);
     $conta = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -62,7 +62,8 @@ function authExigirLogin(): void
         'id' => (int)$conta['id'],
         'nome' => $conta['nome'],
         'usuario' => $conta['usuario'],
-        'perfil' => $conta['perfil']
+        'perfil' => $conta['perfil'],
+        'trocar_senha' => (int)$conta['trocar_senha']
     ];
 }
 
@@ -126,6 +127,16 @@ function authProtegerRota(string $pagina): void
 
     authExigirLogin();
 
+    // Senha temporária: só permite acessar a troca obrigatória ou sair.
+    if (!in_array($pagina, ['trocar_senha', 'logout'], true) && (int)(authUsuario()['trocar_senha'] ?? 0) === 1) {
+        header('Location: index.php?page=trocar_senha');
+        exit;
+    }
+
+    if ($pagina === 'trocar_senha') {
+        return;
+    }
+
     if (in_array($pagina, ['usuarios', 'usuarios_acao'], true)) {
         authExigirPerfil(['admin']);
     }
@@ -143,9 +154,9 @@ function authProtegerRota(string $pagina): void
         authExigirPerfil(['admin', 'analista_pcp']);
     }
 
-    // Essas telas exibem formulários em GET e executam alterações em POST.
-    $telasComCrud = ['cadastro_aco','cadastro_vendedores','cadastro_equipamentos','cadastro_motivos_estorno','importacao'];
-    if (in_array($pagina, $telasComCrud, true) && strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+    // Todas as telas do menu Cadastros, inclusive consultas/GET, ficam restritas a admin e Analista PCP.
+    $telasCadastro = ['cadastro_aco','cadastro_vendedores','cadastro_equipamentos','cadastro_motivos_estorno','importacao'];
+    if (in_array($pagina, $telasCadastro, true)) {
         authExigirPerfil(['admin', 'analista_pcp']);
     }
 
