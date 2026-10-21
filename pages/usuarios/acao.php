@@ -16,7 +16,26 @@ if (!$id || !in_array($perfil, $perfisValidos, true)) {
 }
 $atual = authUsuario();
 try {
-    if ($acao === 'aprovar' || $acao === 'salvar_perfil') {
+    if ($acao === 'redefinir_senha') {
+        $stmt = $pdo->prepare('SELECT nome,usuario FROM usuarios_acesso WHERE id = :id LIMIT 1');
+        $stmt->execute([':id' => $id]);
+        $alvoSenha = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$alvoSenha) {
+            throw new RuntimeException('Conta não encontrada.');
+        }
+        $alfabeto = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+        $senhaTemporaria = '';
+        for ($i = 0; $i < 20; $i++) {
+            $senhaTemporaria .= $alfabeto[random_int(0, strlen($alfabeto) - 1)];
+        }
+        $hash = password_hash($senhaTemporaria, PASSWORD_DEFAULT);
+        $stmt = $pdo->prepare('UPDATE usuarios_acesso SET senha_hash = :hash WHERE id = :id');
+        $stmt->execute([':hash' => $hash, ':id' => $id]);
+        $_SESSION['senha_temporaria_reset'] = [
+            'usuario' => $alvoSenha['usuario'],
+            'senha' => $senhaTemporaria
+        ];
+    } elseif ($acao === 'aprovar' || $acao === 'salvar_perfil') {
         $pdo->beginTransaction();
         $stmt = $pdo->prepare('SELECT id,perfil,status FROM usuarios_acesso WHERE id = :id FOR UPDATE');
         $stmt->execute([':id'=>$id]);
