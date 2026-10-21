@@ -183,95 +183,74 @@ class tabelasModel extends BaseModel
     public function tabelaPedidos()
     {
         try {
-            $sql = "SELECT 
-    pi.*,
-
-    CASE pi.tipo
-        WHEN 'P' THEN 'Padrão'
-        WHEN 'E' THEN 'Encomenda'
-        WHEN 'T' THEN 'Telha'
-        ELSE pi.tipo
-    END AS tipo_nome,
-
-    CASE
-        /* Pedido já saiu: não há prazo */
-        WHEN pi.saida IS NOT NULL THEN NULL
-
-        /* Padrão: pode mostrar horas */
-        WHEN pi.tipo = 'P' THEN
-            CASE
-                WHEN TIMESTAMPDIFF(
-                    HOUR,
-                    NOW(),
-                    DATE_ADD(pi.previsao, INTERVAL 1 DAY)
-                ) > 0
-                THEN
-                    CASE
-                        WHEN TIMESTAMPDIFF(
-                            HOUR,
-                            NOW(),
-                            DATE_ADD(pi.previsao, INTERVAL 1 DAY)
-                        ) >= 24
-                        THEN CONCAT(
-                            FLOOR(
-                                TIMESTAMPDIFF(
-                                    HOUR,
-                                    NOW(),
-                                    DATE_ADD(pi.previsao, INTERVAL 1 DAY)
-                                ) / 24
-                            ),
-                            ' dias'
-                        )
-                        ELSE CONCAT(
-                            TIMESTAMPDIFF(
-                                HOUR,
-                                NOW(),
-                                DATE_ADD(pi.previsao, INTERVAL 1 DAY)
-                            ),
-                            ' horas'
-                        )
-                    END
-
-                ELSE
-                    CONCAT(
-                        ABS(
-                            TIMESTAMPDIFF(
-                                HOUR,
-                                DATE_ADD(pi.previsao, INTERVAL 1 DAY),
-                                NOW()
-                            )
-                        ),
-                        ' horas vencido'
-                    )
-            END
-
-        /* Encomenda e Telha: somente dias */
-        ELSE
-            CASE
-                WHEN DATEDIFF(pi.previsao, CURDATE()) > 0
-                THEN CONCAT(
-                    DATEDIFF(pi.previsao, CURDATE()),
-                    ' dias'
-                )
-
-                WHEN DATEDIFF(pi.previsao, CURDATE()) = 0
-                THEN 'Hoje'
-
-                ELSE CONCAT(
-                    ABS(DATEDIFF(pi.previsao, CURDATE())),
-                    ' dias vencido'
-                )
-            END
-    END AS prazo
-
-FROM pedidos_industria pi
-ORDER BY pi.id DESC
-LIMIT 100;";
+            $sql = "SELECT
+                        pi.*,
+                        CASE pi.tipo
+                            WHEN 'P' THEN 'Padrão'
+                            WHEN 'E' THEN 'Encomenda'
+                            WHEN 'T' THEN 'Telha'
+                            ELSE pi.tipo
+                        END AS tipo_nome
+                    FROM pedidos_industria pi
+                    ORDER BY pi.id DESC
+                    LIMIT 100";
 
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute();
+            $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $hoje = new DateTimeImmutable('today');
+
+            foreach ($pedidos as &$pedido) {
+                // Pedido com saída ou sem previsão não possui prazo em aberto.
+                if (!empty($pedido['saida']) && $pedido['saida'] !== '0000-00-00 00:00:00') {
+                    $pedido['prazo'] = null;
+                    continue;
+                }
+
+                $valorPrevisao = trim((string) ($pedido['previsao'] ?? ''));
+                if ($valorPrevisao === '' || $valorPrevisao === '0000-00-00' || $valorPrevisao === '0000-00-00 00:00:00') {
+                    $pedido['prazo'] = '';
+                    continue;
+                }
+
+                try {
+                    $previsao = new DateTimeImmutable(substr($valorPrevisao, 0, 10));
+                } catch (Throwable $e) {
+                    $pedido['prazo'] = '';
+                    continue;
+                }
+
+                $diasUteis = 0;
+                if ($previsao > $hoje) {
+                    // Conta os dias úteis após hoje até a previsão, incluindo a data prevista.
+                    for ($dia = $hoje->modify('+1 day'); $dia <= $previsao; $dia = $dia->modify('+1 day')) {
+                        if ((int) $dia->format('N') <= 5) {
+                            $diasUteis++;
+                        }
+                    }
+
+                    if ($diasUteis === 0) {
+                        $pedido['prazo'] = 'Fim de semana';
+                    } else {
+                        $pedido['prazo'] = $diasUteis . ($diasUteis === 1 ? ' dia útil' : ' dias úteis');
+                    }
+                } elseif ($previsao < $hoje) {
+                    // Para atraso, conta apenas dias úteis entre a previsão e ontem.
+                    for ($dia = $previsao; $dia < $hoje; $dia = $dia->modify('+1 day')) {
+                        if ((int) $dia->format('N') <= 5) {
+                            $diasUteis++;
+                        }
+                    }
+
+                    $pedido['prazo'] = $diasUteis . ($diasUteis === 1 ? ' dia útil vencido' : ' dias úteis vencidos');
+                } else {
+                    $pedido['prazo'] = ((int) $hoje->format('N') <= 5) ? 'Hoje' : 'Fim de semana';
+                }
+            }
+            unset($pedido);
+
+            return $pedidos;
         } catch (PDOException $erro) {
             throw $erro;
         }
