@@ -11,7 +11,7 @@
     <ul class="navbar-nav ms-auto align-items-center">
         <?php if (function_exists('authUsuario') && authUsuario()): ?>
         <li class="nav-item d-none d-md-block"><span class="nav-link small text-secondary"><?= htmlspecialchars(authUsuario()['nome'] ?? '', ENT_QUOTES, 'UTF-8') ?> · <?= htmlspecialchars(['admin'=>'Administrador','analista_pcp'=>'Analista PCP','visitante'=>'Visitante'][authUsuario()['perfil'] ?? ''] ?? '', ENT_QUOTES, 'UTF-8') ?></span></li>
-        <li class="nav-item"><a class="nav-link" href="index.php?page=logout" title="Sair"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
+        <li class="nav-item"><form method="post" action="index.php?page=logout" class="m-0"><input type="hidden" name="_csrf" value="<?= htmlspecialchars(authCsrfToken(), ENT_QUOTES, 'UTF-8') ?>"><button class="nav-link border-0 bg-transparent" type="submit" title="Sair"><i class="bi bi-box-arrow-right"></i> Sair</button></form></li>
         <?php endif; ?>
     </ul>
 </nav>
