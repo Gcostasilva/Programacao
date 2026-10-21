@@ -29,7 +29,7 @@ try {
             $senhaTemporaria .= $alfabeto[random_int(0, strlen($alfabeto) - 1)];
         }
         $hash = password_hash($senhaTemporaria, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare('UPDATE usuarios_acesso SET senha_hash = :hash WHERE id = :id');
+        $stmt = $pdo->prepare('UPDATE usuarios_acesso SET senha_hash = :hash, trocar_senha = 1 WHERE id = :id');
         $stmt->execute([':hash' => $hash, ':id' => $id]);
         $_SESSION['senha_temporaria_reset'] = [
             'usuario' => $alvoSenha['usuario'],
