@@ -28,8 +28,8 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                             <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select"
                                     id="tipoPedido" name="tipo_pedido" required>
                                     <option value="" disabled selected>Selecione...</option>
-                                    <option value="E">Encomenda</option>
                                     <option value="P">Padrão</option>
+                                    <option value="E">Encomenda</option>
                                     <option value="T">Telha</option>
                                 </select></div>
                             <div class="col-md-4"><label class="form-label">Previsão</label><input type="date"
@@ -299,7 +299,22 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                 }
                 const podeCancelarSaida = Number(r.pode_cancelar_saida) === 1;
                 const podeExcluirEntrada = Number(r.pode_excluir_entrada) === 1;
-                tr.innerHTML = `<td class="text-center"><button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido" data-id="${escapeHtml(r.id)}" data-pedido="${escapeHtml(r.pedido)}" title="Adicionar comentário"><i class="bi bi-chat-left-text"></i>${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}</button></td><td>${escapeHtml(formatarTipo(r.tipo))}</td><td class="text-nowrap">${escapeHtml(formataTimeStamp(r.entrada) + (r.user_entrada ? ' - ' + r.user_entrada : ''))} <button type="button" class="btn btn-sm btn-outline-danger ms-1 btn-excluir-entrada" data-id="${escapeHtml(r.id)}" title="${podeExcluirEntrada ? 'Excluir esta entrada' : (temSaida ? 'Não é possível excluir: o registro possui saída' : 'Não é possível excluir: existe uma entrada posterior')} "${podeExcluirEntrada ? '' : ' disabled'}><i class="bi bi-trash3"></i></button></td><td>${escapeHtml(formataData(r.previsao))}</td><td class="text-nowrap">${escapeHtml(formatarSaida(r))} <button type="button" class="btn btn-sm btn-outline-warning ms-1 btn-cancelar-saida" data-id="${escapeHtml(r.id)}" title="${podeCancelarSaida ? 'Cancelar saída' : (temSaida ? 'Não é possível cancelar: existe uma entrada posterior' : 'Não há saída para cancelar')} "${podeCancelarSaida ? '' : ' disabled'}><i class="bi bi-arrow-counterclockwise"></i></button></td>`;
+                tr.innerHTML = `<td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-primary btn-comentario-pedido" data-id="${escapeHtml(r.id)}"
+                 data-pedido="${escapeHtml(r.pedido)}" title="Adicionar comentário"><i class="bi bi-chat-left-text">
+                 </i>${comentarios ? `<span class="badge text-bg-primary ms-1">${comentarios}</span>` : ''}</button>
+                 </td><td>${escapeHtml(formatarTipo(r.tipo))}</td><td class="text-nowrap">
+                 ${escapeHtml(formataTimeStamp(r.entrada) + (r.user_entrada ? ' - ' + r.user_entrada : ''))} 
+                 <button type="button" class="btn btn-sm btn-outline-danger ms-1 btn-excluir-entrada" data-id="${escapeHtml(r.id)}
+                 " title="${podeExcluirEntrada ? 'Excluir esta entrada' : (temSaida ?
+                  'Não é possível excluir: o registro possui saída' : 'Não é possível excluir: existe uma entrada posterior')} 
+                  "${podeExcluirEntrada ? '' : ' disabled'}><i class="bi bi-trash3"></i></button></td><td>${escapeHtml(formataData(r.previsao))}
+                  </td><td class="text-nowrap">
+                  <button type="button" class="btn btn-sm btn-outline-warning ms-1 btn-cancelar-saida" data-id="${escapeHtml(r.id)}
+                  " title="${podeCancelarSaida ? 'Cancelar saída' : (temSaida ? 'Não é possível cancelar: existe uma entrada posterior' :
+                   'Não há saída para cancelar')} "${podeCancelarSaida ? '' : ' disabled'}><i class="bi bi-arrow-counterclockwise"></i></button>
+                  ${escapeHtml(formatarSaida(r))} 
+                  </td>`;
                 tabela.appendChild(tr)
             })
         }
