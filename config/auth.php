@@ -39,10 +39,31 @@ function authTemPerfil(array $perfis): bool
 
 function authExigirLogin(): void
 {
-    if (!authLogado()) {
+    $sessao = authUsuario();
+    if ($sessao === null) {
         header('Location: index.php?page=login');
         exit;
     }
+
+    // Revalida status e perfil no banco em cada requisição protegida para que
+    // bloqueios e alterações de perfil tenham efeito imediato.
+    $stmt = authPdo()->prepare("SELECT id,nome,usuario,perfil,status FROM usuarios_acesso WHERE id = :id LIMIT 1");
+    $stmt->execute([':id' => (int)($sessao['id'] ?? 0)]);
+    $conta = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$conta || $conta['status'] !== 'ativo') {
+        unset($_SESSION['auth_usuario']);
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        header('Location: index.php?page=login&motivo=conta_inativa');
+        exit;
+    }
+
+    $_SESSION['auth_usuario'] = [
+        'id' => (int)$conta['id'],
+        'nome' => $conta['nome'],
+        'usuario' => $conta['usuario'],
+        'perfil' => $conta['perfil']
+    ];
 }
 
 function authExigirPerfil(array $perfis): void
