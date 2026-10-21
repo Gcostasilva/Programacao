@@ -62,3 +62,11 @@ Router::add('cadastro_aco', 'controllers/CadastroAcosController.php', 'Cadastro 
 Router::add('cadastro_vendedores', 'controllers/CadastroVendedoresController.php', 'Cadastro de Vendedores');
 Router::add('cadastro_equipamentos', 'controllers/CadastroMaquinasController.php', 'Cadastro de equipamentos');
 Router::add('cadastro_motivos_estorno', 'controllers/CadastroMotivosEstornoController.php', 'Cadastro de Motivos de Estorno');
+
+ 
+// Autenticação e controle de acesso
+Router::add('login', 'pages/usuarios/login.php', 'Entrar');
+Router::add('logout', 'pages/usuarios/logout.php', 'Sair');
+Router::add('solicitar_acesso', 'pages/usuarios/solicitar_acesso.php', 'Solicitar acesso');
+Router::add('usuarios_setup', 'pages/usuarios/setup.php', 'Configuração inicial');
+Router::add('usuarios', 'pages/usuarios/index.php', 'Gerenciar usuários');
