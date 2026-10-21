@@ -79,3 +79,53 @@ function authNormalizarUsuario(string $usuario): string
 {
     return strtolower(trim($usuario));
 }
+
+/**
+ * Camada inicial de proteção por rota. Endpoints de gravação conhecidos são
+ * bloqueados para visitantes; endpoints de consulta permanecem liberados.
+ */
+function authProtegerRota(string $pagina): void
+{
+    $publicas = ['login', 'logout', 'solicitar_acesso', 'usuarios_setup'];
+    if (in_array($pagina, $publicas, true)) {
+        return;
+    }
+
+    try {
+        $total = (int) authPdo()->query('SELECT COUNT(*) FROM usuarios_acesso')->fetchColumn();
+    } catch (Throwable $e) {
+        http_response_code(503);
+        exit('Autenticação ainda não configurada. Importe database/sql/usuarios_acesso.sql no banco da aplicação.');
+    }
+
+    if ($total === 0) {
+        header('Location: index.php?page=usuarios_setup');
+        exit;
+    }
+
+    authExigirLogin();
+
+    if (in_array($pagina, ['usuarios', 'usuarios_acao'], true)) {
+        authExigirPerfil(['admin']);
+    }
+
+    $mutacoes = [
+        'prog_diaria_salvar','prog_diaria_baixar','prog_diaria_baixa_salvar',
+        'prog_diaria_excluir','prog_diaria_editar','prog_diaria_reordenar',
+        'prog_semanal_novo','prog_semanal_editar','prog_semanal_excluir','prog_semanal_reordenar',
+        'prog_quinzenal_salvar','prog_quinzenal_editar','prog_quinzenal_excluir','prog_quinzenal_reordenar',
+        'pedidos_salvar','salvar_pedido','pedidos_registro_acao','pedidos_comentario','pedidos_estorno',
+        'pedidos_motivos_estorno_salvar','pedidos_motivos_estorno_excluir',
+        'cadastro_aco','cadastro_vendedores','cadastro_equipamentos','cadastro_motivos_estorno',
+        'importacao'
+    ];
+
+    if (in_array($pagina, $mutacoes, true)) {
+        authExigirPerfil(['admin', 'analista_pcp']);
+    }
+
+    // Acesso administrativo a usuários deve ser sempre exclusivo de admin.
+    if (str_starts_with($pagina, 'usuarios_')) {
+        authExigirPerfil(['admin']);
+    }
+}
