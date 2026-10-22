@@ -110,7 +110,13 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
 ?>
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-end mb-2">
+    <?php if (!$modoSelecao): ?>
+    <div class="d-flex flex-wrap justify-content-end gap-2 mb-2 no-print">
+        <button type="button" class="btn btn-success btn-sm" id="btnExportarDemandaExcel"><i class="bi bi-file-earmark-excel me-1"></i> Exportar para Excel</button>
+        <button type="button" class="btn btn-outline-primary btn-sm" id="btnImprimirDemanda"><i class="bi bi-printer me-1"></i> Imprimir demanda</button>
+    </div>
+    <?php endif; ?>
+    <div class="d-flex justify-content-end mb-2 no-print">
         <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalAjudaFiltroDemanda">
             <i class="bi bi-funnel me-1"></i> Como filtrar?
         </button>
@@ -403,6 +409,109 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+    const idTabela = <?= json_encode($idTabelaDemanda) ?>;
+    const modoSelecao = <?= json_encode($modoSelecao) ?>;
+
+    function obterTabelaFiltrada() {
+        const tabela = document.getElementById(idTabela);
+        if (!tabela) return null;
+        let linhas = Array.from(tabela.querySelectorAll('tbody tr'));
+        if (window.DataTable && DataTable.isDataTable && DataTable.isDataTable(tabela)) {
+            const instancia = DataTable.isDataTable(tabela) ? new DataTable.Api(tabela) : null;
+            if (instancia) linhas = instancia.rows({ search: 'applied', order: 'applied' }).nodes().toArray();
+        }
+        return { tabela, linhas };
+    }
+
+    function textoCelula(celula) {
+        const botao = celula.querySelector('.btn-detalhes-op-aberta');
+        if (botao) return (botao.querySelector('span')?.textContent || botao.textContent).trim();
+        return (celula.innerText || celula.textContent || '').trim();
+    }
+
+    function coletarDados() {
+        const dados = obterTabelaFiltrada();
+        if (!dados) return null;
+        const cabecalhos = Array.from(dados.tabela.tHead.rows[0].cells)
+            .map(th => (th.innerText || th.textContent || '').trim());
+        // A coluna de seleção só existe no modal e não faz parte da exportação.
+        const quantidadeColunas = Math.min(11, cabecalhos.length);
+        const cabecalhosExportar = cabecalhos.slice(0, quantidadeColunas);
+        const linhas = dados.linhas.map(tr => Array.from(tr.cells).slice(0, quantidadeColunas).map(textoCelula));
+        return { cabecalhos: cabecalhosExportar, linhas };
+    }
+
+    const btnExcel = document.getElementById('btnExportarDemandaExcel');
+    if (btnExcel && !modoSelecao && btnExcel.dataset.ligado !== '1') {
+        btnExcel.dataset.ligado = '1';
+        btnExcel.addEventListener('click', async function () {
+            const dados = coletarDados();
+            if (!dados || !dados.linhas.length) {
+                alert('Não há registros para exportar com os filtros atuais.');
+                return;
+            }
+            const textoOriginal = btnExcel.innerHTML;
+            btnExcel.disabled = true;
+            btnExcel.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Gerando Excel...';
+            try {
+                const resposta = await fetch('index.php?page=demanda_excel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+                    body: JSON.stringify(dados)
+                });
+                if (!resposta.ok) {
+                    const mensagem = await resposta.text();
+                    throw new Error(mensagem || ('HTTP ' + resposta.status));
+                }
+                const blob = await resposta.blob();
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'Demanda_' + new Date().toISOString().slice(0, 10) + '.xlsx';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                URL.revokeObjectURL(url);
+            } catch (erro) {
+                console.error('Erro ao exportar demanda para Excel:', erro);
+                alert('Não foi possível gerar o arquivo Excel. ' + (erro.message || 'Verifique o servidor.'));
+            } finally {
+                btnExcel.disabled = false;
+                btnExcel.innerHTML = textoOriginal;
+            }
+        });
+    }
+
+    const btnImprimir = document.getElementById('btnImprimirDemanda');
+    if (btnImprimir && !modoSelecao && btnImprimir.dataset.ligado !== '1') {
+        btnImprimir.dataset.ligado = '1';
+        btnImprimir.addEventListener('click', function () {
+            const dados = coletarDados();
+            if (!dados || !dados.linhas.length) {
+                alert('Não há registros para imprimir com os filtros atuais.');
+                return;
+            }
+            const janela = window.open('', '_blank');
+            if (!janela) {
+                alert('O navegador bloqueou a janela de impressão. Permita pop-ups para este sistema.');
+                return;
+            }
+            const escapar = valor => String(valor ?? '').replace(/[&<>"]/g, caractere => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'
+            }[caractere]));
+            const cabecalho = dados.cabecalhos.map(valor => '<th>' + escapar(valor) + '</th>').join('');
+            const linhas = dados.linhas.map(linha => '<tr>' + linha.map(valor => '<td>' + escapar(valor) + '</td>').join('') + '</tr>').join('');
+            janela.document.write('<!doctype html><html lang="pt-br"><head><meta charset="utf-8"><title>Demanda</title><style>' +
+                '@page{size:landscape;margin:10mm}body{font-family:Arial,sans-serif;color:#222;font-size:10px}h1{font-size:18px;margin:0 0 4px}p{font-size:10px;color:#555;margin:0 0 14px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #aaa;padding:5px 4px;text-align:left;overflow-wrap:anywhere}th{background:#e9eef5;font-weight:bold}tbody tr:nth-child(even){background:#f6f8fa}thead{display:table-header-group}tr{break-inside:avoid}' +
+                '</style></head><body><h1>Relatório de Demanda</h1><p>Emitido em ' + escapar(new Date().toLocaleString('pt-BR')) + ' — ' + dados.linhas.length + ' registro(s)</p><table><thead><tr>' + cabecalho + '</tr></thead><tbody>' + linhas + '</tbody></table><script>window.onload=function(){window.print();};<\/script></body></html>');
+            janela.document.close();
+        });
+    }
+})();
+</script>
 
 <style>
 #<?= htmlspecialchars($idTabelaDemanda) ?> thead tr.filtros-demanda th { padding:4px; background:var(--bs-body-bg); }
