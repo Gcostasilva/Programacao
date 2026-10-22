@@ -63,8 +63,7 @@ $modoSelecao = $modoDemanda === 'selecao';
 // Detalhes usados pelo modal de OP aberta: produção realizada igual a zero
 // e quantidade programada maior que zero, tanto na semanal quanto na quinzenal.
 $opsAbertasPorProduto = [];
-if (!$modoSelecao) {
-    $sqlOpsAbertas = "
+$sqlOpsAbertas = "
         SELECT
             CONVERT('Semanal' USING utf8mb4) COLLATE utf8mb4_unicode_ci AS origem,
             CONVERT(CAST(pr.produto_id AS CHAR) USING utf8mb4) COLLATE utf8mb4_unicode_ci AS produto_id,
@@ -102,10 +101,9 @@ if (!$modoSelecao) {
 $registrosOpsAbertas = $stmtOpsAbertas->fetchAll(PDO::FETCH_ASSOC);
 $stmtOpsAbertas->closeCursor();
 
-    foreach ($registrosOpsAbertas as $op) {
-        $codigoProduto = (string) $op['produto_id'];
-        $opsAbertasPorProduto[$codigoProduto][] = $op;
-    }
+foreach ($registrosOpsAbertas as $op) {
+    $codigoProduto = (string) $op['produto_id'];
+    $opsAbertasPorProduto[$codigoProduto][] = $op;
 }
 
 $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
@@ -188,7 +186,6 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
     </div>
 </div>
 
-<?php if (!$modoSelecao): ?>
 <!-- Modal com os registros que compõem a OP aberta do produto selecionado -->
 <div class="modal fade" id="modalDetalhesOpAberta" tabindex="-1" aria-labelledby="modalDetalhesOpAbertaLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-scrollable">
@@ -235,6 +232,31 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
     const modalEl = document.getElementById('modalDetalhesOpAberta');
     if (!modalEl || modalEl.dataset.eventoLigado === '1') return;
     modalEl.dataset.eventoLigado = '1';
+
+    // Coloca o modal de detalhes diretamente no body para funcionar também
+    // quando a tabela de Demanda está dentro do modal da Programação Semanal.
+    document.body.appendChild(modalEl);
+
+    modalEl.addEventListener('show.bs.modal', function () {
+        if (document.querySelectorAll('.modal.show').length > 0) {
+            modalEl.style.zIndex = '1060';
+        }
+    });
+
+    modalEl.addEventListener('shown.bs.modal', function () {
+        const modaisAbertos = document.querySelectorAll('.modal.show').length;
+        const fundos = document.querySelectorAll('.modal-backdrop');
+        const ultimoFundo = fundos[fundos.length - 1];
+        if (modaisAbertos > 1 && ultimoFundo) ultimoFundo.style.zIndex = '1055';
+    });
+
+    modalEl.addEventListener('hidden.bs.modal', function () {
+        modalEl.style.zIndex = '';
+        document.querySelectorAll('.modal-backdrop').forEach(function (fundo) {
+            if (fundo.style.zIndex === '1055') fundo.style.zIndex = '';
+        });
+        if (document.querySelector('.modal.show')) document.body.classList.add('modal-open');
+    });
 
     document.addEventListener('click', function (event) {
         const botao = event.target.closest('.btn-detalhes-op-aberta');
@@ -289,7 +311,6 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
     });
 })();
 </script>
-<?php endif; ?>
 
 <!-- Ajuda dos filtros -->
 <div class="modal fade" id="modalAjudaFiltroDemanda" tabindex="-1" aria-labelledby="modalAjudaFiltroDemandaLabel" aria-hidden="true">
