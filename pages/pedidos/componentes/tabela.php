@@ -3,17 +3,17 @@
         <div class="card-title d-flex align-items-center gap-2"><i class="bi bi-clock-history"></i><span>Histórico de pedidos</span></div>
     </div>
     <!-- /.card-header -->
-    <div class="card">
-        <div class="card-body p-0">
-            <table class="table table-sm table-hover">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle">
                 <thead>
                     <tr>
-                        <td>Pedido</td>
-                        <td>Tipo</td>
-                        <td>Entrada</td>
-                        <td>Previsão</td>
-                        <td>Saída</td>
-                        <td>Prazo</td>
+                        <th scope="col">Pedido</th>
+                        <th scope="col">Tipo</th>
+                        <th scope="col">Entrada</th>
+                        <th scope="col">Previsão</th>
+                        <th scope="col">Saída</th>
+                        <th scope="col">Prazo</th>
                     </tr>
                 </thead>
                 <tbody id="tabelaDados">
