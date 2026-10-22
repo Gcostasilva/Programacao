@@ -54,6 +54,7 @@ WHERE equipamento <> ''; -- Excludes items that don't match any equipment group
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $demanda = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt->closeCursor();
 
 $modoDemanda = $modoDemanda ?? 'pagina';
 $idTabelaDemanda = $idTabelaDemanda ?? 'tb_demanda';
@@ -98,8 +99,10 @@ if (!$modoSelecao) {
     ";
     $stmtOpsAbertas = $pdo->prepare($sqlOpsAbertas);
     $stmtOpsAbertas->execute();
+$registrosOpsAbertas = $stmtOpsAbertas->fetchAll(PDO::FETCH_ASSOC);
+$stmtOpsAbertas->closeCursor();
 
-    foreach ($stmtOpsAbertas->fetchAll(PDO::FETCH_ASSOC) as $op) {
+    foreach ($registrosOpsAbertas as $op) {
         $codigoProduto = (string) $op['produto_id'];
         $opsAbertasPorProduto[$codigoProduto][] = $op;
     }
