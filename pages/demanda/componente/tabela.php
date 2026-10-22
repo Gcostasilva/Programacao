@@ -58,6 +58,53 @@ $demanda = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $modoDemanda = $modoDemanda ?? 'pagina';
 $idTabelaDemanda = $idTabelaDemanda ?? 'tb_demanda';
 $modoSelecao = $modoDemanda === 'selecao';
+
+// Detalhes usados pelo modal de OP aberta: produção realizada igual a zero
+// e quantidade programada maior que zero, tanto na semanal quanto na quinzenal.
+$opsAbertasPorProduto = [];
+if (!$modoSelecao) {
+    $sqlOpsAbertas = "
+        SELECT
+            'Semanal' AS origem,
+            pr.produto_id AS produto_id,
+            CAST(pr.id AS CHAR) AS registro,
+            COALESCE(DATE_FORMAT(pr.data, '%d/%m/%Y'), '') AS periodo,
+            COALESCE(pr.demanda, '') AS referencia,
+            COALESCE(mq.descricao, '') AS recurso,
+            COALESCE(pr.qtd, 0) AS quantidade,
+            COALESCE(pr.peca_realizada, 0) AS produzida,
+            COALESCE(pr.obs, '') AS observacao
+        FROM programacao pr
+        LEFT JOIN maquinas mq ON mq.id = pr.maquina_id
+        WHERE pr.produto_id IS NOT NULL
+          AND COALESCE(pr.peca_realizada, 0) = 0
+          AND COALESCE(pr.qtd, 0) > 0
+
+        UNION ALL
+
+        SELECT
+            'Quinzenal' AS origem,
+            pq.produto_id AS produto_id,
+            COALESCE(NULLIF(pq.ordem_producao, ''), CAST(pq.id AS CHAR)) AS registro,
+            COALESCE(pq.quinzena, '') AS periodo,
+            COALESCE(pq.ordem_producao, '') AS referencia,
+            '' AS recurso,
+            COALESCE(pq.quantidade, 0) AS quantidade,
+            COALESCE(pq.peca_realizada, 0) AS produzida,
+            COALESCE(pq.obs, '') AS observacao
+        FROM programacao_quinzenal pq
+        WHERE COALESCE(pq.peca_realizada, 0) = 0
+          AND COALESCE(pq.quantidade, 0) > 0
+    ";
+    $stmtOpsAbertas = $pdo->prepare($sqlOpsAbertas);
+    $stmtOpsAbertas->execute();
+
+    foreach ($stmtOpsAbertas->fetchAll(PDO::FETCH_ASSOC) as $op) {
+        $codigoProduto = (string) $op['produto_id'];
+        $opsAbertasPorProduto[$codigoProduto][] = $op;
+    }
+}
+
 $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
 ?>
 
@@ -112,7 +159,22 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
                         <td><?= htmlspecialchars($d['previsao'] ?? '') ?></td>
                         <td><?= htmlspecialchars($d['dias_estoque']) ?></td>
                         <td><?= htmlspecialchars($d['necessidade']) ?></td>
-                        <td><?= htmlspecialchars($d['op_aberta']) ?></td>
+                        <td>
+                            <?php if ((float) $d['op_aberta'] > 0 && !empty($opsAbertasPorProduto[(string) $d['codigo']])): ?>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-primary btn-detalhes-op-aberta"
+                                        title="Ver registros de OP aberta"
+                                        aria-label="Ver registros de OP aberta para <?= htmlspecialchars($d['codigo'], ENT_QUOTES) ?>"
+                                        data-codigo="<?= htmlspecialchars($d['codigo'], ENT_QUOTES) ?>"
+                                        data-descricao="<?= htmlspecialchars($d['descricao'] ?? '', ENT_QUOTES) ?>"
+                                        data-ops="<?= htmlspecialchars(json_encode($opsAbertasPorProduto[(string) $d['codigo']], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), ENT_QUOTES) ?>">
+                                    <i class="bi bi-search"></i>
+                                    <span><?= htmlspecialchars($d['op_aberta']) ?></span>
+                                </button>
+                            <?php else: ?>
+                                <?= htmlspecialchars($d['op_aberta']) ?>
+                            <?php endif; ?>
+                        </td>
                         <?php if ($modoSelecao): ?>
                             <td><button type="button" class="btn btn-sm btn-primary btn-selecionar-demanda" data-codigo="<?= htmlspecialchars($d['codigo'], ENT_QUOTES) ?>"><i class="bi bi-check-lg"></i></button></td>
                         <?php endif; ?>
@@ -122,6 +184,109 @@ $colunasNumericas = [4, 5,  6, 7, 8, 9,10];
         </table>
     </div>
 </div>
+
+<?php if (!$modoSelecao): ?>
+<!-- Modal com os registros que compõem a OP aberta do produto selecionado -->
+<div class="modal fade" id="modalDetalhesOpAberta" tabindex="-1" aria-labelledby="modalDetalhesOpAbertaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h5 class="modal-title" id="modalDetalhesOpAbertaLabel"><i class="bi bi-list-check me-2"></i>Registros de OP aberta</h5>
+                    <div class="small text-body-secondary" id="modalDetalhesOpAbertaProduto"></div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info py-2">
+                    São listados os registros com quantidade produzida igual a zero e quantidade programada maior que zero.
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Origem</th>
+                                <th>Registro / OP</th>
+                                <th>Período / Data</th>
+                                <th>Demanda</th>
+                                <th>Recurso</th>
+                                <th class="text-end">Qtd. programada</th>
+                                <th class="text-end">Qtd. produzida</th>
+                                <th>Observação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modalDetalhesOpAbertaLinhas">
+                            <tr><td colspan="8" class="text-center text-body-secondary">Selecione um produto para consultar os registros.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    const modalEl = document.getElementById('modalDetalhesOpAberta');
+    if (!modalEl || modalEl.dataset.eventoLigado === '1') return;
+    modalEl.dataset.eventoLigado = '1';
+
+    document.addEventListener('click', function (event) {
+        const botao = event.target.closest('.btn-detalhes-op-aberta');
+        if (!botao) return;
+
+        let registros = [];
+        try {
+            registros = JSON.parse(botao.dataset.ops || '[]');
+        } catch (erro) {
+            console.error('Não foi possível ler os registros de OP aberta.', erro);
+        }
+
+        document.getElementById('modalDetalhesOpAbertaProduto').textContent =
+            (botao.dataset.codigo || '') + ' — ' + (botao.dataset.descricao || '');
+
+        const tbody = document.getElementById('modalDetalhesOpAbertaLinhas');
+        tbody.replaceChildren();
+
+        if (!registros.length) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            td.colSpan = 8;
+            td.className = 'text-center text-body-secondary';
+            td.textContent = 'Nenhum registro em aberto encontrado para este produto.';
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+        } else {
+            registros.forEach(function (registro) {
+                const tr = document.createElement('tr');
+                [
+                    registro.origem,
+                    registro.registro,
+                    registro.periodo,
+                    registro.referencia,
+                    registro.recurso,
+                    registro.quantidade,
+                    registro.produzida,
+                    registro.observacao
+                ].forEach(function (valor, indice) {
+                    const td = document.createElement('td');
+                    td.textContent = valor == null ? '' : String(valor);
+                    if (indice === 5 || indice === 6) td.className = 'text-end';
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+        }
+
+        if (window.bootstrap) {
+            bootstrap.Modal.getOrCreateInstance(modalEl).show();
+        }
+    });
+})();
+</script>
+<?php endif; ?>
 
 <!-- Ajuda dos filtros -->
 <div class="modal fade" id="modalAjudaFiltroDemanda" tabindex="-1" aria-labelledby="modalAjudaFiltroDemandaLabel" aria-hidden="true">
