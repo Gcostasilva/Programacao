@@ -1,6 +1,6 @@
 <?php
 
-require_once 'c:\\xampp\\htdocs\\Programacao\\config\\banco.php';
+$pdo = require 'c:\\xampp\\htdocs\\Programacao\\config\\banco.php';
 
 $sql = "
 WITH dados_equipamento AS (
