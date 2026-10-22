@@ -113,7 +113,7 @@ $sheetXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
 
 $stylesXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     . '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-    . '<numFmts count="1"><numFmt numFmtId="164" formatCode="#,##0.##"/></numFmts>'
+    . '<numFmts count="1"><numFmt numFmtId="164" formatCode="###,##0"/></numFmts>'
     . '<fonts count="4">'
     . '<font><sz val="10"/><name val="Arial"/></font>'
     . '<font><b/><sz val="16"/><color rgb="FFFFFFFF"/><name val="Arial"/></font>'
