@@ -4,6 +4,7 @@ require_once 'router.php';
 
 Router::add('index', 'index.php', 'inicio');
 Router::add('demanda', 'pages/demanda/index.php', 'Demanda');
+Router::add('demanda_excel', 'pages/demanda/exportar_excel.php', 'Exportar Demanda para Excel');
 Router::add('pedidos', 'controllers/PedidosController.php', 'Pedidos na Industria');
 Router::add('importacao', 'pages/importacao/index.php', 'Importação');
 Router::add('relatorios', 'pages/relatorios/index.php', 'Relatórios');
