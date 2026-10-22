@@ -66,15 +66,15 @@ $opsAbertasPorProduto = [];
 if (!$modoSelecao) {
     $sqlOpsAbertas = "
         SELECT
-            'Semanal' AS origem,
-            pr.produto_id AS produto_id,
-            CAST(pr.id AS CHAR) AS registro,
-            COALESCE(DATE_FORMAT(pr.data, '%d/%m/%Y'), '') AS periodo,
-            COALESCE(pr.demanda, '') AS referencia,
-            COALESCE(mq.descricao, '') AS recurso,
+            CONVERT('Semanal' USING utf8mb4) COLLATE utf8mb4_unicode_ci AS origem,
+            CONVERT(CAST(pr.produto_id AS CHAR) USING utf8mb4) COLLATE utf8mb4_unicode_ci AS produto_id,
+            CONVERT(CAST(pr.id AS CHAR) USING utf8mb4) COLLATE utf8mb4_unicode_ci AS registro,
+            CONVERT(COALESCE(DATE_FORMAT(pr.data, '%d/%m/%Y'), '') USING utf8mb4) COLLATE utf8mb4_unicode_ci AS periodo,
+            CONVERT(COALESCE(CAST(pr.demanda AS CHAR), '') USING utf8mb4) COLLATE utf8mb4_unicode_ci AS referencia,
+            CONVERT(COALESCE(mq.descricao, '') USING utf8mb4) COLLATE utf8mb4_unicode_ci AS recurso,
             COALESCE(pr.qtd, 0) AS quantidade,
             COALESCE(pr.peca_realizada, 0) AS produzida,
-            COALESCE(pr.obs, '') AS observacao
+            CONVERT(COALESCE(pr.obs, '') USING utf8mb4) COLLATE utf8mb4_unicode_ci AS observacao
         FROM programacao pr
         LEFT JOIN maquinas mq ON mq.id = pr.maquina_id
         WHERE pr.produto_id IS NOT NULL
@@ -84,15 +84,15 @@ if (!$modoSelecao) {
         UNION ALL
 
         SELECT
-            'Quinzenal' AS origem,
-            pq.produto_id AS produto_id,
-            COALESCE(NULLIF(pq.ordem_producao, ''), CAST(pq.id AS CHAR)) AS registro,
-            COALESCE(pq.quinzena, '') AS periodo,
-            COALESCE(pq.ordem_producao, '') AS referencia,
-            '' AS recurso,
+            CONVERT('Quinzenal' USING utf8mb4) COLLATE utf8mb4_unicode_ci AS origem,
+            CONVERT(CAST(pq.produto_id AS CHAR) USING utf8mb4) COLLATE utf8mb4_unicode_ci AS produto_id,
+            CONVERT(COALESCE(NULLIF(pq.ordem_producao, ''), CAST(pq.id AS CHAR)) USING utf8mb4) COLLATE utf8mb4_unicode_ci AS registro,
+            CONVERT(COALESCE(CAST(pq.quinzena AS CHAR), '') USING utf8mb4) COLLATE utf8mb4_unicode_ci AS periodo,
+            CONVERT(COALESCE(CAST(pq.ordem_producao AS CHAR), '') USING utf8mb4) COLLATE utf8mb4_unicode_ci AS referencia,
+            CONVERT('' USING utf8mb4) COLLATE utf8mb4_unicode_ci AS recurso,
             COALESCE(pq.quantidade, 0) AS quantidade,
             COALESCE(pq.peca_realizada, 0) AS produzida,
-            COALESCE(pq.obs, '') AS observacao
+            CONVERT(COALESCE(pq.obs, '') USING utf8mb4) COLLATE utf8mb4_unicode_ci AS observacao
         FROM programacao_quinzenal pq
         WHERE COALESCE(pq.peca_realizada, 0) = 0
           AND COALESCE(pq.quantidade, 0) > 0
