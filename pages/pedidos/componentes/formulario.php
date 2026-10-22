@@ -16,30 +16,27 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
                     <form action="index.php?page=pedidos_salvar" method="POST" id="formPedido">
                         <div class="row g-3 align-items-end">
                             <div class="col-md-4"><label class="form-label">Pedido</label>
-                                <div class="input-group"><input class="form-control" id="pedido" name="pedido" required
+                                <input class="form-control" id="pedido" name="pedido" required
                                         autocomplete="off" autofocus>
-                                    <button class="btn btn-primary bt-especial" type="button" id="btn_estorno"
-                                        title="Estorno">
-                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                    </button>
+                                
+                                    
                                 </div>
-
-                            </div>
-                            <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select"
-                                    id="tipoPedido" name="tipo_pedido" required>
-                                    <option value="" disabled selected>Selecione...</option>
-                                    <option value="P">Padrão</option>
-                                    <option value="E">Encomenda</option>
-                                    <option value="T">Telha</option>
-                                </select></div>
+                                <div class="col-md-4"><label class="form-label">Tipo</label><select class="form-select"
+                                id="tipoPedido" name="tipo_pedido" required>
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="P">Padrão</option>
+                                <option value="E">Encomenda</option>
+                                <option value="T">Telha</option>
+                            </select></div>
                             <div class="col-md-4"><label class="form-label">Previsão</label><input type="date"
-                                    class="form-control" id="data" name="data"></div>
+                            class="form-control" id="data" name="data"></div>
                         </div>
                         <div class="row mt-3">
                             <div class="col-12 d-flex flex-wrap gap-2">
-                                        <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button>
-                                        <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button>
-                                        
+                                <button class="btn btn-primary" type="submit"><i class="bi bi-save"></i> Salvar</button>
+                                <button class="btn btn-primary" type="reset"><i class="bi bi-x-circle"></i> Desistir</button>
+                                <button class="btn btn-primary bt-especial" type="button" id="btn_estorno" title="Estorno"><i class="bi bi-arrow-counterclockwise"></i> Estorno</button>
+                                
                                         <div id="pedidoConsultaStatus" class="form-text"></div>
                                     </div>
                         </div>
