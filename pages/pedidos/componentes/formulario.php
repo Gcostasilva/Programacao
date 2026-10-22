@@ -5,7 +5,7 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
 <div class="container-fluid hidden-print">
     <div class="card card-primary card-outline" id="cardFormSemanal">
         <div class="card-header" style="cursor: pointer;">
-            <h3 class="card-title">Pedidos na Industria</h3>
+            <h3 class="card-title d-flex align-items-center gap-2"><i class="bi bi-clipboard2-check"></i><span>Pedidos na Indústria</span></h3>
             <div class="card-tools"><button type="button" class="btn btn-tool" id="btnToggleFormSemanal"
                     title="Expandir/Retrair"><i class="bi bi-chevron-down" id="iconeToggleFormSemanal"></i></button>
             </div>
@@ -623,3 +623,85 @@ $vendedoresEstorno = (new CadastroVendedorModel())->listar();
         });
     });
 </script>
+
+<style>
+/* Apresentação da página Pedidos na Indústria */
+#cardFormSemanal {
+    border: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 .35rem 1.25rem rgba(30, 41, 59, .08);
+}
+#cardFormSemanal > .card-header {
+    display: flex;
+    align-items: center;
+    min-height: 3.75rem;
+    padding: 1rem 1.25rem;
+    color: var(--bs-emphasis-color);
+    background: linear-gradient(120deg, rgba(var(--bs-primary-rgb), .11), rgba(var(--bs-primary-rgb), .025));
+    border-bottom: 1px solid rgba(var(--bs-primary-rgb), .12);
+}
+#cardFormSemanal .card-title { font-size: 1.08rem; font-weight: 700; letter-spacing: .01em; }
+#cardFormSemanal .card-title i { color: var(--bs-primary); font-size: 1.25rem; }
+#cardFormSemanal > .card-body { padding: clamp(1rem, 2vw, 1.5rem); }
+#formPedido {
+    padding: 1rem;
+    height: 100%;
+    border: 1px solid var(--bs-border-color);
+    border-radius: .85rem;
+    background: var(--bs-tertiary-bg);
+}
+#formPedido .form-label { font-size: .82rem; font-weight: 650; color: var(--bs-secondary-color); margin-bottom: .4rem; }
+#formPedido .form-control, #formPedido .form-select { min-height: 2.7rem; border-radius: .55rem; }
+#formPedido .form-control:focus, #formPedido .form-select:focus {
+    box-shadow: 0 0 0 .2rem rgba(var(--bs-primary-rgb), .13);
+}
+#formPedido button { border-radius: .55rem; font-weight: 600; }
+#formPedido button[type="submit"] { box-shadow: 0 .2rem .5rem rgba(var(--bs-primary-rgb), .18); }
+#pedidoConsultaStatus { flex: 1 1 100%; }
+#tabelaPedidosIndustria, #cardFormSemanal .table {
+    --bs-table-bg: transparent;
+    margin-bottom: 0;
+    font-size: .9rem;
+}
+#tabelaPedidosIndustria thead th, #cardFormSemanal .table thead th {
+    padding: .8rem .75rem;
+    white-space: nowrap;
+    background: var(--bs-tertiary-bg);
+    color: var(--bs-secondary-color);
+    border-bottom: 1px solid var(--bs-border-color);
+    font-size: .75rem;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: .045em;
+}
+#tabelaPedidosIndustria tbody td, #cardFormSemanal .table tbody td {
+    padding: .7rem .75rem;
+    vertical-align: middle;
+    border-color: var(--bs-border-color-translucent);
+}
+#tabelaPedidosIndustria tbody tr:last-child td, #cardFormSemanal .table tbody tr:last-child td { border-bottom: 0; }
+#tabelaPedidosIndustria tbody tr:hover td, #cardFormSemanal .table tbody tr:hover td {
+    --bs-table-bg: rgba(var(--bs-primary-rgb), .035);
+}
+#tabelaPedidosIndustria .btn, #cardFormSemanal .table .btn { border-radius: .45rem; }
+#cardFormSemanal .table-responsive { border: 1px solid var(--bs-border-color); border-radius: .85rem; overflow: hidden; }
+#modalComentarioPedido .modal-content, #modalVisualizarEstornos .modal-content, #modalEstornoPedido .modal-content {
+    border: 0; border-radius: 1rem; overflow: hidden; box-shadow: 0 1rem 3rem rgba(0,0,0,.15);
+}
+#modalComentarioPedido .modal-header, #modalVisualizarEstornos .modal-header, #modalEstornoPedido .modal-header {
+    background: var(--bs-tertiary-bg); border-bottom-color: var(--bs-border-color);
+}
+#modalComentarioPedido .modal-footer, #modalVisualizarEstornos .modal-footer, #modalEstornoPedido .modal-footer {
+    border-top-color: var(--bs-border-color);
+}
+@media (max-width: 767.98px) {
+    #cardFormSemanal > .card-body { padding: .85rem; }
+    #formPedido { padding: .85rem; }
+    #formPedido .row.mt-3 > .col-12 { align-items: stretch; }
+    #formPedido .row.mt-3 button { flex: 1 1 auto; }
+}
+@media print {
+    #cardFormSemanal > .card-header, #formPedido, #btnToggleFormSemanal { display: none !important; }
+}
+</style>
